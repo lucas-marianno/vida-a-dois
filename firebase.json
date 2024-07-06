@@ -1,0 +1,21 @@
+{
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "vida-a-dois-app",
+                    "appId": "1:870868222481:android:3b4fcada83547ace7427b0",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "vida-a-dois-app",
+                    "configurations": {
+                        "android": "1:870868222481:android:3b4fcada83547ace7427b0"
+                    }
+                }
+            }
+        }
+    }
+}

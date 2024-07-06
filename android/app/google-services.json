@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "870868222481",
+    "project_id": "vida-a-dois-app",
+    "storage_bucket": "vida-a-dois-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:870868222481:android:3b4fcada83547ace7427b0",
+        "android_client_info": {
+          "package_name": "com.lucasmarianno.VidaADois"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFFSHxoDqvVryhUcndd8ls0Ex4fqtfm-8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
