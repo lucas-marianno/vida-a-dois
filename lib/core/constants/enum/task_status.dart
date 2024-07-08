@@ -3,7 +3,8 @@
 enum TaskStatus {
   todo,
   inProgress,
-  done;
+  done,
+  uninplemented;
 
   String get name {
     switch (this) {
@@ -13,6 +14,21 @@ enum TaskStatus {
         return 'In progress';
       case TaskStatus.done:
         return 'Done';
+      case TaskStatus.uninplemented:
+        return 'UNINPLEMENTED STATUS';
+    }
+  }
+
+  static TaskStatus fromString(String s) {
+    switch (s) {
+      case 'To do':
+        return TaskStatus.todo;
+      case 'In progress':
+        return TaskStatus.inProgress;
+      case 'Done':
+        return TaskStatus.done;
+      default:
+        return TaskStatus.uninplemented;
     }
   }
 }

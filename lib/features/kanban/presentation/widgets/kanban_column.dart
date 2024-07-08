@@ -1,15 +1,12 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
-
-import '../../presentation/widgets/kanban_tile.dart';
-import '../../domain/entities/task_entity.dart';
+import 'package:kanban/features/kanban/presentation/widgets/kanban_column_title.dart';
+import 'kanban_add_task_button.dart';
+import 'kanban_column_streambuilder.dart';
 
 class KanbanColumn extends StatelessWidget {
-  final String columnName;
-  final List<Task> taskList;
+  final String columnId;
   const KanbanColumn({
-    required this.columnName,
-    required this.taskList,
+    required this.columnId,
     super.key,
   });
 
@@ -28,36 +25,9 @@ class KanbanColumn extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Center(child: Text(columnName)),
-          Expanded(
-            child: DragTarget(
-              onAcceptWithDetails: (data) {
-                if (data.data is Task) {
-                  //TODO: remove this function from here
-
-                  taskList.add(data.data as Task);
-                }
-              },
-              builder: (context, candidateData, rejectedData) {
-                return ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: max(taskList.length, 1),
-                  padding: const EdgeInsets.symmetric(vertical: 1),
-                  itemBuilder: (context, index) {
-                    if (taskList.isEmpty) {
-                      return const Center(child: Text('No tasks here!'));
-                    }
-
-                    return KanbanTile(
-                      task: taskList[index],
-                      tileHeight: width / 3,
-                      tileWidth: width,
-                    );
-                  },
-                );
-              },
-            ),
-          ),
+          KanbanColumnTitle(columnId: columnId),
+          KanbanColumnStreamBuilder(columnId: columnId, width: width),
+          KanbanAddTaskButton(columnId: columnId),
         ],
       ),
     );
