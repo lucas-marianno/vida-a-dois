@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 import 'package:kanban/features/kanban/presentation/widgets/kanban_column_title.dart';
+import 'column_task_list.dart';
 import 'kanban_add_task_button.dart';
-import 'kanban_column_streambuilder.dart';
 
 class KanbanColumn extends StatelessWidget {
   final String columnId;
+  final List<Task> taskList;
   const KanbanColumn({
     required this.columnId,
+    required this.taskList,
     super.key,
   });
 
@@ -26,7 +29,7 @@ class KanbanColumn extends StatelessWidget {
       child: Column(
         children: [
           KanbanColumnTitle(columnId: columnId),
-          KanbanColumnStreamBuilder(columnId: columnId, width: width),
+          KanbanTaskList(taskList: taskList, width: width),
           KanbanAddTaskButton(columnId: columnId),
         ],
       ),

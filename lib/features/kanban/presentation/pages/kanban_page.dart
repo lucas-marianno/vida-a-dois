@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kanban/features/kanban/data/remote/firestore_service.dart';
-import '../../presentation/widgets/kanban_column.dart';
+import '../widgets/kanban_column.dart';
 
 class KanbanPage extends StatelessWidget {
   const KanbanPage({super.key});
@@ -31,8 +31,18 @@ class KanbanPage extends StatelessWidget {
               itemCount: columns.length,
               itemBuilder: (context, index) {
                 // TODO: finish implementing this shit, then abstract it
-
-                return KanbanColumn(columnId: columns[index].id);
+                String columnId = columns[index].id;
+                return StreamBuilder(
+                  stream: FirestoreService.getMockColumnContent(columnId),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return KanbanColumn(
+                          columnId: columnId, taskList: snapshot.data!);
+                    } else {
+                      return Center(child: Text(snapshot.error.toString()));
+                    }
+                  },
+                );
               },
             );
           } else {

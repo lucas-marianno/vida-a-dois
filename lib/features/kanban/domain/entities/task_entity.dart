@@ -1,20 +1,20 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'person_entity.dart';
 
 import '../../../../core/constants/enum/task_importance.dart';
 import '../../../../core/constants/enum/task_status.dart';
 
 class Task {
-  final String? id;
   final String title;
   final String? description;
   final Person? assingnedTo;
   final TaskImportance taskImportance;
   final TaskStatus status;
-  final DateTime? dueDate;
-  final DateTime? createdDate;
+  final Timestamp? dueDate;
+  final Timestamp? createdDate;
 
   const Task({
-    this.id,
     required this.title,
     this.description,
     this.assingnedTo,
@@ -23,4 +23,14 @@ class Task {
     this.dueDate,
     this.createdDate,
   });
+
+  static List<String> get atributes => [
+        'title',
+        'description',
+        'assingnedTo',
+        'taskImportance',
+        'status',
+        'dueDate',
+        'createdDate',
+      ];
 }
