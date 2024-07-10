@@ -3,19 +3,22 @@
 enum TaskStatus {
   todo,
   inProgress,
-  done,
-  uninplemented;
+  done;
 
   static TaskStatus fromString(String s) {
     switch (s.toLowerCase()) {
-      case 'to do':
+      case 'to do' || 'todo':
         return TaskStatus.todo;
-      case 'in progress':
+      case 'in progress' || 'inprogress':
         return TaskStatus.inProgress;
       case 'done':
         return TaskStatus.done;
       default:
-        return TaskStatus.uninplemented;
+        throw UnimplementedError(
+          "'$s' is not a type of '$TaskStatus'! \n"
+          "Available types:\n"
+          "${TaskStatus.values.map((e) => e.name).toSet()}",
+        );
     }
   }
 }

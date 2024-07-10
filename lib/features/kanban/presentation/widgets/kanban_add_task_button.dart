@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kanban/features/kanban/presentation/widgets/create_task_form.dart';
 
 class KanbanAddTaskButton extends StatelessWidget {
   final String columnId;
@@ -17,9 +18,9 @@ class KanbanAddTaskButton extends StatelessWidget {
         child: ListTile(
           leading: const Icon(Icons.add),
           title: const Text('Add Task'),
-          onTap: () {
-            //TODO: add new task
-            print('new task added to $columnId');
+          onTap: () async {
+            final newTask = await CreateTaskFromModalBottomForm.show(context);
+            print(newTask?.toJson());
           },
         ),
       ),
