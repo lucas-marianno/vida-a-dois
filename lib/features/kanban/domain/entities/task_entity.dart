@@ -26,14 +26,20 @@ class Task {
     this.createdDate,
   });
 
-  factory Task.fromJson(Map<String, dynamic> json, String documentId) {
+  factory Task.fromJson(QueryDocumentSnapshot<Object?> json) {
+    final taskId = json.reference.id;
+
+    return Task.fromMap(json.data() as Map<String, dynamic>)..id = taskId;
+  }
+
+  factory Task.fromMap(Map<String, dynamic> json) {
     return Task(
-      id: documentId,
+      id: json['id'],
       title: json['title'],
       description: json['description'],
       assingnedTo: Assignee.fromString(json['assingnedTo']),
       taskImportance: TaskImportance.fromString(json['taskImportance']),
-      status: TaskStatus.fromString(json['taskStatus']),
+      status: TaskStatus.fromString(json['status']),
       dueDate: json['dueDate'],
       createdDate: json['createdDate'],
     );
@@ -41,8 +47,9 @@ class Task {
 
   Map<String, dynamic> toJson() {
     return {
-      'title': title.toString(),
-      'description': description.toString(),
+      'id': id,
+      'title': title,
+      'description': description,
       'assingnedTo': assingnedTo.name,
       'taskImportance': taskImportance.name,
       'status': status.name,
@@ -50,4 +57,6 @@ class Task {
       'createdDate': createdDate,
     };
   }
+
+  Task copy() => Task.fromMap(toJson());
 }
