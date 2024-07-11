@@ -35,4 +35,23 @@ class KanbanColumn extends StatelessWidget {
       ),
     );
   }
+
+  static Widget loading(BuildContext context) {
+    double widthMultiplier = 0.6;
+    double width = MediaQuery.of(context).size.width * widthMultiplier;
+
+    return Container(
+      width: width,
+      margin: const EdgeInsets.symmetric(horizontal: 3),
+      padding: const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: Colors.blueGrey[100],
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: const Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [LinearProgressIndicator()],
+      ),
+    );
+  }
 }
