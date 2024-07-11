@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class FormDropDownMenuButton extends StatefulWidget {
   final String label;
   final List<String> items;
-  final void Function(String newValue) onChanged;
+  final void Function(String? newValue) onChanged;
   final String? initialValue;
   final double? maxHeight;
   final double? maxWidth;
@@ -44,6 +44,8 @@ class _FormDropDownMenuButtonState extends State<FormDropDownMenuButton> {
 
   @override
   void initState() {
+    widget.onChanged(widget.initialValue);
+
     checkInitialValue();
     value = widget.initialValue ?? widget.items.first;
     super.initState();

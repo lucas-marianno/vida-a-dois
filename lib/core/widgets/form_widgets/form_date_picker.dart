@@ -6,7 +6,7 @@ class FormDatePicker extends StatefulWidget {
   final double? maxHeight;
   final String label;
   final DateTime? initialDate;
-  final void Function(DateTime newDate) onChanged;
+  final void Function(DateTime? newDate) onChanged;
   const FormDatePicker({
     super.key,
     required this.label,
@@ -21,7 +21,7 @@ class FormDatePicker extends StatefulWidget {
 }
 
 class _FormDatePickerState extends State<FormDatePicker> {
-  late DateTime dueDate;
+  late DateTime? dueDate;
   TextEditingController controller = TextEditingController();
 
   Future<void> pickDate() async {
@@ -35,17 +35,21 @@ class _FormDatePickerState extends State<FormDatePicker> {
     if (response != null) updateDueDate(response);
   }
 
-  void updateDueDate(DateTime newDate, {bool initialCall = false}) {
+  void updateDueDate(DateTime? newDate, {bool initialCall = false}) {
     dueDate = newDate;
     widget.onChanged(dueDate);
-    controller.text = DateTimeUtil.dateTimeToStringBrazilDateOnly(dueDate);
+    controller.text = dueDate == null
+        ? ''
+        : DateTimeUtil.dateTimeToStringBrazilDateOnly(dueDate!);
 
     if (!initialCall) setState(() {});
   }
 
   @override
   void initState() {
-    updateDueDate(widget.initialDate ?? DateTime.now(), initialCall: true);
+    widget.onChanged(widget.initialDate);
+
+    updateDueDate(widget.initialDate, initialCall: true);
     super.initState();
   }
 

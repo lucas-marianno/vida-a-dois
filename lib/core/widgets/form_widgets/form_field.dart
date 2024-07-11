@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class MyFormField extends StatelessWidget {
   final String label;
-  final void Function(String newString) onChanged;
+  final void Function(String? newString) onChanged;
   final String? initialValue;
   final bool mandatory;
   final bool multilineFormField;
@@ -22,6 +22,8 @@ class MyFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    onChanged(initialValue);
+
     return SizedBox(
       height: maxHeight,
       width: maxWidth,
