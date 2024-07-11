@@ -8,14 +8,37 @@ import 'package:kanban/core/widgets/form_widgets/form_title.dart';
 import 'package:kanban/core/widgets/form_widgets/form_field.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 
-class TaskFromModalBottomForm {
+enum _TaskFormType {
+  create,
+  edit;
+
+  String get typeTitle {
+    switch (this) {
+      case create:
+        return 'Adicionar Tarefa';
+      case edit:
+        return 'Editar Tarefa';
+    }
+  }
+
+  IconData get icon {
+    switch (this) {
+      case create:
+        return Icons.add;
+      case edit:
+        return Icons.check;
+    }
+  }
+}
+
+class TaskForm {
   static final Task _newTask = Task(title: 'Nova Tarefa');
 
   static Future<Task?> newTask(BuildContext context) async {
     return await showModalBottomSheet(
       context: context,
       builder: (context) {
-        return _EditTaskForm(_newTask, formTitle: 'Adicionar Tarefa');
+        return _EditTaskForm(_newTask, formType: _TaskFormType.create);
       },
     );
   }
@@ -24,7 +47,7 @@ class TaskFromModalBottomForm {
     return await showModalBottomSheet(
       context: context,
       builder: (context) {
-        return _EditTaskForm(task, formTitle: 'Editar Tarefa');
+        return _EditTaskForm(task, formType: _TaskFormType.edit);
       },
     );
   }
@@ -32,8 +55,8 @@ class TaskFromModalBottomForm {
 
 class _EditTaskForm extends StatefulWidget {
   final Task task;
-  final String formTitle;
-  const _EditTaskForm(this.task, {required this.formTitle});
+  final _TaskFormType formType;
+  const _EditTaskForm(this.task, {required this.formType});
 
   @override
   State<_EditTaskForm> createState() => _EditTaskFormState();
@@ -71,9 +94,9 @@ class _EditTaskFormState extends State<_EditTaskForm> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           FormTitle(
-            title: widget.formTitle,
+            title: widget.formType.typeTitle,
             onIconPressed: sendForm,
-            icon: Icons.add,
+            icon: widget.formType.icon,
           ),
           const Divider(),
           Expanded(

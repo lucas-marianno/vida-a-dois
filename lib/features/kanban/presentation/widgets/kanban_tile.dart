@@ -19,11 +19,6 @@ class KanbanTile extends StatelessWidget {
 
     return LongPressDraggable(
       data: task,
-      onDragEnd: (details) {
-        if (details.wasAccepted) {
-          // TODO: remove task from status column
-        }
-      },
       feedback: tile,
       childWhenDragging: Text(
         task.title,
@@ -61,7 +56,6 @@ class KanbanTile extends StatelessWidget {
               // show edit / delete task
               trailing: PopupMenuButton(
                 itemBuilder: (context) {
-                  print(task.toJson());
                   return [
                     PopupMenuItem(
                       child: const Text('Edit'),

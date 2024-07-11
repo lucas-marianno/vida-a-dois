@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 import 'package:kanban/features/kanban/presentation/widgets/kanban_column_title.dart';
-import 'column_task_list.dart';
+import 'column_drag_target.dart';
 import 'kanban_add_task_button.dart';
 
 class KanbanColumn extends StatelessWidget {
@@ -29,7 +29,11 @@ class KanbanColumn extends StatelessWidget {
       child: Column(
         children: [
           KanbanColumnTitle(columnId: columnId),
-          KanbanTaskList(taskList: taskList, width: width),
+          KanbanColumnDragTarget(
+            columnId: columnId,
+            taskList: taskList,
+            width: width,
+          ),
           KanbanAddTaskButton(columnId: columnId),
         ],
       ),

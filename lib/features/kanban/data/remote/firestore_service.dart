@@ -23,10 +23,6 @@ abstract class FirestoreService {
 
   static void deleteTask(Task? task) async {
     if (task == null || task.title.isEmpty) return;
-    assert(task.id != null, "O id de ${task.title} é nulo!!!");
-    print(
-        'deletando a task: -------------------------------------------------');
-    print(task.toJson());
 
     await _statusColumnReference(task.status.name).doc(task.id).delete();
   }

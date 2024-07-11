@@ -1,15 +1,19 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:kanban/core/constants/enum/task_status.dart';
 
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
+import 'package:kanban/features/kanban/domain/repository/task_repository.dart';
 
 import 'kanban_tile.dart';
 
-class KanbanTaskList extends StatelessWidget {
+class KanbanColumnDragTarget extends StatelessWidget {
+  final String columnId;
   final double width;
   final List<Task> taskList;
 
-  const KanbanTaskList({
+  const KanbanColumnDragTarget({
+    required this.columnId,
     required this.width,
     required this.taskList,
     super.key,
@@ -21,10 +25,8 @@ class KanbanTaskList extends StatelessWidget {
       child: DragTarget(
         onAcceptWithDetails: (data) {
           if (data.data is Task) {
-            //TODO: remove this function from here
-
-            //TODO: create function to add received task
-            // taskList.add(data.data as Task);
+            TaskRepository(context).updateTaskStatus(
+                data.data as Task, TaskStatus.fromString(columnId));
           }
         },
         builder: (context, candidateData, rejectedData) {
