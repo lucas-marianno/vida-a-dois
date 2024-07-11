@@ -6,30 +6,35 @@ abstract class FirestoreService {
   static final _firestoreMockCollection = FirebaseFirestore.instance
       .collection(FireStoreConstants.mockKanbanCollection);
 
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getMockKanbanColumns() {
+  static Stream<QuerySnapshot<Map<String, dynamic>>>
+      getMockKanbanStatusColumns() {
     return _firestoreMockCollection.orderBy('position').snapshots();
   }
 
-  static Stream<List<Task>> getMockColumnContent(String columnId) {
-    return _columnReference(columnId).snapshots().map(
+  static Stream<List<Task>> getMockStatusColumnContent(String columnId) {
+    return _statusColumnReference(columnId).snapshots().map(
           (snapshot) => snapshot.docs
               .map(
-                (doc) => Task.fromJson(
-                  doc.data() as Map<String, dynamic>,
-                  doc.id,
-                ),
+                (doc) => Task.fromJson(doc),
               )
               .toList(),
         );
   }
 
+  static void deleteTask(Task? task) async {
+    if (task == null || task.title.isEmpty) return;
+    assert(task.id != null, "O id de ${task.title} é nulo!!!");
+    print(
+        'deletando a task: -------------------------------------------------');
+    print(task.toJson());
+
+    await _statusColumnReference(task.status.name).doc(task.id).delete();
+  }
+
   static void editTask(Task? task) async {
-    // TODO: later on, add verification for 'task.id == null'
     if (task == null || task.title.isEmpty) return;
 
-    final String columnId = task.status.name;
-
-    await _columnReference(columnId).doc(task.id).set(
+    await _statusColumnReference(task.status.name).doc(task.id).set(
           task.toJson(),
           SetOptions(merge: true),
         );
@@ -38,12 +43,9 @@ abstract class FirestoreService {
   static void addTaskToColumn(Task? task) async {
     if (task == null || task.title.isEmpty) return;
 
-    final String columnId = task.status.name;
-
-    //TODO: retrieve id from uploaded task and store it in task.id
-    await _columnReference(columnId).add(task.toJson());
+    await _statusColumnReference(task.status.name).add(task.toJson());
   }
 
-  static CollectionReference _columnReference(String columnId) =>
+  static CollectionReference _statusColumnReference(String columnId) =>
       _firestoreMockCollection.doc(columnId).collection('tasks');
 }
