@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:kanban/core/constants/enum/task_status.dart';
 import 'package:kanban/core/constants/firebase/firebase_constants.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 
@@ -12,35 +11,37 @@ abstract class FirestoreService {
   }
 
   static Stream<List<Task>> getMockColumnContent(String columnId) {
-    return _columnReference(columnId)
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map(
-              (doc) => Task(
-                title: doc['title'],
-                status: TaskStatus.fromString(columnId),
-              ),
-            )
-            .toList());
+    return _columnReference(columnId).snapshots().map(
+          (snapshot) => snapshot.docs
+              .map(
+                (doc) => Task.fromJson(
+                  doc.data() as Map<String, dynamic>,
+                  doc.id,
+                ),
+              )
+              .toList(),
+        );
   }
 
-  static void addTaskToColumn(Task task, String columnId) async {
-    // final String title;
-    // final String? description;
-    // final Person? assingnedTo;
-    // final TaskImportance taskImportance;
-    // final TaskStatus status;
-    // final Timestamp? dueDate;
-    // final Timestamp? createdDate;
-    await _columnReference(columnId).add({
-      'title': task.title,
-      'description': task.description,
-      'assingnedTo': task.assingnedTo,
-      'taskImportance': task.taskImportance.name,
-      'taskStatus': TaskStatus.fromString(columnId).name,
-      'dueDate': task.dueDate,
-      'createdDate': task.createdDate,
-    });
+  static void editTask(Task? task) async {
+    // TODO: later on, add verification for 'task.id == null'
+    if (task == null || task.title.isEmpty) return;
+
+    final String columnId = task.status.name;
+
+    await _columnReference(columnId).doc(task.id).set(
+          task.toJson(),
+          SetOptions(merge: true),
+        );
+  }
+
+  static void addTaskToColumn(Task? task) async {
+    if (task == null || task.title.isEmpty) return;
+
+    final String columnId = task.status.name;
+
+    //TODO: retrieve id from uploaded task and store it in task.id
+    await _columnReference(columnId).add(task.toJson());
   }
 
   static CollectionReference _columnReference(String columnId) =>

@@ -5,11 +5,13 @@ class FormDatePicker extends StatefulWidget {
   final double? maxWidth;
   final double? maxHeight;
   final String label;
+  final DateTime? initialDate;
   final void Function(DateTime newDate) onChanged;
   const FormDatePicker({
     super.key,
     required this.label,
     required this.onChanged,
+    this.initialDate,
     this.maxWidth,
     this.maxHeight,
   });
@@ -43,7 +45,7 @@ class _FormDatePickerState extends State<FormDatePicker> {
 
   @override
   void initState() {
-    updateDueDate(DateTime.now(), initialCall: true);
+    updateDueDate(widget.initialDate ?? DateTime.now(), initialCall: true);
     super.initState();
   }
 

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:kanban/features/kanban/data/remote/firestore_service.dart';
+import 'package:kanban/features/kanban/presentation/widgets/create_task_form.dart';
 
 import '../../domain/entities/task_entity.dart';
 import '../../domain/repository/task_repository.dart';
@@ -16,7 +18,8 @@ class KanbanTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget tile = createTile(task.title);
+    Widget tile = _createTile(context);
+
     return LongPressDraggable(
       data: task,
       onDragEnd: (details) {
@@ -34,39 +37,50 @@ class KanbanTile extends StatelessWidget {
     );
   }
 
-  Widget createTile(String tarefa) => Material(
+  Widget _createTile(BuildContext context) => Material(
         color: Colors.transparent,
         child: Container(
           height: tileHeight,
           width: tileWidth,
           margin: const EdgeInsets.symmetric(vertical: 3),
-          padding: const EdgeInsets.all(2),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           decoration: BoxDecoration(
             color: Colors.blueGrey[300],
             borderRadius: BorderRadius.circular(10),
           ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               // tarefa proposta
-              Text(
-                tarefa,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const ListTile(
-                // Permitir que o usuário escolha um icone de uma lista
-                leading: Icon(Icons.tapas_outlined),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Exibir a foto da pessoa que foi atribuida a tarefa
-                    Icon(Icons.person),
-                    SizedBox(width: 10),
-                    // Permitir atribuir um nível de importancia para a tarefa
-                    Icon(Icons.label_important),
-                  ],
+              ListTile(
+                title: Text(
+                  task.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
+                trailing: IconButton(
+                  onPressed: () async {
+                    // TODO: display task options (edit | delete)
+                    final response =
+                        await TaskFromModalBottomForm.editTask(task, context);
+                    if (response != null) {
+                      // Call firestore to edit
+                      FirestoreService.editTask(response);
+                    }
+                  },
+                  icon: const Icon(Icons.more_horiz),
+                ),
+              ),
+              // Permitir que o usuário escolha um icone de uma lista
+              const Row(
+                children: [
+                  Icon(Icons.tapas_outlined),
+                  // Exibir a foto da pessoa que foi atribuida a tarefa
+                  Icon(Icons.person),
+                  SizedBox(width: 10),
+                  // Permitir atribuir um nível de importancia para a tarefa
+                  Icon(Icons.label_important),
+                ],
               ),
             ],
           ),

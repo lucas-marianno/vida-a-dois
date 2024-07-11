@@ -5,7 +5,9 @@ enum TaskStatus {
   inProgress,
   done;
 
-  static TaskStatus fromString(String s) {
+  static TaskStatus fromString(String? s) {
+    if (s == null) return TaskStatus.todo;
+
     switch (s.toLowerCase()) {
       case 'to do' || 'todo':
         return TaskStatus.todo;

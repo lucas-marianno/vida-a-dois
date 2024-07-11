@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kanban/core/constants/enum/assignee.dart';
+import 'package:kanban/core/constants/enum/task_importance.dart';
 import 'package:kanban/core/constants/enum/task_status.dart';
 import 'package:kanban/core/widgets/form_widgets/form_date_picker.dart';
 import 'package:kanban/core/widgets/form_widgets/form_drop_down_menu_button.dart';
@@ -8,25 +9,40 @@ import 'package:kanban/core/widgets/form_widgets/form_title.dart';
 import 'package:kanban/core/widgets/form_widgets/form_field.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 
-class CreateTaskFromModalBottomForm {
-  static Future<Task?> show(BuildContext context) async {
+class TaskFromModalBottomForm {
+  static final Task _newTask = Task(
+    title: 'Nova Tarefa',
+    status: TaskStatus.todo,
+    taskImportance: TaskImportance.normal,
+    dueDate: null,
+    description: null,
+    createdDate: Timestamp.now(),
+    assingnedTo: Assignee.myself,
+  );
+
+  static Future<Task?> newTask(BuildContext context) async {
+    return await editTask(_newTask, context);
+  }
+
+  static Future<Task?> editTask(Task task, BuildContext context) async {
     return await showModalBottomSheet(
       context: context,
       builder: (context) {
-        return const _CreateTaskForm();
+        return _EditTaskForm(task);
       },
     );
   }
 }
 
-class _CreateTaskForm extends StatefulWidget {
-  const _CreateTaskForm();
+class _EditTaskForm extends StatefulWidget {
+  final Task task;
+  const _EditTaskForm(this.task);
 
   @override
-  State<_CreateTaskForm> createState() => _CreateTaskFormState();
+  State<_EditTaskForm> createState() => _EditTaskFormState();
 }
 
-class _CreateTaskFormState extends State<_CreateTaskForm> {
+class _EditTaskFormState extends State<_EditTaskForm> {
   late Task newTask;
 
   void sendForm() {
@@ -38,10 +54,7 @@ class _CreateTaskFormState extends State<_CreateTaskForm> {
 
   @override
   void initState() {
-    newTask = Task(
-      title: 'Nova Tarefa',
-      status: TaskStatus.todo,
-    );
+    newTask = widget.task;
     super.initState();
   }
 
@@ -87,6 +100,7 @@ class _CreateTaskFormState extends State<_CreateTaskForm> {
                   ),
                   MyFormField(
                     label: 'Descrição da tarefa',
+                    initialValue: newTask.description,
                     multilineFormField: true,
                     onChanged: (newString) {
                       newTask.description = newString;
@@ -94,6 +108,7 @@ class _CreateTaskFormState extends State<_CreateTaskForm> {
                   ),
                   FormDropDownMenuButton(
                     label: 'Responsável pela tarefa',
+                    initialValue: newTask.assingnedTo.name,
                     items: Assignee.values.map((e) => e.name).toList(),
                     onChanged: (newValue) {
                       newTask.assingnedTo = Assignee.fromString(newValue);
@@ -104,6 +119,7 @@ class _CreateTaskFormState extends State<_CreateTaskForm> {
                       FormDropDownMenuButton(
                         maxWidth: width / 2 - 3,
                         label: 'Status da tarefa',
+                        initialValue: newTask.status.name,
                         items: TaskStatus.values.map((e) => e.name).toList(),
                         onChanged: (newValue) {
                           newTask.status = TaskStatus.fromString(newValue);
@@ -112,6 +128,7 @@ class _CreateTaskFormState extends State<_CreateTaskForm> {
                       const SizedBox(width: 6),
                       FormDatePicker(
                         label: 'Prazo da tarefa',
+                        initialDate: newTask.dueDate?.toDate(),
                         maxWidth: width / 2 - 3,
                         onChanged: (newDate) {
                           newTask.dueDate = Timestamp.fromDate(newDate);
