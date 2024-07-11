@@ -8,7 +8,7 @@ class KanbanPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final stream = FirestoreService.getMockKanbanColumns();
+    final stream = FirestoreService.getMockKanbanStatusColumns();
 
     return Scaffold(
       appBar: AppBar(
@@ -33,13 +33,13 @@ class KanbanPage extends StatelessWidget {
                 // TODO: finish implementing this shit, then abstract it
                 String columnId = columns[index].id;
                 return StreamBuilder(
-                  stream: FirestoreService.getMockColumnContent(columnId),
+                  stream: FirestoreService.getMockStatusColumnContent(columnId),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       return KanbanColumn(
                           columnId: columnId, taskList: snapshot.data!);
                     } else {
-                      return Center(child: Text(snapshot.error.toString()));
+                      return KanbanColumn.loading(context);
                     }
                   },
                 );
@@ -47,7 +47,7 @@ class KanbanPage extends StatelessWidget {
             );
           } else {
             return const Center(
-              child: CircularProgressIndicator(),
+              child: LinearProgressIndicator(),
             );
           }
         },
