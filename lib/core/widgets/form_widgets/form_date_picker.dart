@@ -38,9 +38,7 @@ class _FormDatePickerState extends State<FormDatePicker> {
   void updateDueDate(DateTime? newDate, {bool initialCall = false}) {
     dueDate = newDate;
     widget.onChanged(dueDate);
-    controller.text = dueDate == null
-        ? ''
-        : DateTimeUtil.dateTimeToStringBrazilDateOnly(dueDate!);
+    controller.text = DateTimeUtil.dateTimeToStringBrazilDateOnly(dueDate);
 
     if (!initialCall) setState(() {});
   }

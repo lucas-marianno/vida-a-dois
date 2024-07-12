@@ -33,7 +33,6 @@ class KanbanColumnDragTarget extends StatelessWidget {
           return ListView.builder(
             shrinkWrap: true,
             itemCount: max(taskList.length, 1),
-            padding: const EdgeInsets.symmetric(vertical: 1),
             itemBuilder: (context, index) {
               if (taskList.isEmpty) {
                 return const Center(child: Text('No tasks here!'));

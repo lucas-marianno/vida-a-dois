@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../../../core/constants/enum/assignee.dart';
+import '../../../../core/constants/enum/task_assignee.dart';
 
 import '../../../../core/constants/enum/task_importance.dart';
 import '../../../../core/constants/enum/task_status.dart';
@@ -9,7 +9,7 @@ class Task {
   String? id;
   String title;
   String? description;
-  Assignee assingnedTo;
+  TaskAssignee assingnee;
   TaskImportance taskImportance;
   TaskStatus status;
   Timestamp? dueDate;
@@ -19,7 +19,7 @@ class Task {
     this.id,
     required this.title,
     this.description,
-    this.assingnedTo = Assignee.anyone,
+    this.assingnee = TaskAssignee.anyone,
     this.taskImportance = TaskImportance.normal,
     this.status = TaskStatus.todo,
     this.dueDate,
@@ -37,7 +37,7 @@ class Task {
       id: json['id'],
       title: json['title'],
       description: json['description'],
-      assingnedTo: Assignee.fromString(json['assingnedTo']),
+      assingnee: TaskAssignee.fromString(json['assingnedTo']),
       taskImportance: TaskImportance.fromString(json['taskImportance']),
       status: TaskStatus.fromString(json['status']),
       dueDate: json['dueDate'],
@@ -50,7 +50,7 @@ class Task {
       'id': id,
       'title': title,
       'description': description,
-      'assingnedTo': assingnedTo.name,
+      'assingnedTo': assingnee.name,
       'taskImportance': taskImportance.name,
       'status': status.name,
       'dueDate': dueDate,

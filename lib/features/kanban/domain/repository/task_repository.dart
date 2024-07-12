@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:kanban/core/constants/enum/task_assignee.dart';
+import 'package:kanban/core/constants/enum/task_importance.dart';
 import 'package:kanban/core/constants/enum/task_status.dart';
 import 'package:kanban/features/kanban/data/remote/firestore_service.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
@@ -29,6 +31,22 @@ class TaskRepository {
     } else {
       FirestoreService.editTask(newTask);
     }
+  }
+
+  void updateTaskImportance(Task task, TaskImportance taskImportance) {
+    if (task.taskImportance == taskImportance) return;
+
+    final newTask = task.copy()..taskImportance = taskImportance;
+
+    FirestoreService.editTask(newTask);
+  }
+
+  void updateTaskAssignee(Task task, TaskAssignee assignee) {
+    if (task.assingnee == assignee) return;
+
+    final newTask = task.copy()..assingnee = assignee;
+
+    FirestoreService.editTask(newTask);
   }
 
   void updateTaskStatus(Task task, TaskStatus newStatus) {

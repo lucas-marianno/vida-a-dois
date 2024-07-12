@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 enum TaskImportance {
   low,
   normal,
@@ -19,6 +21,17 @@ enum TaskImportance {
           "Available types:\n"
           "${TaskImportance.values.map((e) => e.name).toSet()}",
         );
+    }
+  }
+
+  IconData get icon {
+    switch (this) {
+      case low:
+        return Icons.keyboard_arrow_down;
+      case normal:
+        return Icons.horizontal_rule;
+      case high:
+        return Icons.keyboard_double_arrow_up;
     }
   }
 }

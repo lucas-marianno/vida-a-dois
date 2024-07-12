@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:kanban/core/constants/enum/assignee.dart';
+import 'package:kanban/core/constants/enum/task_assignee.dart';
 import 'package:kanban/core/constants/enum/task_status.dart';
 import 'package:kanban/core/widgets/form_widgets/form_date_picker.dart';
 import 'package:kanban/core/widgets/form_widgets/form_drop_down_menu_button.dart';
@@ -127,10 +127,10 @@ class _EditTaskFormState extends State<_EditTaskForm> {
                 ),
                 FormDropDownMenuButton(
                   label: 'Responsável pela tarefa',
-                  initialValue: newTask.assingnedTo.name,
-                  items: Assignee.values.map((e) => e.name).toList(),
+                  initialValue: newTask.assingnee.name,
+                  items: TaskAssignee.values.map((e) => e.name).toList(),
                   onChanged: (newValue) {
-                    newTask.assingnedTo = Assignee.fromString(newValue);
+                    newTask.assingnee = TaskAssignee.fromString(newValue);
                   },
                 ),
                 Row(

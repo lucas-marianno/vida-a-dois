@@ -21,7 +21,6 @@ class KanbanColumn extends StatelessWidget {
     return Container(
       width: width,
       margin: const EdgeInsets.symmetric(horizontal: 3),
-      padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
         color: Colors.blueGrey[100],
         borderRadius: BorderRadius.circular(10),
