@@ -6,6 +6,7 @@ import '../../../../core/constants/enum/task_importance.dart';
 import '../../../../core/constants/enum/task_status.dart';
 
 class Task {
+  // TODO: add createdBy attribute after firebase auth is implemented
   String? id;
   String title;
   String? description;

@@ -8,7 +8,7 @@ import 'package:kanban/features/kanban/domain/repository/task_repository.dart';
 import 'kanban_tile.dart';
 
 class KanbanColumnDragTarget extends StatelessWidget {
-  final String columnId;
+  final TaskStatus columnId;
   final double width;
   final List<Task> taskList;
 
@@ -25,8 +25,8 @@ class KanbanColumnDragTarget extends StatelessWidget {
       child: DragTarget(
         onAcceptWithDetails: (data) {
           if (data.data is Task) {
-            TaskRepository(context).updateTaskStatus(
-                data.data as Task, TaskStatus.fromString(columnId));
+            TaskRepository(context)
+                .updateTaskStatus(data.data as Task, columnId);
           }
         },
         builder: (context, candidateData, rejectedData) {

@@ -29,9 +29,20 @@ enum TaskImportance {
       case low:
         return Icons.keyboard_arrow_down;
       case normal:
-        return Icons.horizontal_rule;
+        return Icons.drag_handle;
       case high:
         return Icons.keyboard_double_arrow_up;
+    }
+  }
+
+  Color get color {
+    switch (this) {
+      case low:
+        return Colors.blue[600]!;
+      case normal:
+        return Colors.amber[700]!;
+      case high:
+        return Colors.red;
     }
   }
 }

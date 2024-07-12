@@ -18,8 +18,11 @@ class DateTimeUtil {
     String day = dateTime.day.toString();
     String month = _monthPTBR(dateTime.month).substring(0, 3);
 
+    String year =
+        DateTime.now().year == dateTime.year ? '' : dateTime.year.toString();
+
     day = _padWithZeroUpTo(day, 2);
-    return '$day/$month';
+    return '$day $month $year';
   }
 
   static String _padWithZeroUpTo(String string, int desiredLength) {

@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kanban/features/kanban/domain/repository/task_repository.dart';
 
 class KanbanAddTaskButton extends StatelessWidget {
-  final String columnId;
-  const KanbanAddTaskButton({
-    required this.columnId,
-    super.key,
-  });
+  const KanbanAddTaskButton({super.key});
 
   @override
   Widget build(BuildContext context) {
