@@ -5,12 +5,14 @@ class FormDatePicker extends StatefulWidget {
   final double? maxWidth;
   final double? maxHeight;
   final String label;
+  final bool enabled;
   final DateTime? initialDate;
   final void Function(DateTime? newDate) onChanged;
   const FormDatePicker({
     super.key,
     required this.label,
     required this.onChanged,
+    this.enabled = true,
     this.initialDate,
     this.maxWidth,
     this.maxHeight,
@@ -57,6 +59,8 @@ class _FormDatePickerState extends State<FormDatePicker> {
       height: widget.maxHeight,
       width: widget.maxWidth,
       child: TextFormField(
+        enabled: widget.enabled,
+        style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
         controller: controller,
         decoration: InputDecoration(
           suffixIcon: const Icon(Icons.calendar_today),

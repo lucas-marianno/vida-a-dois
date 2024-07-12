@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kanban/core/constants/enum/task_assignee.dart';
 import 'package:kanban/core/constants/enum/task_importance.dart';
 import 'package:kanban/core/constants/enum/task_status.dart';
+import 'package:kanban/core/util/dialogs/alert_dialog.dart';
 import 'package:kanban/features/kanban/data/remote/firestore_service.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 import 'package:kanban/features/kanban/presentation/widgets/task_form.dart';
@@ -20,8 +21,8 @@ class TaskRepository {
     }
   }
 
-  void editTask(Task task) async {
-    final newTask = await TaskForm.editTask(task, context);
+  void readTask(Task task) async {
+    final newTask = await TaskForm.readTask(task, context);
 
     if (newTask == null) return;
 
@@ -29,7 +30,7 @@ class TaskRepository {
       FirestoreService.deleteTask(task);
       FirestoreService.addTaskToColumn(newTask);
     } else {
-      FirestoreService.editTask(newTask);
+      FirestoreService.updateTask(newTask);
     }
   }
 
@@ -38,7 +39,7 @@ class TaskRepository {
 
     final newTask = task.copy()..taskImportance = taskImportance;
 
-    FirestoreService.editTask(newTask);
+    FirestoreService.updateTask(newTask);
   }
 
   void updateTaskAssignee(Task task, TaskAssignee assignee) {
@@ -46,7 +47,7 @@ class TaskRepository {
 
     final newTask = task.copy()..assingnee = assignee;
 
-    FirestoreService.editTask(newTask);
+    FirestoreService.updateTask(newTask);
   }
 
   void updateTaskStatus(Task task, TaskStatus newStatus) {
@@ -59,6 +60,18 @@ class TaskRepository {
   }
 
   void deleteTask(Task task) async {
+    final response = await Dialogs(context).alertDialog(
+      title: 'Excluir tarefa?',
+      content: 'Tem certeza que deseja exluir a tarefa "${task.title}"?'
+          '\n'
+          '\n'
+          'Atenção! Após excluída, não será possível a recuperação da tarefa!',
+      cancelButtonLabel: 'Cancelar',
+      confirmButtonLabel: 'Excluir Tarefa',
+    );
+
+    if (response != true) return;
+
     FirestoreService.deleteTask(task);
   }
 }

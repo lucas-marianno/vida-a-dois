@@ -64,10 +64,7 @@ class KanbanTile extends StatelessWidget {
                 task.title,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+                style: Theme.of(context).textTheme.titleMedium,
               ),
               subtitle: task.description == null
                   ? null
@@ -79,7 +76,6 @@ class KanbanTile extends StatelessWidget {
             ),
             ListTile(
               contentPadding: const EdgeInsets.only(left: 16),
-
               leading: task.dueDate == null
                   ? null
                   : Row(
@@ -94,6 +90,7 @@ class KanbanTile extends StatelessWidget {
                           DateTimeUtil.dateTimeToStringShort(
                             task.dueDate!.toDate(),
                           ).toUpperCase(),
+                          style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ],
                     ),
@@ -102,28 +99,16 @@ class KanbanTile extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // Exibir a foto da pessoa que foi atribuida a tarefa
-                  PopupMenuButton(
-                    icon: Icon(task.assingnee.icon),
-                    tooltip: task.assingnee.name,
-                    itemBuilder: (context) {
-                      return [
-                        for (TaskAssignee assignee in TaskAssignee.values)
-                          PopupMenuItem(
-                            child: Row(
-                              children: [
-                                Icon(assignee.icon),
-                                const SizedBox(width: 10),
-                                Text(assignee.name),
-                              ],
-                            ),
-                            onTap: () => taskRepo.updateTaskAssignee(
-                              task,
-                              assignee,
-                            ),
-                          ),
-                      ];
-                    },
+                  Icon(task.assingnee == TaskAssignee.anyone
+                      ? null
+                      : task.assingnee.icon),
+                  Text(
+                    task.assingnee == TaskAssignee.anyone
+                        ? ''
+                        : task.assingnee.name,
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
+                  // Altera o nível de importância da tarefa
                   PopupMenuButton(
                     icon: Icon(
                       task.taskImportance.icon,

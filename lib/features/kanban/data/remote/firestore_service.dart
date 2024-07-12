@@ -28,7 +28,7 @@ abstract class FirestoreService {
     await _statusColumnReference(task.status.name).doc(task.id).delete();
   }
 
-  static void editTask(Task? task) async {
+  static void updateTask(Task? task) async {
     if (task == null || task.title.isEmpty) return;
 
     await _statusColumnReference(task.status.name).doc(task.id).set(

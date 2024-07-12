@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:kanban/core/widgets/form_widgets/form_field.dart';
 
 class FormDropDownMenuButton extends StatefulWidget {
   final String label;
+  final bool enabled;
   final List<String> items;
   final void Function(String? newValue) onChanged;
   final String? initialValue;
@@ -10,6 +12,7 @@ class FormDropDownMenuButton extends StatefulWidget {
 
   const FormDropDownMenuButton({
     required this.label,
+    this.enabled = true,
     required this.items,
     required this.onChanged,
     this.initialValue,
@@ -53,6 +56,18 @@ class _FormDropDownMenuButtonState extends State<FormDropDownMenuButton> {
 
   @override
   Widget build(BuildContext context) {
+    if (!widget.enabled) {
+      return SizedBox(
+        height: widget.maxHeight,
+        width: widget.maxWidth,
+        child: MyFormField(
+          label: value,
+          initialValue: value,
+          enabled: false,
+          onChanged: (_) {},
+        ),
+      );
+    }
     return SizedBox(
       height: widget.maxHeight,
       width: widget.maxWidth,

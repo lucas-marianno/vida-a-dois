@@ -4,6 +4,7 @@ class MyFormField extends StatelessWidget {
   final String label;
   final void Function(String? newString) onChanged;
   final String? initialValue;
+  final bool enabled;
   final bool mandatory;
   final bool multilineFormField;
   final double? maxHeight;
@@ -13,6 +14,7 @@ class MyFormField extends StatelessWidget {
     required this.label,
     required this.onChanged,
     this.initialValue,
+    this.enabled = true,
     this.mandatory = false,
     this.multilineFormField = false,
     this.maxHeight,
@@ -30,6 +32,8 @@ class MyFormField extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 5),
         child: TextFormField(
+          enabled: enabled,
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
           initialValue: mandatory ? initialValue ?? label : initialValue,
           autovalidateMode: AutovalidateMode.always,
           decoration: InputDecoration(
