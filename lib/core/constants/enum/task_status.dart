@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 /// [TaskStatus] is a temporary enum!
 ///
 /// TODO: this should not exist as an enum as users must be able to
@@ -28,17 +26,6 @@ enum TaskStatus {
           "Available types:\n"
           "${TaskStatus.values.map((e) => e.name).toSet()}",
         );
-    }
-  }
-
-  Color get color {
-    switch (this) {
-      case todo:
-        return Colors.blue[600]!;
-      case inProgress:
-        return Colors.amber[600]!;
-      case done:
-        return Colors.green[600]!;
     }
   }
 }

@@ -4,11 +4,13 @@ class FormTitle extends StatelessWidget {
   final String title;
   final void Function() onIconPressed;
   final IconData? icon;
+  final Color? color;
 
   const FormTitle({
     required this.title,
     required this.onIconPressed,
     required this.icon,
+    this.color,
     super.key,
   });
 
@@ -23,13 +25,9 @@ class FormTitle extends StatelessWidget {
       trailing: icon == null
           ? null
           : ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll<Color>(
-                  Theme.of(context).colorScheme.primary,
-                ),
-                foregroundColor: WidgetStatePropertyAll<Color>(
-                  Theme.of(context).colorScheme.onPrimary,
-                ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: color ?? Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
               ),
               onPressed: onIconPressed,
               child: Icon(icon),

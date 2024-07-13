@@ -13,7 +13,7 @@ class KanbanColumnTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: columnId.color,
+        // color: columnId.color,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(10),
           topRight: Radius.circular(10),
@@ -26,8 +26,8 @@ class KanbanColumnTitle extends StatelessWidget {
           Text(
             columnId.name.toUpperCase(),
             style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w900,
+              // color: Colors.white,
+              // fontWeight: FontWeight.w900,
               letterSpacing: 3,
             ),
           ),

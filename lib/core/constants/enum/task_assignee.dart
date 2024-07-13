@@ -24,12 +24,15 @@ enum TaskAssignee {
     }
   }
 
+  /// This will be removed!
+  ///
+  /// TODO: allow users to select and use a personal profile picture
   IconData? get icon {
     switch (this) {
       case myself:
-        return Icons.person_outline;
+        return Icons.person;
       case mylove:
-        return Icons.favorite_outline;
+        return Icons.person_outline;
       case TaskAssignee.anyone:
         return null;
     }

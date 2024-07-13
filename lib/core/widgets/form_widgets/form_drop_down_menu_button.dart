@@ -61,7 +61,7 @@ class _FormDropDownMenuButtonState extends State<FormDropDownMenuButton> {
         height: widget.maxHeight,
         width: widget.maxWidth,
         child: MyFormField(
-          label: value,
+          label: widget.label,
           initialValue: value,
           enabled: false,
           onChanged: (_) {},

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kanban/core/constants/enum/task_assignee.dart';
+import 'package:kanban/core/constants/enum/task_importance.dart';
 import 'package:kanban/core/constants/enum/task_status.dart';
 import 'package:kanban/core/widgets/form_widgets/form_date_picker.dart';
 import 'package:kanban/core/widgets/form_widgets/form_drop_down_menu_button.dart';
@@ -41,19 +42,23 @@ class TaskForm {
   static final Task _newTask = Task(title: 'Nova Tarefa');
 
   static Future<Task?> newTask(BuildContext context) async {
-    return await showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return _EditTaskForm(_newTask, formType: _TaskFormType.create);
-      },
-    );
+    return await _showModal(_newTask, context, _TaskFormType.create);
   }
 
   static Future<Task?> readTask(Task task, BuildContext context) async {
+    return await _showModal(task, context, _TaskFormType.read);
+  }
+
+  static Future<Task?> _showModal(
+    Task task,
+    BuildContext context,
+    _TaskFormType formType,
+  ) async {
     return await showModalBottomSheet(
+      isScrollControlled: true,
       context: context,
       builder: (context) {
-        return _EditTaskForm(task, formType: _TaskFormType.read);
+        return _EditTaskForm(task, formType: formType);
       },
     );
   }
@@ -108,7 +113,9 @@ class _EditTaskFormState extends State<_EditTaskForm> {
 
     String formTitle = formType.typeTitle;
 
-    return Padding(
+    return Container(
+      height: MediaQuery.of(context).viewInsets.bottom +
+          MediaQuery.of(context).size.height * 0.6,
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
         left: padding,
@@ -117,18 +124,20 @@ class _EditTaskFormState extends State<_EditTaskForm> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
         children: [
           FormTitle(
             title: formTitle,
-            onIconPressed: sendForm,
-            icon: formType.icon,
+            onIconPressed: deleteTaskAndClose,
+            icon: formType != _TaskFormType.edit ? null : Icons.delete,
+            color: Colors.red[800],
           ),
           const Divider(),
           Expanded(
             child: ListView(
               children: [
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: 5),
+                  padding: const EdgeInsets.symmetric(vertical: 5),
                   child: Text(
                     readOnly ? ' ' : "* campos obrigatórios!",
                     textAlign: TextAlign.end,
@@ -159,6 +168,16 @@ class _EditTaskFormState extends State<_EditTaskForm> {
                   items: TaskAssignee.values.map((e) => e.name).toList(),
                   onChanged: (newValue) {
                     newTask.assingnee = TaskAssignee.fromString(newValue);
+                  },
+                ),
+                FormDropDownMenuButton(
+                  label: 'Importância da tarefa',
+                  enabled: !readOnly,
+                  initialValue: newTask.taskImportance.name,
+                  items: TaskImportance.values.map((e) => e.name).toList(),
+                  onChanged: (newValue) {
+                    newTask.taskImportance =
+                        TaskImportance.fromString(newValue);
                   },
                 ),
                 Row(
@@ -210,16 +229,26 @@ class _EditTaskFormState extends State<_EditTaskForm> {
                       child:
                           Text(readOnly ? 'Editar Tarefa' : '    Cancelar   '),
                     ),
+                    // ElevatedButton(
+                    //   style: ElevatedButton.styleFrom(
+                    //     backgroundColor: Colors.red[600],
+                    //     foregroundColor:
+                    //         Theme.of(context).colorScheme.onPrimary,
+                    //   ),
+                    //   onPressed: formType != _TaskFormType.edit
+                    //       ? null
+                    //       : deleteTaskAndClose,
+                    //   child: const Text('Excluir Tarefa'),
+                    // ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red[600],
+                        backgroundColor: Theme.of(context).colorScheme.primary,
                         foregroundColor:
                             Theme.of(context).colorScheme.onPrimary,
                       ),
-                      onPressed: formType != _TaskFormType.edit
-                          ? null
-                          : deleteTaskAndClose,
-                      child: const Text('Excluir Tarefa'),
+                      onPressed:
+                          formType == _TaskFormType.read ? null : sendForm,
+                      child: const Text('  Concluído  '),
                     ),
                   ],
                 )

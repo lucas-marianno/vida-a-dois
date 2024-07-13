@@ -58,21 +58,59 @@ class KanbanTile extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            // tarefa proposta
-            ListTile(
-              title: Text(
-                task.title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              subtitle: task.description == null
-                  ? null
-                  : Text(
-                      task.description!,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
+            Stack(
+              children: [
+                // tarefa proposta
+                ListTile(
+                  contentPadding: const EdgeInsets.only(left: 16, right: 50),
+                  title: Text(
+                    task.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  subtitle: task.description == null
+                      ? null
+                      : Text(
+                          task.description!,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                ),
+                // Altera o nível de importância da tarefa
+                Positioned(
+                  top: 6,
+                  right: 0,
+                  child: PopupMenuButton(
+                    icon: Icon(
+                      task.taskImportance.icon,
+                      color: task.taskImportance.color,
                     ),
+                    tooltip: task.taskImportance.name,
+                    itemBuilder: (context) {
+                      return [
+                        for (TaskImportance importance in TaskImportance.values)
+                          PopupMenuItem(
+                            child: Row(
+                              children: [
+                                Icon(
+                                  importance.icon,
+                                  color: importance.color,
+                                ),
+                                const SizedBox(width: 10),
+                                Text(importance.name),
+                              ],
+                            ),
+                            onTap: () => taskRepo.updateTaskImportance(
+                              task,
+                              importance,
+                            ),
+                          ),
+                      ];
+                    },
+                  ),
+                ),
+              ],
             ),
             ListTile(
               contentPadding: const EdgeInsets.only(left: 16),
@@ -94,42 +132,29 @@ class KanbanTile extends StatelessWidget {
                         ),
                       ],
                     ),
-              // Permitir atribuir um nível de importancia para a tarefa
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // Exibir a foto da pessoa que foi atribuida a tarefa
-                  Icon(task.assingnee == TaskAssignee.anyone
-                      ? null
-                      : task.assingnee.icon),
-                  Text(
-                    task.assingnee == TaskAssignee.anyone
-                        ? ''
-                        : task.assingnee.name,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  // Altera o nível de importância da tarefa
                   PopupMenuButton(
                     icon: Icon(
-                      task.taskImportance.icon,
-                      color: task.taskImportance.color,
+                      task.assingnee.icon,
                     ),
-                    tooltip: task.taskImportance.name,
+                    tooltip: task.assingnee.name,
                     itemBuilder: (context) {
                       return [
-                        for (TaskImportance importance in TaskImportance.values)
+                        for (TaskAssignee importance in TaskAssignee.values)
                           PopupMenuItem(
                             child: Row(
                               children: [
                                 Icon(
                                   importance.icon,
-                                  color: importance.color,
                                 ),
                                 const SizedBox(width: 10),
                                 Text(importance.name),
                               ],
                             ),
-                            onTap: () => taskRepo.updateTaskImportance(
+                            onTap: () => taskRepo.updateTaskAssignee(
                               task,
                               importance,
                             ),
