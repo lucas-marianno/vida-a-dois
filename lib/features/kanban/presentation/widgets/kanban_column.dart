@@ -8,9 +8,11 @@ import 'kanban_add_task_button.dart';
 class KanbanColumn extends StatelessWidget {
   final TaskStatus columnId;
   final List<Task> taskList;
+  final ScrollController horizontalParentScrollController;
   const KanbanColumn({
     required this.columnId,
     required this.taskList,
+    required this.horizontalParentScrollController,
     super.key,
   });
 
@@ -36,6 +38,7 @@ class KanbanColumn extends StatelessWidget {
             columnId: columnId,
             taskList: taskList,
             width: width,
+            horizontalParentScrollController: horizontalParentScrollController,
           ),
           const KanbanAddTaskButton(),
         ],

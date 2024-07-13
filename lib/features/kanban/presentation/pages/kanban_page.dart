@@ -4,8 +4,15 @@ import 'package:kanban/core/constants/enum/task_status.dart';
 import 'package:kanban/features/kanban/data/remote/firestore_service.dart';
 import '../widgets/kanban_column.dart';
 
-class KanbanPage extends StatelessWidget {
+class KanbanPage extends StatefulWidget {
   const KanbanPage({super.key});
+
+  @override
+  State<KanbanPage> createState() => _KanbanPageState();
+}
+
+class _KanbanPageState extends State<KanbanPage> {
+  ScrollController scrlCtrl = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +38,8 @@ class KanbanPage extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               List<QueryDocumentSnapshot> columns = snapshot.data!.docs;
-
               return ListView.builder(
+                controller: scrlCtrl,
                 scrollDirection: Axis.horizontal,
                 itemCount: columns.length,
                 itemBuilder: (context, index) {
@@ -45,7 +52,10 @@ class KanbanPage extends StatelessWidget {
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         return KanbanColumn(
-                            columnId: columnId, taskList: snapshot.data!);
+                          columnId: columnId,
+                          taskList: snapshot.data!,
+                          horizontalParentScrollController: scrlCtrl,
+                        );
                       } else {
                         return KanbanColumn.loading(context);
                       }

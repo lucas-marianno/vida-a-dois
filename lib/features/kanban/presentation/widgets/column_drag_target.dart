@@ -11,16 +11,19 @@ class KanbanColumnDragTarget extends StatelessWidget {
   final TaskStatus columnId;
   final double width;
   final List<Task> taskList;
+  final ScrollController horizontalParentScrollController;
 
   const KanbanColumnDragTarget({
     required this.columnId,
     required this.width,
     required this.taskList,
+    required this.horizontalParentScrollController,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
+    ScrollController verticalController = ScrollController();
     return Expanded(
       child: DragTarget(
         onAcceptWithDetails: (data) {
@@ -31,6 +34,7 @@ class KanbanColumnDragTarget extends StatelessWidget {
         },
         builder: (context, candidateData, rejectedData) {
           return ListView.builder(
+            controller: verticalController,
             shrinkWrap: true,
             itemCount: max(taskList.length, 1),
             itemBuilder: (context, index) {
@@ -42,6 +46,9 @@ class KanbanColumnDragTarget extends StatelessWidget {
                 task: taskList[index],
                 tileHeight: width / 3,
                 tileWidth: width,
+                horizontalParentScrollController:
+                    horizontalParentScrollController,
+                verticalParentScrollController: verticalController,
               );
             },
           );

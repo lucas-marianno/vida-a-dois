@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:kanban/core/constants/enum/task_assignee.dart';
 import 'package:kanban/core/constants/enum/task_importance.dart';
@@ -6,23 +7,69 @@ import 'package:kanban/core/util/datetime_util.dart';
 import 'package:kanban/features/kanban/domain/repository/task_repository.dart';
 import '../../domain/entities/task_entity.dart';
 
-class KanbanTile extends StatelessWidget {
+class KanbanTile extends StatefulWidget {
   final Task task;
   final double tileHeight;
   final double tileWidth;
+  final ScrollController horizontalParentScrollController;
+  final ScrollController verticalParentScrollController;
   const KanbanTile({
     required this.task,
     required this.tileHeight,
     required this.tileWidth,
+    required this.horizontalParentScrollController,
+    required this.verticalParentScrollController,
     super.key,
   });
 
   @override
+  State<KanbanTile> createState() => _KanbanTileState();
+}
+
+class _KanbanTileState extends State<KanbanTile> {
+  late Widget tile;
+  late Timer? timer;
+  late ScrollController verticalCtrl;
+  late ScrollController horizontalCtrl;
+  late double maxRight;
+  late double maxLeft;
+  Duration interval = const Duration(milliseconds: 100);
+  double sentitiveArea = 10;
+
+  /// [direction] == true: right
+  ///
+  /// [direction] == false: left
+  Future<void> startScrollingPage(bool direction) async {
+    horizontalCtrl.animateTo(
+      direction ? maxRight : maxLeft,
+      duration: interval,
+      curve: Curves.linear,
+    );
+  }
+
+  @override
+  void initState() {
+    verticalCtrl = widget.verticalParentScrollController;
+    horizontalCtrl = widget.horizontalParentScrollController;
+    maxRight = horizontalCtrl.position.maxScrollExtent;
+    maxLeft = horizontalCtrl.position.minScrollExtent;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    Widget tile = _createTile(context);
+    tile = _createTile(context);
 
     return LongPressDraggable(
-      data: task,
+      onDragUpdate: (details) async {
+        final pos = details.globalPosition.dx;
+        if (pos < maxLeft + sentitiveArea) {
+          await startScrollingPage(false);
+        } else if (pos > maxRight - sentitiveArea) {
+          await startScrollingPage(true);
+        }
+      },
+      data: widget.task,
       feedback: Material(
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(20),
@@ -46,7 +93,7 @@ class KanbanTile extends StatelessWidget {
     TaskRepository taskRepo = TaskRepository(context);
 
     return Container(
-      width: tileWidth,
+      width: widget.tileWidth,
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
@@ -54,7 +101,7 @@ class KanbanTile extends StatelessWidget {
         border: Border.all(color: Theme.of(context).colorScheme.shadow),
       ),
       child: GestureDetector(
-        onTap: () => taskRepo.readTask(task),
+        onTap: () => taskRepo.readTask(widget.task),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -64,15 +111,15 @@ class KanbanTile extends StatelessWidget {
                 ListTile(
                   contentPadding: const EdgeInsets.only(left: 16, right: 50),
                   title: Text(
-                    task.title,
+                    widget.task.title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
-                  subtitle: task.description == null
+                  subtitle: widget.task.description == null
                       ? null
                       : Text(
-                          task.description!,
+                          widget.task.description!,
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -83,10 +130,10 @@ class KanbanTile extends StatelessWidget {
                   right: 0,
                   child: PopupMenuButton(
                     icon: Icon(
-                      task.taskImportance.icon,
-                      color: task.taskImportance.color,
+                      widget.task.taskImportance.icon,
+                      color: widget.task.taskImportance.color,
                     ),
-                    tooltip: task.taskImportance.name,
+                    tooltip: widget.task.taskImportance.name,
                     itemBuilder: (context) {
                       return [
                         for (TaskImportance importance in TaskImportance.values)
@@ -102,7 +149,7 @@ class KanbanTile extends StatelessWidget {
                               ],
                             ),
                             onTap: () => taskRepo.updateTaskImportance(
-                              task,
+                              widget.task,
                               importance,
                             ),
                           ),
@@ -114,7 +161,7 @@ class KanbanTile extends StatelessWidget {
             ),
             ListTile(
               contentPadding: const EdgeInsets.only(left: 16),
-              leading: task.dueDate == null
+              leading: widget.task.dueDate == null
                   ? null
                   : Row(
                       mainAxisSize: MainAxisSize.min,
@@ -126,7 +173,7 @@ class KanbanTile extends StatelessWidget {
                         const SizedBox(width: 10),
                         Text(
                           DateTimeUtil.dateTimeToStringShort(
-                            task.dueDate!.toDate(),
+                            widget.task.dueDate!.toDate(),
                           ).toUpperCase(),
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
@@ -138,9 +185,9 @@ class KanbanTile extends StatelessWidget {
                   // Exibir a foto da pessoa que foi atribuida a tarefa
                   PopupMenuButton(
                     icon: Icon(
-                      task.assingnee.icon,
+                      widget.task.assingnee.icon,
                     ),
-                    tooltip: task.assingnee.name,
+                    tooltip: widget.task.assingnee.name,
                     itemBuilder: (context) {
                       return [
                         for (TaskAssignee importance in TaskAssignee.values)
@@ -155,7 +202,7 @@ class KanbanTile extends StatelessWidget {
                               ],
                             ),
                             onTap: () => taskRepo.updateTaskAssignee(
-                              task,
+                              widget.task,
                               importance,
                             ),
                           ),
