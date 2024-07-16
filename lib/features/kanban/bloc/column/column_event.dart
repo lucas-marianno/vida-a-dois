@@ -1,15 +1,15 @@
 part of 'column_bloc.dart';
 
-sealed class ColumnEvent extends Equatable {
-  const ColumnEvent();
+sealed class ColumnsEvent extends Equatable {
+  const ColumnsEvent();
 
   @override
   List<Object> get props => [];
 }
 
-class LoadColumnEvent extends ColumnEvent {}
+class LoadColumnsEvent extends ColumnsEvent {}
 
-class ColumnsUpdatedEvent extends ColumnEvent {
+class ColumnsUpdatedEvent extends ColumnsEvent {
   final List<ColumnEntity> columns;
 
   const ColumnsUpdatedEvent(this.columns);

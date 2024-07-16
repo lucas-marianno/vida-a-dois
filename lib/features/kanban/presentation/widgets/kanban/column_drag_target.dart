@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:kanban/features/kanban/domain/entities/column_entity.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
+import 'package:kanban/features/kanban/domain/repository/task_repository.dart';
 import 'kanban_tile.dart';
 
 class KanbanColumnDragTarget extends StatelessWidget {
@@ -20,15 +21,14 @@ class KanbanColumnDragTarget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Task> taskList = mappedTasks[column.title]!;
+    List<Task> taskList = mappedTasks[column.title] ?? [];
     ScrollController verticalController = ScrollController();
     return Expanded(
       child: DragTarget(
         onAcceptWithDetails: (data) {
           if (data.data is Task) {
-            // TODO: refactor this
-            // TaskRepository(context)
-            //     .updateTaskStatus(data.data as Task, columnId);
+            TaskRepository(context)
+                .updateTaskStatus(data.data as Task, column.title);
           }
         },
         builder: (context, candidateData, rejectedData) {

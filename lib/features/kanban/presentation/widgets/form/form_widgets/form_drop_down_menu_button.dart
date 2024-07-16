@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kanban/core/widgets/form_widgets/form_field.dart';
+import 'package:kanban/features/kanban/presentation/widgets/form/form_widgets/form_field.dart';
 
 class FormDropDownMenuButton extends StatefulWidget {
   final String label;

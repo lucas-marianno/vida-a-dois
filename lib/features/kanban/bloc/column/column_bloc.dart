@@ -8,26 +8,30 @@ import 'package:kanban/features/kanban/domain/entities/column_entity.dart';
 part 'column_event.dart';
 part 'column_state.dart';
 
-class ColumnsBloc extends Bloc<ColumnEvent, ColumnState> {
+class ColumnsBloc extends Bloc<ColumnsEvent, ColumnsState> {
+  static List<ColumnEntity> statusList = [];
   final _columnsStream = FirestoreService.getColumnsStream();
   late final StreamSubscription _columnsSubscription;
 
   ColumnsBloc() : super(ColumnLoadingState()) {
-    on<LoadColumnEvent>(_onLoadKanbanEvent);
+    on<LoadColumnsEvent>(_onLoadColumnsEvent);
     on<ColumnsUpdatedEvent>(_onColumnsUpdatedEvent);
   }
 
-  _onLoadKanbanEvent(LoadColumnEvent event, Emitter<ColumnState> emit) async {
-// This is only here to simulate delay while fetching data
-    await Future.delayed(const Duration(seconds: 1));
-
+  _onLoadColumnsEvent(
+    LoadColumnsEvent event,
+    Emitter<ColumnsState> emit,
+  ) {
     _columnsSubscription = _columnsStream.listen((snapshot) {
+      statusList = snapshot;
       add(ColumnsUpdatedEvent(snapshot));
     });
   }
 
   _onColumnsUpdatedEvent(
-      ColumnsUpdatedEvent event, Emitter<ColumnState> emit) async {
+    ColumnsUpdatedEvent event,
+    Emitter<ColumnsState> emit,
+  ) {
     emit(ColumnLoadedState(event.columns));
   }
 

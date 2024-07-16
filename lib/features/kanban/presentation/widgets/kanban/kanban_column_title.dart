@@ -32,10 +32,7 @@ class KanbanColumnTitle extends StatelessWidget {
           ),
           IconButton(
             visualDensity: VisualDensity.compact,
-            icon: const Icon(
-              Icons.sort,
-              color: Colors.white,
-            ),
+            icon: const Icon(Icons.more_vert),
             onPressed: () {
               //TODO: create sortby functionallity
             },

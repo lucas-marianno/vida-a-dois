@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/features/kanban/bloc/column/column_bloc.dart';
 import 'package:kanban/features/kanban/bloc/task/task_bloc.dart';
-import '../widgets/kanban_column.dart';
+import '../widgets/kanban/kanban_column.dart';
 
 class KanbanPage extends StatefulWidget {
   const KanbanPage({super.key});
@@ -31,7 +31,7 @@ class _KanbanPageState extends State<KanbanPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
-        child: BlocBuilder<ColumnsBloc, ColumnState>(
+        child: BlocBuilder<ColumnsBloc, ColumnsState>(
           builder: (context, state) {
             if (state is ColumnLoadingState) {
               return const Center(child: CircularProgressIndicator());
@@ -56,7 +56,7 @@ class _KanbanPageState extends State<KanbanPage> {
               );
             } else {
               throw UnimplementedError(
-                  '$state implementation wasn\'t found in $ColumnState!');
+                  '$state implementation wasn\'t found in $ColumnsState!');
             }
           },
         ),

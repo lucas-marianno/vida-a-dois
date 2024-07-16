@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:kanban/core/constants/enum/task_assignee.dart';
-import 'package:kanban/core/constants/enum/task_importance.dart';
-import 'package:kanban/core/constants/enum/task_status.dart';
-import 'package:kanban/core/widgets/form_widgets/form_date_picker.dart';
-import 'package:kanban/core/widgets/form_widgets/form_drop_down_menu_button.dart';
-import 'package:kanban/core/widgets/form_widgets/form_title.dart';
-import 'package:kanban/core/widgets/form_widgets/form_field.dart';
+import 'package:kanban/features/kanban/core/constants/enum/task_assignee.dart';
+import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
+import 'package:kanban/features/kanban/presentation/widgets/form/form_widgets/form_date_picker.dart';
+import 'package:kanban/features/kanban/presentation/widgets/form/form_widgets/form_drop_down_menu_button.dart';
+import 'package:kanban/features/kanban/presentation/widgets/form/form_widgets/form_title.dart';
+import 'package:kanban/features/kanban/presentation/widgets/form/form_widgets/form_field.dart';
+import 'package:kanban/features/kanban/bloc/column/column_bloc.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 import 'package:kanban/features/kanban/domain/repository/task_repository.dart';
 
@@ -187,7 +187,8 @@ class _EditTaskFormState extends State<_EditTaskForm> {
                       label: 'Status da tarefa',
                       enabled: !readOnly,
                       initialValue: newTask.status,
-                      items: TaskStatus.values.map((e) => e.name).toList(),
+                      items:
+                          ColumnsBloc.statusList.map((e) => e.title).toList(),
                       onChanged: (newValue) {
                         newTask.status = newValue!;
                       },
@@ -229,17 +230,6 @@ class _EditTaskFormState extends State<_EditTaskForm> {
                       child:
                           Text(readOnly ? 'Editar Tarefa' : '    Cancelar   '),
                     ),
-                    // ElevatedButton(
-                    //   style: ElevatedButton.styleFrom(
-                    //     backgroundColor: Colors.red[600],
-                    //     foregroundColor:
-                    //         Theme.of(context).colorScheme.onPrimary,
-                    //   ),
-                    //   onPressed: formType != _TaskFormType.edit
-                    //       ? null
-                    //       : deleteTaskAndClose,
-                    //   child: const Text('Excluir Tarefa'),
-                    // ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Theme.of(context).colorScheme.primary,

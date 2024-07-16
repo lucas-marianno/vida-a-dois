@@ -18,14 +18,12 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     on<TasksUpdatedEvent>(_onTasksUpdatedEvent);
   }
 
-  _onLoadTaskEvent(LoadTasksEvent event, Emitter<TaskState> emit) async {
-    // This is only here to simulate delay while fetching data
-    await Future.delayed(const Duration(seconds: 1));
+  _onLoadTaskEvent(LoadTasksEvent event, Emitter<TaskState> emit) {
     try {
-      final taskStream = FirestoreService.getTasksStream(event.columnList);
+      final taskStream = FirestoreService.getTasksStream();
 
       streamSubscription = taskStream.listen((data) {
-        add(TasksUpdatedEvent(data));
+        add(TasksUpdatedEvent(data, event.columnList));
       });
     } catch (e) {
       emit(TasksErrorState(e.toString()));
@@ -33,7 +31,11 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   _onTasksUpdatedEvent(TasksUpdatedEvent event, Emitter<TaskState> emit) async {
-    emit(TasksLoadedState(event.mappedTasks));
+    final organized = FirestoreService.organizeList(
+      event.updatedTasks,
+      event.columnList,
+    );
+    emit(TasksLoadedState(organized));
   }
 
   @override

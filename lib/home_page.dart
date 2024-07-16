@@ -13,7 +13,7 @@ class HomePage extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<ColumnsBloc>(
-          create: (context) => ColumnsBloc()..add(LoadColumnEvent()),
+          create: (context) => ColumnsBloc()..add(LoadColumnsEvent()),
         ),
         BlocProvider<TaskBloc>(
           create: (context) => TaskBloc()..add(TaskInitialEvent()),

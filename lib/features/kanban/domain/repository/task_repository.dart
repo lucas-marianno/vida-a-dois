@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:kanban/core/constants/enum/task_assignee.dart';
-import 'package:kanban/core/constants/enum/task_importance.dart';
-import 'package:kanban/core/constants/enum/task_status.dart';
+import 'package:kanban/features/kanban/core/constants/enum/task_assignee.dart';
+import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
+
 import 'package:kanban/core/util/dialogs/alert_dialog.dart';
 import 'package:kanban/features/kanban/data/remote/firestore_service.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
-import 'package:kanban/features/kanban/presentation/widgets/task_form.dart';
+import 'package:kanban/features/kanban/presentation/widgets/form/task_form.dart';
 
 // CRUD
 class TaskRepository {
@@ -50,10 +50,10 @@ class TaskRepository {
     FirestoreService.updateTask(newTask);
   }
 
-  void updateTaskStatus(Task task, TaskStatus newStatus) {
+  void updateTaskStatus(Task task, String newStatus) {
     if (task.status == newStatus) return;
 
-    final newTask = task.copy()..status = newStatus.name;
+    final newTask = task.copy()..status = newStatus;
 
     FirestoreService.deleteTask(task);
     FirestoreService.addTaskToColumn(newTask);

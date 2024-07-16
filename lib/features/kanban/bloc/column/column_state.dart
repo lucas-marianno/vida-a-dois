@@ -1,15 +1,15 @@
 part of 'column_bloc.dart';
 
-sealed class ColumnState extends Equatable {
-  const ColumnState();
+sealed class ColumnsState extends Equatable {
+  const ColumnsState();
 
   @override
   List<Object> get props => [];
 }
 
-final class ColumnLoadingState extends ColumnState {}
+final class ColumnLoadingState extends ColumnsState {}
 
-final class ColumnLoadedState extends ColumnState {
+final class ColumnLoadedState extends ColumnsState {
   final List<ColumnEntity> columns;
 
   const ColumnLoadedState(this.columns);
@@ -18,7 +18,7 @@ final class ColumnLoadedState extends ColumnState {
   List<Object> get props => [columns];
 }
 
-final class ColumnErrorState extends ColumnState {
+final class ColumnErrorState extends ColumnsState {
   final String error;
 
   const ColumnErrorState(this.error);

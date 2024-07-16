@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../../core/constants/enum/task_assignee.dart';
-import '../../../../core/constants/enum/task_importance.dart';
+import '../../core/constants/enum/task_assignee.dart';
+import '../../core/constants/enum/task_importance.dart';
 
 class Task {
   // TODO: add createdBy attribute after firebase auth is implemented
@@ -37,7 +37,7 @@ class Task {
       description: json['description'],
       assingnee: TaskAssignee.fromString(json['assingnedTo']),
       taskImportance: TaskImportance.fromString(json['taskImportance']),
-      status: json['status'],
+      status: json['status'].toString(),
       dueDate: json['dueDate'],
       createdDate: json['createdDate'],
     );

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/features/kanban/bloc/task/task_bloc.dart';
 import 'package:kanban/features/kanban/domain/entities/column_entity.dart';
-import 'package:kanban/features/kanban/presentation/widgets/column_drag_target.dart';
-import 'package:kanban/features/kanban/presentation/widgets/kanban_column_title.dart';
+import 'package:kanban/features/kanban/presentation/widgets/kanban/column_drag_target.dart';
+import 'package:kanban/features/kanban/presentation/widgets/kanban/kanban_column_title.dart';
 import 'kanban_add_task_button.dart';
 
 class KanbanColumn extends StatelessWidget {

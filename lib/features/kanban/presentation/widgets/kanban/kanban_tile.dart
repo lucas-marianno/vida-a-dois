@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:kanban/core/constants/enum/task_assignee.dart';
-import 'package:kanban/core/constants/enum/task_importance.dart';
+import 'package:kanban/features/kanban/core/constants/enum/task_assignee.dart';
+import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
 import 'package:kanban/core/util/color_util.dart';
 import 'package:kanban/core/util/datetime_util.dart';
 import 'package:kanban/features/kanban/domain/repository/task_repository.dart';
-import '../../domain/entities/task_entity.dart';
+import '../../../domain/entities/task_entity.dart';
 
 class KanbanTile extends StatefulWidget {
   final Task task;

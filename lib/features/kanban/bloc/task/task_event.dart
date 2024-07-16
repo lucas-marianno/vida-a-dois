@@ -19,10 +19,13 @@ class LoadTasksEvent extends TaskEvent {
 }
 
 class TasksUpdatedEvent extends TaskEvent {
-  final Map<String, List<Task>> mappedTasks;
+  final List<Task> updatedTasks;
+  final List<ColumnEntity> columnList;
 
-  const TasksUpdatedEvent(this.mappedTasks);
+  const TasksUpdatedEvent(this.updatedTasks, this.columnList);
 
   @override
-  List<Object> get props => [mappedTasks];
+  List<Object> get props => [updatedTasks];
 }
+
+// TODO: implement CRUD events
