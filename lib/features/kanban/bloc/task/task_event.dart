@@ -17,3 +17,12 @@ class LoadTasksEvent extends TaskEvent {
   @override
   List<Object> get props => [columnList];
 }
+
+class TasksUpdatedEvent extends TaskEvent {
+  final List<ColumnEntity> columnList;
+
+  const TasksUpdatedEvent(this.columnList);
+
+  @override
+  List<Object> get props => [columnList];
+}

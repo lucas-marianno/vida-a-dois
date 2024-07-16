@@ -9,29 +9,32 @@ part 'column_event.dart';
 part 'column_state.dart';
 
 class ColumnsBloc extends Bloc<ColumnEvent, ColumnState> {
+  final _columnsStream = FirestoreService.getColumnsStream();
   late final StreamSubscription _columnsSubscription;
+
   ColumnsBloc() : super(ColumnLoadingState()) {
     on<LoadColumnEvent>(_onLoadKanbanEvent);
+    on<ColumnsUpdatedEvent>(_onColumnsUpdatedEvent);
   }
 
-  _onLoadKanbanEvent(LoadColumnEvent event, Emitter<ColumnState> emit) async {
-    // Delay to simulate fetching data
-    await Future.delayed(const Duration(seconds: 1));
+  _onLoadKanbanEvent(
+    LoadColumnEvent event,
+    Emitter<ColumnState> emit,
+  ) async {
+    late final List<ColumnEntity> columns;
 
-    _columnsSubscription =
-        FirestoreService.getMockKanbanStatusColumns().listen((snapshot) {
-      final columns =
-          snapshot.docs.map((doc) => ColumnEntity.fromJson(doc)).toList();
+    _columnsSubscription = _columnsStream.listen((snapshot) {
+      columns = snapshot.docs.map((doc) => ColumnEntity.fromJson(doc)).toList();
 
       add(ColumnsUpdatedEvent(columns));
     });
+  }
 
-    try {
-      final columns = await FirestoreService.getColumns();
-      emit(ColumnLoadedState(columns));
-    } catch (e) {
-      emit(ColumnErrorState(e.toString()));
-    }
+  _onColumnsUpdatedEvent(
+    ColumnsUpdatedEvent event,
+    Emitter<ColumnState> emit,
+  ) async {
+    emit(ColumnLoadedState(event.columns));
   }
 
   @override

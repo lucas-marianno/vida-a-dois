@@ -1,18 +1,40 @@
+import 'package:async/async.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:kanban/core/constants/enum/task_status.dart';
 import 'package:kanban/core/constants/firebase/firebase_constants.dart';
 import 'package:kanban/features/kanban/domain/entities/column_entity.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 
+/// TODO: refactor
+///
+/// In theory, this should be renamed KanbanRepository
+///
+/// This class should provide abstraction to the database, whether it is
+/// firebase, mysql or even SharedPreferences
 abstract class FirestoreService {
   static final _firestoreMockCollection = FirebaseFirestore.instance
       .collection(FireStoreConstants.mockKanbanCollection);
 
-  static Future<List<ColumnEntity>> getColumns() async {
-    return (await _firestoreMockCollection.orderBy('position').get())
-        .docs
-        .map((doc) => ColumnEntity.fromJson(doc))
-        .toList();
+  static Map<TaskStatus, Stream<List<Task>>> getTaskStreams() {
+    Map<TaskStatus, Stream<List<Task>>> taskStreams = {};
+
+    for (TaskStatus s in TaskStatus.values) {
+      taskStreams.addAll({s, getMockStatusColumnContent(s)}
+          as Map<TaskStatus, Stream<List<Task>>>);
+    }
+
+    return taskStreams;
+  }
+
+  static Stream getTasksStream(List<ColumnEntity> columns) {
+    final StreamGroup streams = StreamGroup();
+
+    for (ColumnEntity c in columns) {
+      streams.add(getMockStatusColumnContent(c.id));
+    }
+    streams.close();
+
+    return streams.stream;
   }
 
   static Future<List<List<Task>>> getTasks(List<ColumnEntity> columns) async {
@@ -38,8 +60,7 @@ abstract class FirestoreService {
     return kanban;
   }
 
-  static Stream<QuerySnapshot<Map<String, dynamic>>>
-      getMockKanbanStatusColumns() {
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getColumnsStream() {
     return _firestoreMockCollection.orderBy('position').snapshots();
   }
 
