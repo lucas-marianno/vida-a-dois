@@ -53,7 +53,7 @@ class TaskRepository {
   void updateTaskStatus(Task task, TaskStatus newStatus) {
     if (task.status == newStatus) return;
 
-    final newTask = task.copy()..status = newStatus;
+    final newTask = task.copy()..status = newStatus.name;
 
     FirestoreService.deleteTask(task);
     FirestoreService.addTaskToColumn(newTask);

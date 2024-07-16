@@ -1,9 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import '../../../../core/constants/enum/task_assignee.dart';
-
 import '../../../../core/constants/enum/task_importance.dart';
-import '../../../../core/constants/enum/task_status.dart';
 
 class Task {
   // TODO: add createdBy attribute after firebase auth is implemented
@@ -12,7 +9,7 @@ class Task {
   String? description;
   TaskAssignee assingnee;
   TaskImportance taskImportance;
-  TaskStatus status;
+  String status;
   Timestamp? dueDate;
   Timestamp? createdDate;
 
@@ -22,7 +19,7 @@ class Task {
     this.description,
     this.assingnee = TaskAssignee.anyone,
     this.taskImportance = TaskImportance.normal,
-    this.status = TaskStatus.todo,
+    this.status = 'todo',
     this.dueDate,
     this.createdDate,
   });
@@ -40,7 +37,7 @@ class Task {
       description: json['description'],
       assingnee: TaskAssignee.fromString(json['assingnedTo']),
       taskImportance: TaskImportance.fromString(json['taskImportance']),
-      status: TaskStatus.fromString(json['status']),
+      status: json['status'],
       dueDate: json['dueDate'],
       createdDate: json['createdDate'],
     );
@@ -53,7 +50,7 @@ class Task {
       'description': description,
       'assingnedTo': assingnee.name,
       'taskImportance': taskImportance.name,
-      'status': status.name,
+      'status': status,
       'dueDate': dueDate,
       'createdDate': createdDate,
     };

@@ -38,8 +38,6 @@ class _KanbanPageState extends State<KanbanPage> {
             } else if (state is ColumnLoadedState) {
               context.read<TaskBloc>().add(LoadTasksEvent(state.columns));
 
-              print(state.columns);
-
               final columns = state.columns;
               return ListView.builder(
                 controller: scrlCtrl,

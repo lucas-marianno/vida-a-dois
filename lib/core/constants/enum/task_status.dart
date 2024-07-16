@@ -4,7 +4,7 @@
 /// CRUD kanban columns.
 ///
 /// extract this into a user configuration collection in firebase.
-///
+@Deprecated('Do not use! [TaskStatus] is a temporary enum!')
 enum TaskStatus {
   todo,
   inProgress,

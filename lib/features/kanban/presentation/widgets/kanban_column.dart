@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kanban/core/constants/enum/task_status.dart';
 import 'package:kanban/features/kanban/bloc/task/task_bloc.dart';
 import 'package:kanban/features/kanban/domain/entities/column_entity.dart';
 import 'package:kanban/features/kanban/presentation/widgets/column_drag_target.dart';
@@ -33,25 +32,20 @@ class KanbanColumn extends StatelessWidget {
       ),
       child: Column(
         children: [
-          KanbanColumnTitle(columnId: column.id),
+          KanbanColumnTitle(column: column),
           BlocBuilder<TaskBloc, TaskState>(
             builder: (context, state) {
-              if (state is TaskLoadingState) {
+              if (state is TasksLoadingState) {
                 return loading(context);
-              } else if (state is TaskLoadedState) {
-                if (state.taskList.isEmpty) {
-                  return const Center(
-                    child: Text('tasklist is empty'),
-                  );
-                }
+              } else if (state is TasksLoadedState) {
                 return KanbanColumnDragTarget(
-                  columnId: column.id,
+                  column: column,
                   width: width,
-                  taskList: state.taskList[column.position],
+                  mappedTasks: state.mappedTasks,
                   horizontalParentScrollController:
                       horizontalParentScrollController,
                 );
-              } else if (state is TaskErrorState) {
+              } else if (state is TasksErrorState) {
                 return Center(
                   child: Text(state.error),
                 );
@@ -66,7 +60,7 @@ class KanbanColumn extends StatelessWidget {
     );
   }
 
-  static Widget loading(BuildContext context, {TaskStatus? label}) {
+  static Widget loading(BuildContext context, {String? label}) {
     double widthMultiplier = 0.6;
     double width = MediaQuery.of(context).size.width * widthMultiplier;
 
@@ -82,7 +76,7 @@ class KanbanColumn extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (label != null) Text(label.name),
+            if (label != null) Text(label),
             const CircularProgressIndicator(),
           ],
         ),

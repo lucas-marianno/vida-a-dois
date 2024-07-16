@@ -12,43 +12,28 @@ part 'task_state.dart';
 class TaskBloc extends Bloc<TaskEvent, TaskState> {
   late StreamSubscription streamSubscription;
 
-  TaskBloc() : super(TaskLoadingState()) {
+  TaskBloc() : super(TasksLoadingState()) {
     on<TaskInitialEvent>((_, __) {});
     on<LoadTasksEvent>(_onLoadTaskEvent);
     on<TasksUpdatedEvent>(_onTasksUpdatedEvent);
   }
 
-  /// TODO: refactor this!
-  ///
-  /// This is a dumb way to achieve real-time screen updates.
-  ///
-  /// Everytime a column updates, [TasksUpdatedEvent] is called twice,
-  /// since two columns are actually being updated. (deleteTask + createTask).
-  ///
-  /// The database should probably be updated to store all tasks in a single
-  /// collection, and then the UI should separate them according to each
-  /// taskStatus, or something like it.
   _onLoadTaskEvent(LoadTasksEvent event, Emitter<TaskState> emit) async {
-    final stream = FirestoreService.getTasksStream(event.columnList);
+    // This is only here to simulate delay while fetching data
+    await Future.delayed(const Duration(seconds: 1));
+    try {
+      final taskStream = FirestoreService.getTasksStream(event.columnList);
 
-    streamSubscription = stream.listen((_) {
-      add(TasksUpdatedEvent(event.columnList));
-    });
+      streamSubscription = taskStream.listen((data) {
+        add(TasksUpdatedEvent(data));
+      });
+    } catch (e) {
+      emit(TasksErrorState(e.toString()));
+    }
   }
 
-  _onTasksUpdatedEvent(
-    TasksUpdatedEvent event,
-    Emitter<TaskState> emit,
-  ) async {
-    List<ColumnEntity> columnList = event.columnList;
-
-    try {
-      List<List<Task>> taskList = await FirestoreService.getTasks(columnList);
-      emit(TaskLoadedState(taskList));
-      // add(TaskInitSubscriptionEvent(columnList));
-    } catch (e) {
-      emit(TaskErrorState(e.toString()));
-    }
+  _onTasksUpdatedEvent(TasksUpdatedEvent event, Emitter<TaskState> emit) async {
+    emit(TasksLoadedState(event.mappedTasks));
   }
 
   @override

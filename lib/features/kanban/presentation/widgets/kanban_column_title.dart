@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:kanban/core/constants/enum/task_status.dart';
+import 'package:kanban/features/kanban/domain/entities/column_entity.dart';
 
 class KanbanColumnTitle extends StatelessWidget {
+  final ColumnEntity column;
+
   const KanbanColumnTitle({
     super.key,
-    required this.columnId,
+    required this.column,
   });
-
-  final TaskStatus columnId;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        // color: columnId.color,
-        borderRadius: const BorderRadius.only(
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.only(
           topLeft: Radius.circular(10),
           topRight: Radius.circular(10),
         ),
@@ -24,7 +23,7 @@ class KanbanColumnTitle extends StatelessWidget {
         children: [
           const SizedBox(width: 30),
           Text(
-            columnId.name.toUpperCase(),
+            column.title.toUpperCase(),
             style: const TextStyle(
               // color: Colors.white,
               // fontWeight: FontWeight.w900,

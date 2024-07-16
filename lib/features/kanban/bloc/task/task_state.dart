@@ -7,21 +7,21 @@ sealed class TaskState extends Equatable {
   List<Object> get props => [];
 }
 
-final class TaskLoadingState extends TaskState {}
+final class TasksLoadingState extends TaskState {}
 
-final class TaskLoadedState extends TaskState {
-  final List<List<Task>> taskList;
+final class TasksLoadedState extends TaskState {
+  final Map<String, List<Task>> mappedTasks;
 
-  const TaskLoadedState(this.taskList);
+  const TasksLoadedState(this.mappedTasks);
 
   @override
-  List<Object> get props => [taskList];
+  List<Object> get props => [mappedTasks];
 }
 
-final class TaskErrorState extends TaskState {
+final class TasksErrorState extends TaskState {
   final String error;
 
-  const TaskErrorState(this.error);
+  const TasksErrorState(this.error);
 
   @override
   List<Object> get props => [error];

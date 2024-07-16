@@ -186,10 +186,10 @@ class _EditTaskFormState extends State<_EditTaskForm> {
                       maxWidth: width / 2 - 3,
                       label: 'Status da tarefa',
                       enabled: !readOnly,
-                      initialValue: newTask.status.name,
+                      initialValue: newTask.status,
                       items: TaskStatus.values.map((e) => e.name).toList(),
                       onChanged: (newValue) {
-                        newTask.status = TaskStatus.fromString(newValue);
+                        newTask.status = newValue!;
                       },
                     ),
                     const SizedBox(width: 6),

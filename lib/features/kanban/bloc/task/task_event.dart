@@ -19,10 +19,10 @@ class LoadTasksEvent extends TaskEvent {
 }
 
 class TasksUpdatedEvent extends TaskEvent {
-  final List<ColumnEntity> columnList;
+  final Map<String, List<Task>> mappedTasks;
 
-  const TasksUpdatedEvent(this.columnList);
+  const TasksUpdatedEvent(this.mappedTasks);
 
   @override
-  List<Object> get props => [columnList];
+  List<Object> get props => [mappedTasks];
 }

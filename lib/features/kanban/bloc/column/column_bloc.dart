@@ -17,23 +17,17 @@ class ColumnsBloc extends Bloc<ColumnEvent, ColumnState> {
     on<ColumnsUpdatedEvent>(_onColumnsUpdatedEvent);
   }
 
-  _onLoadKanbanEvent(
-    LoadColumnEvent event,
-    Emitter<ColumnState> emit,
-  ) async {
-    late final List<ColumnEntity> columns;
+  _onLoadKanbanEvent(LoadColumnEvent event, Emitter<ColumnState> emit) async {
+// This is only here to simulate delay while fetching data
+    await Future.delayed(const Duration(seconds: 1));
 
     _columnsSubscription = _columnsStream.listen((snapshot) {
-      columns = snapshot.docs.map((doc) => ColumnEntity.fromJson(doc)).toList();
-
-      add(ColumnsUpdatedEvent(columns));
+      add(ColumnsUpdatedEvent(snapshot));
     });
   }
 
   _onColumnsUpdatedEvent(
-    ColumnsUpdatedEvent event,
-    Emitter<ColumnState> emit,
-  ) async {
+      ColumnsUpdatedEvent event, Emitter<ColumnState> emit) async {
     emit(ColumnLoadedState(event.columns));
   }
 
