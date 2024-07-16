@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/core/constants/enum/task_status.dart';
-import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
+import 'package:kanban/features/kanban/bloc/task/task_bloc.dart';
+import 'package:kanban/features/kanban/domain/entities/column_entity.dart';
+import 'package:kanban/features/kanban/presentation/widgets/column_drag_target.dart';
 import 'package:kanban/features/kanban/presentation/widgets/kanban_column_title.dart';
-import 'column_drag_target.dart';
 import 'kanban_add_task_button.dart';
 
 class KanbanColumn extends StatelessWidget {
-  final TaskStatus columnId;
-  final List<Task> taskList;
+  final ColumnEntity column;
   final ScrollController horizontalParentScrollController;
   const KanbanColumn({
-    required this.columnId,
-    required this.taskList,
+    required this.column,
     required this.horizontalParentScrollController,
     super.key,
   });
@@ -33,12 +33,32 @@ class KanbanColumn extends StatelessWidget {
       ),
       child: Column(
         children: [
-          KanbanColumnTitle(columnId: columnId),
-          KanbanColumnDragTarget(
-            columnId: columnId,
-            taskList: taskList,
-            width: width,
-            horizontalParentScrollController: horizontalParentScrollController,
+          KanbanColumnTitle(columnId: column.id),
+          BlocBuilder<TaskBloc, TaskState>(
+            builder: (context, state) {
+              if (state is TaskLoadingState) {
+                return loading(context);
+              } else if (state is TaskLoadedState) {
+                if (state.taskList.isEmpty) {
+                  return const Center(
+                    child: Text('tasklist is empty'),
+                  );
+                }
+                return KanbanColumnDragTarget(
+                  columnId: column.id,
+                  width: width,
+                  taskList: state.taskList[column.position],
+                  horizontalParentScrollController:
+                      horizontalParentScrollController,
+                );
+              } else if (state is TaskErrorState) {
+                return Center(
+                  child: Text(state.error),
+                );
+              } else {
+                throw UnimplementedError();
+              }
+            },
           ),
           const KanbanAddTaskButton(),
         ],
@@ -46,21 +66,26 @@ class KanbanColumn extends StatelessWidget {
     );
   }
 
-  static Widget loading(BuildContext context) {
+  static Widget loading(BuildContext context, {TaskStatus? label}) {
     double widthMultiplier = 0.6;
     double width = MediaQuery.of(context).size.width * widthMultiplier;
 
-    return Container(
-      width: width,
-      margin: const EdgeInsets.symmetric(horizontal: 3),
-      padding: const EdgeInsets.all(5),
-      decoration: BoxDecoration(
-        color: Colors.blueGrey[100],
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: const Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [LinearProgressIndicator()],
+    return Expanded(
+      child: Container(
+        width: width,
+        margin: const EdgeInsets.symmetric(horizontal: 3),
+        padding: const EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          color: Colors.blueGrey[100],
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (label != null) Text(label.name),
+            const CircularProgressIndicator(),
+          ],
+        ),
       ),
     );
   }

@@ -46,7 +46,7 @@ class Task {
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> get toJson {
     return {
       'id': id,
       'title': title,
@@ -59,5 +59,5 @@ class Task {
     };
   }
 
-  Task copy() => Task.fromMap(toJson());
+  Task copy() => Task.fromMap(toJson);
 }

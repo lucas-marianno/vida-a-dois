@@ -1,7 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:kanban/core/constants/enum/task_status.dart';
-import 'package:kanban/features/kanban/data/remote/firestore_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kanban/features/kanban/bloc/column/column_bloc.dart';
+import 'package:kanban/features/kanban/bloc/task/task_bloc.dart';
 import '../widgets/kanban_column.dart';
 
 class KanbanPage extends StatefulWidget {
@@ -16,8 +16,6 @@ class _KanbanPageState extends State<KanbanPage> {
 
   @override
   Widget build(BuildContext context) {
-    final stream = FirestoreService.getMockKanbanStatusColumns();
-
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
       appBar: AppBar(
@@ -33,40 +31,34 @@ class _KanbanPageState extends State<KanbanPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
-        child: StreamBuilder(
-          stream: stream,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              List<QueryDocumentSnapshot> columns = snapshot.data!.docs;
+        child: BlocBuilder<ColumnsBloc, ColumnState>(
+          builder: (context, state) {
+            if (state is ColumnLoadingState) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is ColumnLoadedState) {
+              context.read<TaskBloc>().add(LoadTasksEvent(state.columns));
+
+              print(state.columns);
+
+              final columns = state.columns;
               return ListView.builder(
                 controller: scrlCtrl,
                 scrollDirection: Axis.horizontal,
                 itemCount: columns.length,
                 itemBuilder: (context, index) {
-                  // TODO: finish implementing this shit, then abstract it
-                  TaskStatus columnId =
-                      TaskStatus.fromString(columns[index].id);
-                  return StreamBuilder(
-                    stream:
-                        FirestoreService.getMockStatusColumnContent(columnId),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return KanbanColumn(
-                          columnId: columnId,
-                          taskList: snapshot.data!,
-                          horizontalParentScrollController: scrlCtrl,
-                        );
-                      } else {
-                        return KanbanColumn.loading(context);
-                      }
-                    },
+                  return KanbanColumn(
+                    column: state.columns[index],
+                    horizontalParentScrollController: scrlCtrl,
                   );
                 },
               );
-            } else {
-              return const Center(
-                child: LinearProgressIndicator(),
+            } else if (state is ColumnErrorState) {
+              return Center(
+                child: Text(state.error),
               );
+            } else {
+              throw UnimplementedError(
+                  '$state implementation wasn\'t found in $ColumnState!');
             }
           },
         ),
