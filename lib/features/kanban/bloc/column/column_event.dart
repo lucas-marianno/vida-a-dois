@@ -7,6 +7,15 @@ sealed class ColumnsEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class ColumnsInitialEvent extends ColumnsEvent {
+  final BuildContext context;
+
+  const ColumnsInitialEvent(this.context);
+
+  @override
+  List<Object> get props => [context];
+}
+
 class LoadColumnsEvent extends ColumnsEvent {}
 
 class ColumnsUpdatedEvent extends ColumnsEvent {
@@ -19,3 +28,12 @@ class ColumnsUpdatedEvent extends ColumnsEvent {
 }
 
 class CreateColumnEvent extends ColumnsEvent {}
+
+class DeleteColumnEvent extends ColumnsEvent {
+  final ColumnEntity column;
+
+  const DeleteColumnEvent(this.column);
+
+  @override
+  List<Object> get props => [column];
+}

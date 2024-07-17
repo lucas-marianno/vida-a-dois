@@ -12,7 +12,7 @@ Map<String, List<Task>> parseListIntoMap(
   }
 
   for (Task task in taskList) {
-    map[task.status]!.add(task);
+    map[task.status]?.add(task);
   }
 
   return map;

@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:kanban/features/kanban/data/remote/column_data_source.dart';
 import 'package:kanban/features/kanban/domain/entities/column_entity.dart';
+import 'package:kanban/features/kanban/domain/repository/column_repository.dart';
 
 part 'column_event.dart';
 part 'column_state.dart';
@@ -13,11 +15,22 @@ class ColumnsBloc extends Bloc<ColumnsEvent, ColumnsState> {
   static List<ColumnEntity> statusList = [];
   final _columnsStream = ColumnDataSource.readColumns;
   late final StreamSubscription _columnsSubscription;
+  late final ColumnRepository columnRepo;
 
   ColumnsBloc() : super(ColumnLoadingState()) {
+    on<ColumnsInitialEvent>(_onColumnsInitialEvent);
     on<LoadColumnsEvent>(_onLoadColumnsEvent);
     on<ColumnsUpdatedEvent>(_onColumnsUpdatedEvent);
     on<CreateColumnEvent>(_onCreateColumnEvent);
+    on<DeleteColumnEvent>(_onDeleteColumnEvent);
+  }
+
+  _onColumnsInitialEvent(
+    ColumnsInitialEvent event,
+    Emitter<ColumnsState> emit,
+  ) {
+    columnRepo = ColumnRepository(event.context);
+    add(LoadColumnsEvent());
   }
 
   _onLoadColumnsEvent(
@@ -38,7 +51,11 @@ class ColumnsBloc extends Bloc<ColumnsEvent, ColumnsState> {
   }
 
   _onCreateColumnEvent(CreateColumnEvent event, Emitter<ColumnsState> emit) {
-    ColumnDataSource.createColumn(ColumnEntity(title: 'test7', index: 2));
+    columnRepo.createColumn();
+  }
+
+  _onDeleteColumnEvent(DeleteColumnEvent event, Emitter<ColumnsState> emit) {
+    columnRepo.deleteColumn(event.column);
   }
 
   @override
