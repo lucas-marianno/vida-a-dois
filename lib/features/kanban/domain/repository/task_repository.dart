@@ -3,7 +3,7 @@ import 'package:kanban/features/kanban/core/constants/enum/task_assignee.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
 
 import 'package:kanban/core/util/dialogs/alert_dialog.dart';
-import 'package:kanban/features/kanban/data/remote/firestore_service.dart';
+import 'package:kanban/features/kanban/data/remote/task_data_source.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 import 'package:kanban/features/kanban/presentation/widgets/form/task_form.dart';
 
@@ -17,7 +17,7 @@ class TaskRepository {
     final newTask = await TaskForm.newTask(context);
 
     if (newTask != null) {
-      FirestoreService.addTaskToColumn(newTask);
+      TaskDataSource.createTask(newTask);
     }
   }
 
@@ -27,10 +27,10 @@ class TaskRepository {
     if (newTask == null) return;
 
     if (task.status != newTask.status) {
-      FirestoreService.deleteTask(task);
-      FirestoreService.addTaskToColumn(newTask);
+      TaskDataSource.deleteTask(task);
+      TaskDataSource.createTask(newTask);
     } else {
-      FirestoreService.updateTask(newTask);
+      TaskDataSource.updateTask(newTask);
     }
   }
 
@@ -39,7 +39,7 @@ class TaskRepository {
 
     final newTask = task.copy()..taskImportance = taskImportance;
 
-    FirestoreService.updateTask(newTask);
+    TaskDataSource.updateTask(newTask);
   }
 
   void updateTaskAssignee(Task task, TaskAssignee assignee) {
@@ -47,7 +47,7 @@ class TaskRepository {
 
     final newTask = task.copy()..assingnee = assignee;
 
-    FirestoreService.updateTask(newTask);
+    TaskDataSource.updateTask(newTask);
   }
 
   void updateTaskStatus(Task task, String newStatus) {
@@ -55,8 +55,8 @@ class TaskRepository {
 
     final newTask = task.copy()..status = newStatus;
 
-    FirestoreService.deleteTask(task);
-    FirestoreService.addTaskToColumn(newTask);
+    TaskDataSource.deleteTask(task);
+    TaskDataSource.createTask(newTask);
   }
 
   void deleteTask(Task task) async {
@@ -72,6 +72,6 @@ class TaskRepository {
 
     if (response != true) return;
 
-    FirestoreService.deleteTask(task);
+    TaskDataSource.deleteTask(task);
   }
 }

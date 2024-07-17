@@ -16,7 +16,7 @@ class HomePage extends StatelessWidget {
           create: (context) => ColumnsBloc()..add(LoadColumnsEvent()),
         ),
         BlocProvider<TaskBloc>(
-          create: (context) => TaskBloc()..add(TaskInitialEvent()),
+          create: (context) => TaskBloc()..add(TaskInitialEvent(context)),
         ),
       ],
       child: const KanbanPage(),

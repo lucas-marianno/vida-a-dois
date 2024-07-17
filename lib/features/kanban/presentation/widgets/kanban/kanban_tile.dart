@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kanban/features/kanban/bloc/task/task_bloc.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_assignee.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
 import 'package:kanban/core/util/color_util.dart';
 import 'package:kanban/core/util/datetime_util.dart';
-import 'package:kanban/features/kanban/domain/repository/task_repository.dart';
 import '../../../domain/entities/task_entity.dart';
 
 class KanbanTile extends StatefulWidget {
@@ -90,7 +91,7 @@ class _KanbanTileState extends State<KanbanTile> {
   }
 
   Widget _createTile(BuildContext context) {
-    TaskRepository taskRepo = TaskRepository(context);
+    final taskBloc = context.read<TaskBloc>();
 
     return Container(
       width: widget.tileWidth,
@@ -101,7 +102,7 @@ class _KanbanTileState extends State<KanbanTile> {
         border: Border.all(color: Theme.of(context).colorScheme.shadow),
       ),
       child: GestureDetector(
-        onTap: () => taskRepo.readTask(widget.task),
+        onTap: () => taskBloc.add(ReadTaskEvent(widget.task)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -148,10 +149,10 @@ class _KanbanTileState extends State<KanbanTile> {
                                 Text(importance.name),
                               ],
                             ),
-                            onTap: () => taskRepo.updateTaskImportance(
+                            onTap: () => taskBloc.add(UpdateTaskImportanceEvent(
                               widget.task,
                               importance,
-                            ),
+                            )),
                           ),
                       ];
                     },
@@ -190,21 +191,21 @@ class _KanbanTileState extends State<KanbanTile> {
                     tooltip: widget.task.assingnee.name,
                     itemBuilder: (context) {
                       return [
-                        for (TaskAssignee importance in TaskAssignee.values)
+                        for (TaskAssignee assignee in TaskAssignee.values)
                           PopupMenuItem(
                             child: Row(
                               children: [
                                 Icon(
-                                  importance.icon,
+                                  assignee.icon,
                                 ),
                                 const SizedBox(width: 10),
-                                Text(importance.name),
+                                Text(assignee.name),
                               ],
                             ),
-                            onTap: () => taskRepo.updateTaskAssignee(
+                            onTap: () => taskBloc.add(UpdateTaskAssigneeEvent(
                               widget.task,
-                              importance,
-                            ),
+                              assignee,
+                            )),
                           ),
                       ];
                     },

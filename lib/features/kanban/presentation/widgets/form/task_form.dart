@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kanban/features/kanban/bloc/task/task_bloc.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_assignee.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
 import 'package:kanban/features/kanban/presentation/widgets/form/form_widgets/form_date_picker.dart';
@@ -8,7 +10,6 @@ import 'package:kanban/features/kanban/presentation/widgets/form/form_widgets/fo
 import 'package:kanban/features/kanban/presentation/widgets/form/form_widgets/form_field.dart';
 import 'package:kanban/features/kanban/bloc/column/column_bloc.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
-import 'package:kanban/features/kanban/domain/repository/task_repository.dart';
 
 enum _TaskFormType {
   create,
@@ -87,7 +88,8 @@ class _EditTaskFormState extends State<_EditTaskForm> {
 
   void deleteTaskAndClose() {
     Navigator.pop(context);
-    TaskRepository(context).deleteTask(widget.task);
+
+    context.read<TaskBloc>().add(DeleteTaskEvent(widget.task));
   }
 
   void toggleEditMode() {

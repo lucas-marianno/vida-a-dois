@@ -17,3 +17,5 @@ class ColumnsUpdatedEvent extends ColumnsEvent {
   @override
   List<Object> get props => [columns];
 }
+
+class CreateColumnEvent extends ColumnsEvent {}

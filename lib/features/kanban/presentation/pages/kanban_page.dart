@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/features/kanban/bloc/column/column_bloc.dart';
 import 'package:kanban/features/kanban/bloc/task/task_bloc.dart';
@@ -16,6 +17,8 @@ class _KanbanPageState extends State<KanbanPage> {
 
   @override
   Widget build(BuildContext context) {
+    final columnsBloc = context.read<ColumnsBloc>();
+    final taskBloc = context.read<TaskBloc>();
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
       appBar: AppBar(
@@ -36,18 +39,31 @@ class _KanbanPageState extends State<KanbanPage> {
             if (state is ColumnLoadingState) {
               return const Center(child: CircularProgressIndicator());
             } else if (state is ColumnLoadedState) {
-              context.read<TaskBloc>().add(LoadTasksEvent(state.columns));
-
               final columns = state.columns;
+
+              taskBloc.add(LoadTasksEvent(columns));
+
               return ListView.builder(
                 controller: scrlCtrl,
                 scrollDirection: Axis.horizontal,
-                itemCount: columns.length,
+                itemCount: columns.length + 1,
                 itemBuilder: (context, index) {
-                  return KanbanColumn(
-                    column: state.columns[index],
-                    horizontalParentScrollController: scrlCtrl,
-                  );
+                  if (index < columns.length) {
+                    return KanbanColumn(
+                      column: state.columns[index],
+                      horizontalParentScrollController: scrlCtrl,
+                    );
+                  } else {
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: ElevatedButton(
+                          child: const Icon(Icons.add),
+                          onPressed: () => columnsBloc.add(CreateColumnEvent()),
+                        ),
+                      ),
+                    );
+                  }
                 },
               );
             } else if (state is ColumnErrorState) {
