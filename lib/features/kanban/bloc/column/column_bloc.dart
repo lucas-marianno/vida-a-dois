@@ -22,6 +22,7 @@ class ColumnsBloc extends Bloc<ColumnsEvent, ColumnsState> {
     on<LoadColumnsEvent>(_onLoadColumnsEvent);
     on<ColumnsUpdatedEvent>(_onColumnsUpdatedEvent);
     on<CreateColumnEvent>(_onCreateColumnEvent);
+    on<RenameColumnEvent>(_onRenameColumnEvent);
     on<DeleteColumnEvent>(_onDeleteColumnEvent);
   }
 
@@ -50,12 +51,37 @@ class ColumnsBloc extends Bloc<ColumnsEvent, ColumnsState> {
     emit(ColumnLoadedState(event.columns));
   }
 
-  _onCreateColumnEvent(CreateColumnEvent event, Emitter<ColumnsState> emit) {
-    columnRepo.createColumn();
+  _onCreateColumnEvent(
+    CreateColumnEvent event,
+    Emitter<ColumnsState> emit,
+  ) async {
+    try {
+      await columnRepo.createColumn();
+    } catch (e) {
+      emit(ColumnErrorState(e.toString()));
+    }
   }
 
-  _onDeleteColumnEvent(DeleteColumnEvent event, Emitter<ColumnsState> emit) {
-    columnRepo.deleteColumn(event.column);
+  _onRenameColumnEvent(
+    RenameColumnEvent event,
+    Emitter<ColumnsState> emit,
+  ) async {
+    try {
+      await columnRepo.renameColumn(event.column);
+    } catch (e) {
+      emit(ColumnErrorState(e.toString()));
+    }
+  }
+
+  _onDeleteColumnEvent(
+    DeleteColumnEvent event,
+    Emitter<ColumnsState> emit,
+  ) async {
+    try {
+      await columnRepo.deleteColumn(event.column);
+    } catch (e) {
+      emit(ColumnErrorState(e.toString()));
+    }
   }
 
   @override

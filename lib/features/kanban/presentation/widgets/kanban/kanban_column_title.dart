@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kanban/features/kanban/bloc/column/column_bloc.dart';
 import 'package:kanban/features/kanban/domain/entities/column_entity.dart';
 
 class KanbanColumnTitle extends StatelessWidget {
@@ -11,6 +13,8 @@ class KanbanColumnTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final columnBloc = context.read<ColumnsBloc>();
+
     return Container(
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(
@@ -30,13 +34,29 @@ class KanbanColumnTitle extends StatelessWidget {
               letterSpacing: 3,
             ),
           ),
-          IconButton(
-            visualDensity: VisualDensity.compact,
-            icon: const Icon(Icons.more_vert),
-            onPressed: () {
-              //TODO: create sortby functionallity
+          PopupMenuButton(
+            tooltip: 'Opções',
+            itemBuilder: (context) {
+              return [
+                PopupMenuItem(
+                  child: const Text('Excluir'),
+                  onTap: () => columnBloc.add(DeleteColumnEvent(column)),
+                ),
+                PopupMenuItem(
+                  child: const Text('Renomear'),
+                  onTap: () => columnBloc.add(RenameColumnEvent(column)),
+                ),
+                const PopupMenuItem(child: Text('Mover?')),
+              ];
             },
-          )
+          ),
+          // IconButton(
+          //   visualDensity: VisualDensity.compact,
+          //   icon: const Icon(Icons.more_vert),
+          //   onPressed: () {
+          //     //TODO: create sortby functionallity
+          //   },
+          // )
         ],
       ),
     );

@@ -2,17 +2,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:kanban/features/kanban/core/constants/firebase/firebase_constants.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 
-/// [TaskDataSource] provides CRUD functionality.
+/// [TaskDataSource] provides Firebase integration for CRUD operations
 abstract class TaskDataSource {
   static final _firestore = FireStoreConstants.mockCollectionReference;
 
   static final CollectionReference _taskReference =
       _firestore.doc('columns').collection('tasks');
 
-  static void createTask(Task? task) async {
+  static Future<void> createTask(Task? task) async {
     if (task == null || task.title.isEmpty) return;
 
-    _taskReference.add(task.toJson);
+    await _taskReference.add(task.toJson);
   }
 
   static Stream<List<Task>> get readTasks {
@@ -25,7 +25,7 @@ abstract class TaskDataSource {
     );
   }
 
-  static void updateTask(Task? task) async {
+  static Future<void> updateTask(Task? task) async {
     if (task == null || task.title.isEmpty) return;
 
     await _taskReference.doc(task.id).set(
@@ -34,9 +34,22 @@ abstract class TaskDataSource {
         );
   }
 
-  static void deleteTask(Task? task) async {
+  static Future<void> deleteTask(Task? task) async {
     if (task == null || task.title.isEmpty) return;
 
     await _taskReference.doc(task.id).delete();
+  }
+
+  static Future<void> deleteAllTasksWithStatus(String status) async {
+    final allTasks = await _taskReference.get();
+    final allTasksWithStatus = allTasks.docs
+        .map((e) {
+          Task task = Task.fromJson(e);
+          return task.status == status ? task : null;
+        })
+        .nonNulls
+        .toList();
+
+    await Future.wait([for (Task task in allTasksWithStatus) deleteTask(task)]);
   }
 }
