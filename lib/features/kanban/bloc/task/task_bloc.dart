@@ -30,6 +30,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     on<DeleteTaskEvent>(_onDeleteTaskEvent);
   }
   _onCreateTaskEvent(CreateTaskEvent event, Emitter<TaskState> emit) {
+    throw Exception("some weird behavior is happening");
+    print("new task event");
     taskRepo.createTask();
   }
 

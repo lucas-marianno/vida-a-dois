@@ -26,17 +26,6 @@ enum _TaskFormType {
         return 'Lendo uma Tarefa';
     }
   }
-
-  IconData? get icon {
-    switch (this) {
-      case create:
-        return Icons.add;
-      case edit:
-        return Icons.check;
-      case read:
-        return null;
-    }
-  }
 }
 
 class TaskForm {
@@ -59,7 +48,14 @@ class TaskForm {
       isScrollControlled: true,
       context: context,
       builder: (context) {
-        return _EditTaskForm(task, formType: formType);
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (context) {
+              return TaskBloc()..add(TaskInitialEvent(context));
+            }),
+          ],
+          child: _EditTaskForm(task, formType: formType),
+        );
       },
     );
   }
@@ -75,6 +71,7 @@ class _EditTaskForm extends StatefulWidget {
 }
 
 class _EditTaskFormState extends State<_EditTaskForm> {
+  late TaskBloc taskBloc;
   late Task newTask;
   late bool readOnly;
   late _TaskFormType formType;
@@ -89,7 +86,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
   void deleteTaskAndClose() {
     Navigator.pop(context);
 
-    context.read<TaskBloc>().add(DeleteTaskEvent(widget.task));
+    taskBloc.add(DeleteTaskEvent(widget.task));
   }
 
   void toggleEditMode() {
@@ -109,6 +106,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
 
   @override
   Widget build(BuildContext context) {
+    taskBloc = context.read<TaskBloc>();
     readOnly = formType == _TaskFormType.read;
     double padding = 15;
     double width = MediaQuery.of(context).size.width - padding * 2;

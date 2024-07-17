@@ -13,11 +13,11 @@ class TaskRepository {
 
   TaskRepository(this.context);
 
-  void createTask() async {
+  Future<void> createTask() async {
     final newTask = await TaskForm.newTask(context);
 
     if (newTask != null) {
-      TaskDataSource.createTask(newTask);
+      await TaskDataSource.createTask(newTask);
     }
   }
 

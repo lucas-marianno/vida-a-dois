@@ -3,6 +3,7 @@ import 'package:kanban/core/util/dialogs/alert_dialog.dart';
 import 'package:kanban/features/kanban/data/remote/column_data_source.dart';
 import 'package:kanban/features/kanban/data/remote/task_data_source.dart';
 import 'package:kanban/features/kanban/domain/entities/column_entity.dart';
+import 'package:kanban/features/kanban/presentation/widgets/form/column_form.dart';
 
 //CRUD
 class ColumnRepository {
@@ -11,11 +12,14 @@ class ColumnRepository {
   ColumnRepository(this.context);
 
   Future<void> createColumn() async {
-    ColumnEntity mockColumn = ColumnEntity(title: 'test7', index: 2);
+    // ColumnEntity mockColumn = ColumnEntity(title: 'test7', index: 2);
     // TODO: get name from user
+    final newColumn = await ColumnForm.newColumn(context);
+
+    if (newColumn == null || newColumn.title.isEmpty) return;
 
     // update columns list
-    await ColumnDataSource.createColumn(mockColumn);
+    // await ColumnDataSource.createColumn(newColumn);
   }
 
   Future<void> renameColumn(ColumnEntity column) async {

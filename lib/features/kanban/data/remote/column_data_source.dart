@@ -19,11 +19,12 @@ abstract class ColumnDataSource {
         "As colunas não podem ter nomes repetidos",
       );
     }
+    column.index ??= columns.length;
 
-    if (column.index >= columns.length) {
+    if (column.index! >= columns.length) {
       columns.add(column);
     } else {
-      columns.insert(column.index, column);
+      columns.insert(column.index!, column);
     }
     await _updateColumns(columns);
   }
