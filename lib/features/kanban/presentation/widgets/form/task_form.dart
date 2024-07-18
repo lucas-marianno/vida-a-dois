@@ -29,10 +29,8 @@ enum _TaskFormType {
 }
 
 class TaskForm {
-  static final Task _newTask = Task(title: 'Nova Tarefa');
-
   static Future<Task?> newTask(BuildContext context) async {
-    return await _showModal(_newTask, context, _TaskFormType.create);
+    return await _showModal(null, context, _TaskFormType.create);
   }
 
   static Future<Task?> readTask(Task task, BuildContext context) async {
@@ -40,7 +38,7 @@ class TaskForm {
   }
 
   static Future<Task?> _showModal(
-    Task task,
+    Task? task,
     BuildContext context,
     _TaskFormType formType,
   ) async {
@@ -62,7 +60,7 @@ class TaskForm {
 }
 
 class _EditTaskForm extends StatefulWidget {
-  final Task task;
+  final Task? task;
   final _TaskFormType formType;
   const _EditTaskForm(this.task, {required this.formType});
 
@@ -86,7 +84,9 @@ class _EditTaskFormState extends State<_EditTaskForm> {
   void deleteTaskAndClose() {
     Navigator.pop(context);
 
-    taskBloc.add(DeleteTaskEvent(widget.task));
+    if (widget.task == null) return;
+
+    taskBloc.add(DeleteTaskEvent(widget.task!));
   }
 
   void toggleEditMode() {
@@ -99,7 +99,11 @@ class _EditTaskFormState extends State<_EditTaskForm> {
 
   @override
   void initState() {
-    newTask = widget.task.copy();
+    newTask = widget.task?.copy() ??
+        Task(
+          title: 'Nova tarefa',
+          status: ColumnsBloc.statusList[0].title,
+        );
     formType = widget.formType;
     super.initState();
   }
@@ -190,7 +194,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
                       items:
                           ColumnsBloc.statusList.map((e) => e.title).toList(),
                       onChanged: (newValue) {
-                        newTask.status = newValue!;
+                        newTask.status = newValue ??= newTask.status;
                       },
                     ),
                     const SizedBox(width: 6),

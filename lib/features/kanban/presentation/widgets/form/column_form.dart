@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/features/kanban/domain/entities/column_entity.dart';
+import 'package:kanban/features/kanban/presentation/widgets/form/form_widgets/form_drop_down_menu_button.dart';
 import 'package:kanban/features/kanban/presentation/widgets/form/form_widgets/form_title.dart';
 import 'package:kanban/features/kanban/presentation/widgets/form/form_widgets/form_field.dart';
 import 'package:kanban/features/kanban/bloc/column/column_bloc.dart';
@@ -25,7 +26,7 @@ enum _ColumnFormType {
 class ColumnForm {
   static final ColumnEntity _newColumn = ColumnEntity(
     title: 'Nova Coluna',
-    index: null,
+    index: ColumnsBloc.statusList.length,
   );
 
   static Future<ColumnEntity?> newColumn(BuildContext context) async {
@@ -150,6 +151,23 @@ class _EditColumnFormState extends State<_EditColumnForm> {
                   },
                   mandatory: true,
                 ),
+                () {
+                  final items = ColumnsBloc.statusList.map((e) {
+                        return '${e.index} - Antes de "${e.title}"';
+                      }).toList() +
+                      ['${ColumnsBloc.statusList.length} - Adicionar ao final'];
+                  return FormDropDownMenuButton(
+                    enabled: !readOnly,
+                    label: 'Posição',
+                    initialValue: items[newColumn.index],
+                    items: items,
+                    onChanged: (e) {
+                      newColumn.index =
+                          int.tryParse(e?.substring(0, 1) ?? '') ??
+                              newColumn.index;
+                    },
+                  );
+                }(),
                 const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -171,7 +189,7 @@ class _EditColumnFormState extends State<_EditColumnForm> {
                         }
                       },
                       child:
-                          Text(readOnly ? 'Editar Tarefa' : '    Cancelar   '),
+                          Text(readOnly ? 'Editar Coluna' : '    Cancelar   '),
                     ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(

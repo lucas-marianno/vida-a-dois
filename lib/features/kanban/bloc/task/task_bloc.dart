@@ -15,12 +15,11 @@ part 'task_event.dart';
 part 'task_state.dart';
 
 class TaskBloc extends Bloc<TaskEvent, TaskState> {
-  late StreamSubscription streamSubscription;
-  late TaskRepository taskRepo;
+  StreamSubscription? _streamSubscription;
+  late TaskRepository _taskRepo;
 
   TaskBloc() : super(TasksLoadingState()) {
-    on<TaskInitialEvent>(
-        (event, __) => taskRepo = TaskRepository(event.context));
+    on<TaskInitialEvent>(_onTaskInitialEvent);
     on<LoadTasksEvent>(_onLoadTaskEvent);
     on<TasksUpdatedEvent>(_onTasksUpdatedEvent);
     on<CreateTaskEvent>(_onCreateTaskEvent);
@@ -29,39 +28,42 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     on<UpdateTaskAssigneeEvent>(_onUpdateTaskAssigneeEvent);
     on<DeleteTaskEvent>(_onDeleteTaskEvent);
   }
-  _onCreateTaskEvent(CreateTaskEvent event, Emitter<TaskState> emit) {
-    throw Exception("some weird behavior is happening");
-    print("new task event");
-    taskRepo.createTask();
+
+  _onTaskInitialEvent(TaskInitialEvent event, Emitter<TaskState> emit) {
+    _taskRepo = TaskRepository(event.context);
   }
 
-  _onReadTaskEvent(ReadTaskEvent event, Emitter<TaskState> emit) {
-    taskRepo.readTask(event.task);
+  _onCreateTaskEvent(CreateTaskEvent event, Emitter<TaskState> emit) async {
+    await _taskRepo.createTask();
+  }
+
+  _onReadTaskEvent(ReadTaskEvent event, Emitter<TaskState> emit) async {
+    await _taskRepo.readTask(event.task);
   }
 
   _onUpdateTaskImportanceEvent(
     UpdateTaskImportanceEvent event,
     Emitter<TaskState> emit,
-  ) {
-    taskRepo.updateTaskImportance(event.task, event.importance);
+  ) async {
+    await _taskRepo.updateTaskImportance(event.task, event.importance);
   }
 
   _onUpdateTaskAssigneeEvent(
     UpdateTaskAssigneeEvent event,
     Emitter<TaskState> emit,
-  ) {
-    taskRepo.updateTaskAssignee(event.task, event.assignee);
+  ) async {
+    await _taskRepo.updateTaskAssignee(event.task, event.assignee);
   }
 
-  _onDeleteTaskEvent(DeleteTaskEvent event, Emitter<TaskState> emit) {
-    taskRepo.deleteTask(event.task);
+  _onDeleteTaskEvent(DeleteTaskEvent event, Emitter<TaskState> emit) async {
+    await _taskRepo.deleteTask(event.task);
   }
 
   _onLoadTaskEvent(LoadTasksEvent event, Emitter<TaskState> emit) {
     try {
       final taskStream = TaskDataSource.readTasks;
 
-      streamSubscription = taskStream.listen((data) {
+      _streamSubscription = taskStream.listen((data) {
         add(TasksUpdatedEvent(data, event.columnList));
       });
     } catch (e) {
@@ -79,7 +81,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   @override
   Future<void> close() {
-    streamSubscription.cancel();
+    _streamSubscription?.cancel();
     return super.close();
   }
 }

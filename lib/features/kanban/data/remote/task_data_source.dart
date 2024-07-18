@@ -40,6 +40,26 @@ abstract class TaskDataSource {
     await _taskReference.doc(task.id).delete();
   }
 
+  /// Updates every [Task] that has a [Task.status] as [status] to [newStatus].
+  static Future<void> updateTasksStatusToNewStatus(
+    String status,
+    String newStatus,
+  ) async {
+    final allTasks = await _taskReference.get();
+    final updatedTasks = allTasks.docs
+        .map((e) {
+          Task task = Task.fromJson(e);
+          if (task.status == status) {
+            task.status = newStatus;
+            return task;
+          }
+        })
+        .nonNulls
+        .toList();
+
+    await Future.wait([for (Task task in updatedTasks) updateTask(task)]);
+  }
+
   static Future<void> deleteAllTasksWithStatus(String status) async {
     final allTasks = await _taskReference.get();
     final allTasksWithStatus = allTasks.docs

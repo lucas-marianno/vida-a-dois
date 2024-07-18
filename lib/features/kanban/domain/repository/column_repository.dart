@@ -12,27 +12,25 @@ class ColumnRepository {
   ColumnRepository(this.context);
 
   Future<void> createColumn() async {
-    // ColumnEntity mockColumn = ColumnEntity(title: 'test7', index: 2);
-    // TODO: get name from user
     final newColumn = await ColumnForm.newColumn(context);
 
     if (newColumn == null || newColumn.title.isEmpty) return;
 
     // update columns list
-    // await ColumnDataSource.createColumn(newColumn);
+    await ColumnDataSource.createColumn(newColumn);
   }
 
-  Future<void> renameColumn(ColumnEntity column) async {
-    // TODO: get name from user
+  Future<void> updateColumn(ColumnEntity column) async {
+    final newColumn = await ColumnForm.readColumn(column, context);
 
-    // TODO: update columns list
+    if (newColumn == null || newColumn.equals(column)) return;
+
+    await ColumnDataSource.updateColumn(column, newColumn);
   }
-
-  void updateColumn() {}
 
   Future<void> deleteColumn(ColumnEntity column) async {
     final response = await Dialogs(context).alertDialog(
-      title: 'Excluir tarefa?',
+      title: 'Excluir coluna?',
       content: 'Tem certeza que deseja exluir a coluna "${column.title}"?'
           '\n'
           '\n'
@@ -46,8 +44,9 @@ class ColumnRepository {
 
     if (response != true) return;
 
-    await TaskDataSource.deleteAllTasksWithStatus(column.title);
-
-    await ColumnDataSource.deleteColumn(column);
+    await Future.wait([
+      ColumnDataSource.deleteColumn(column),
+      TaskDataSource.deleteAllTasksWithStatus(column.title),
+    ]);
   }
 }

@@ -19,7 +19,7 @@ class Task {
     this.description,
     this.assingnee = TaskAssignee.anyone,
     this.taskImportance = TaskImportance.normal,
-    this.status = 'todo',
+    required this.status,
     this.dueDate,
     this.createdDate,
   });
@@ -37,7 +37,7 @@ class Task {
       description: json['description'],
       assingnee: TaskAssignee.fromString(json['assingnedTo']),
       taskImportance: TaskImportance.fromString(json['taskImportance']),
-      status: json['status'].toString(),
+      status: json['status'],
       dueDate: json['dueDate'],
       createdDate: json['createdDate'],
     );

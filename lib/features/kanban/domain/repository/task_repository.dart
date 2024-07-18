@@ -16,50 +16,57 @@ class TaskRepository {
   Future<void> createTask() async {
     final newTask = await TaskForm.newTask(context);
 
-    if (newTask != null) {
-      await TaskDataSource.createTask(newTask);
-    }
+    if (newTask == null) return;
+
+    await TaskDataSource.createTask(newTask);
   }
 
-  void readTask(Task task) async {
+  Future<void> readTask(Task task) async {
     final newTask = await TaskForm.readTask(task, context);
 
     if (newTask == null) return;
 
     if (task.status != newTask.status) {
-      TaskDataSource.deleteTask(task);
-      TaskDataSource.createTask(newTask);
+      await Future.wait([
+        TaskDataSource.deleteTask(task),
+        TaskDataSource.createTask(newTask),
+      ]);
     } else {
-      TaskDataSource.updateTask(newTask);
+      await TaskDataSource.updateTask(newTask);
     }
   }
 
-  void updateTaskImportance(Task task, TaskImportance taskImportance) {
+  Future<void> updateTaskImportance(
+    Task task,
+    TaskImportance taskImportance,
+  ) async {
     if (task.taskImportance == taskImportance) return;
 
     final newTask = task.copy()..taskImportance = taskImportance;
 
-    TaskDataSource.updateTask(newTask);
+    await TaskDataSource.updateTask(newTask);
   }
 
-  void updateTaskAssignee(Task task, TaskAssignee assignee) {
+  Future<void> updateTaskAssignee(Task task, TaskAssignee assignee) async {
     if (task.assingnee == assignee) return;
 
     final newTask = task.copy()..assingnee = assignee;
 
-    TaskDataSource.updateTask(newTask);
+    await TaskDataSource.updateTask(newTask);
   }
 
-  void updateTaskStatus(Task task, String newStatus) {
+  Future<void> updateTaskStatus(Task task, String newStatus) async {
     if (task.status == newStatus) return;
 
     final newTask = task.copy()..status = newStatus;
 
-    TaskDataSource.deleteTask(task);
-    TaskDataSource.createTask(newTask);
+    await Future.wait([
+      TaskDataSource.deleteTask(task),
+      TaskDataSource.createTask(newTask),
+    ]);
   }
 
-  void deleteTask(Task task) async {
+  Future<void> deleteTask(Task task) async {
     final response = await Dialogs(context).alertDialog(
       title: 'Excluir tarefa?',
       content: 'Tem certeza que deseja exluir a tarefa "${task.title}"?'
@@ -72,6 +79,6 @@ class TaskRepository {
 
     if (response != true) return;
 
-    TaskDataSource.deleteTask(task);
+    await TaskDataSource.deleteTask(task);
   }
 }

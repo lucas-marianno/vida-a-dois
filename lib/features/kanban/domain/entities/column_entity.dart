@@ -1,6 +1,6 @@
 class ColumnEntity {
   String title;
-  int? index;
+  int index;
 
   ColumnEntity({
     required this.title,
@@ -21,5 +21,9 @@ class ColumnEntity {
     };
   }
 
+  /// Returns a new [ColumnEntity] with the same values as the original.
   ColumnEntity copy() => ColumnEntity.fromJson(toJson);
+
+  /// Compares each item value in both columns and returns [true] or [false].
+  bool equals(ColumnEntity column) => '${column.toJson}' == '$toJson';
 }

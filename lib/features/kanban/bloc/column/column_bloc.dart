@@ -10,12 +10,17 @@ import 'package:kanban/features/kanban/domain/repository/column_repository.dart'
 part 'column_event.dart';
 part 'column_state.dart';
 
-// TODO: Implement columns CRUD
 class ColumnsBloc extends Bloc<ColumnsEvent, ColumnsState> {
+  /// Do not use [statusList]!
+  ///
+  /// A new way to quickly access the latest statusList without new API calls
+  /// must be implemented.
+  @Deprecated("statusList should not be used!")
   static List<ColumnEntity> statusList = [];
+
   final _columnsStream = ColumnDataSource.readColumns;
   late final StreamSubscription _columnsSubscription;
-  late final ColumnRepository columnRepo;
+  late final ColumnRepository _columnRepo;
 
   ColumnsBloc() : super(ColumnLoadingState()) {
     on<ColumnsInitialEvent>(_onColumnsInitialEvent);
@@ -24,13 +29,14 @@ class ColumnsBloc extends Bloc<ColumnsEvent, ColumnsState> {
     on<CreateColumnEvent>(_onCreateColumnEvent);
     on<RenameColumnEvent>(_onRenameColumnEvent);
     on<DeleteColumnEvent>(_onDeleteColumnEvent);
+    on<HandleColumnsException>(_onHandleColumnsException);
   }
 
   _onColumnsInitialEvent(
     ColumnsInitialEvent event,
     Emitter<ColumnsState> emit,
   ) {
-    columnRepo = ColumnRepository(event.context);
+    _columnRepo = ColumnRepository(event.context);
     add(LoadColumnsEvent());
   }
 
@@ -56,9 +62,10 @@ class ColumnsBloc extends Bloc<ColumnsEvent, ColumnsState> {
     Emitter<ColumnsState> emit,
   ) async {
     try {
-      await columnRepo.createColumn();
+      await _columnRepo.createColumn();
     } catch (e) {
-      emit(ColumnErrorState(e.toString()));
+      throw UnimplementedError(
+          "$e: \n${e.toString()} \n\n Implement error handling");
     }
   }
 
@@ -67,9 +74,10 @@ class ColumnsBloc extends Bloc<ColumnsEvent, ColumnsState> {
     Emitter<ColumnsState> emit,
   ) async {
     try {
-      await columnRepo.renameColumn(event.column);
+      await _columnRepo.updateColumn(event.column);
     } catch (e) {
-      emit(ColumnErrorState(e.toString()));
+      throw UnimplementedError(
+          "$e: \n${e.toString()} \n\n Implement error handling");
     }
   }
 
@@ -78,10 +86,19 @@ class ColumnsBloc extends Bloc<ColumnsEvent, ColumnsState> {
     Emitter<ColumnsState> emit,
   ) async {
     try {
-      await columnRepo.deleteColumn(event.column);
+      await _columnRepo.deleteColumn(event.column);
     } catch (e) {
-      emit(ColumnErrorState(e.toString()));
+      throw UnimplementedError(
+          "$e: \n${e.toString()} \n\n Implement error handling");
     }
+  }
+
+  _onHandleColumnsException(
+    HandleColumnsException event,
+    Emitter<ColumnsState> emit,
+  ) async {
+    //TODO: finish implementing this
+    throw UnimplementedError();
   }
 
   @override

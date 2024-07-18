@@ -46,3 +46,16 @@ class DeleteColumnEvent extends ColumnsEvent {
   @override
   List<Object> get props => [column];
 }
+
+class HandleColumnsException extends ColumnsEvent {
+  final String errorTitle;
+  final String errorMessage;
+
+  const HandleColumnsException({
+    this.errorTitle = '',
+    required this.errorMessage,
+  });
+
+  @override
+  List<Object> get props => [errorTitle, errorMessage];
+}
