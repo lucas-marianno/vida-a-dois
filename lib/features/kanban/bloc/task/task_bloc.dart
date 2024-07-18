@@ -34,7 +34,10 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   _onCreateTaskEvent(CreateTaskEvent event, Emitter<TaskState> emit) async {
-    await _taskRepo.createTask();
+    await _taskRepo.createTask(Task(
+      title: 'Nova Tarefa',
+      status: event.currentColumn.title,
+    ));
   }
 
   _onReadTaskEvent(ReadTaskEvent event, Emitter<TaskState> emit) async {

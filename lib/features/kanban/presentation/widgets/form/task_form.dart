@@ -29,12 +29,16 @@ enum _TaskFormType {
 }
 
 class TaskForm {
-  static Future<Task?> newTask(BuildContext context) async {
-    return await _showModal(null, context, _TaskFormType.create);
-  }
-
-  static Future<Task?> readTask(Task task, BuildContext context) async {
-    return await _showModal(task, context, _TaskFormType.read);
+  static Future<Task?> readTask(
+    Task task,
+    BuildContext context, {
+    bool initAsReadOnly = true,
+  }) async {
+    return await _showModal(
+      task,
+      context,
+      initAsReadOnly ? _TaskFormType.read : _TaskFormType.create,
+    );
   }
 
   static Future<Task?> _showModal(

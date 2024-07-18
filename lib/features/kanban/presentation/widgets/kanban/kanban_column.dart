@@ -54,7 +54,7 @@ class KanbanColumn extends StatelessWidget {
               }
             },
           ),
-          const KanbanAddTaskButton(),
+          KanbanAddTaskButton(column),
         ],
       ),
     );

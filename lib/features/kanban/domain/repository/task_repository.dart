@@ -13,8 +13,12 @@ class TaskRepository {
 
   TaskRepository(this.context);
 
-  Future<void> createTask() async {
-    final newTask = await TaskForm.newTask(context);
+  Future<void> createTask(Task initialTask) async {
+    final newTask = await TaskForm.readTask(
+      initialTask,
+      context,
+      initAsReadOnly: false,
+    );
 
     if (newTask == null) return;
 
@@ -26,14 +30,7 @@ class TaskRepository {
 
     if (newTask == null) return;
 
-    if (task.status != newTask.status) {
-      await Future.wait([
-        TaskDataSource.deleteTask(task),
-        TaskDataSource.createTask(newTask),
-      ]);
-    } else {
-      await TaskDataSource.updateTask(newTask);
-    }
+    await TaskDataSource.updateTask(newTask);
   }
 
   Future<void> updateTaskImportance(
@@ -58,12 +55,7 @@ class TaskRepository {
   Future<void> updateTaskStatus(Task task, String newStatus) async {
     if (task.status == newStatus) return;
 
-    final newTask = task.copy()..status = newStatus;
-
-    await Future.wait([
-      TaskDataSource.deleteTask(task),
-      TaskDataSource.createTask(newTask),
-    ]);
+    await TaskDataSource.updateTask(task..status = newStatus);
   }
 
   Future<void> deleteTask(Task task) async {

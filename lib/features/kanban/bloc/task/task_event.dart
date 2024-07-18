@@ -35,7 +35,14 @@ class TasksUpdatedEvent extends TaskEvent {
   List<Object> get props => [updatedTasks];
 }
 
-class CreateTaskEvent extends TaskEvent {}
+class CreateTaskEvent extends TaskEvent {
+  final ColumnEntity currentColumn;
+
+  const CreateTaskEvent(this.currentColumn);
+
+  @override
+  List<Object> get props => [currentColumn];
+}
 
 class ReadTaskEvent extends TaskEvent {
   final Task task;
