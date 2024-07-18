@@ -50,14 +50,7 @@ class TaskForm {
       isScrollControlled: true,
       context: context,
       builder: (context) {
-        return MultiBlocProvider(
-          providers: [
-            BlocProvider(create: (context) {
-              return TaskBloc()..add(TaskInitialEvent(context));
-            }),
-          ],
-          child: _EditTaskForm(task, formType: formType),
-        );
+        return _EditTaskForm(task, formType: formType);
       },
     );
   }

@@ -12,12 +12,21 @@ class KanbanPage extends StatefulWidget {
 }
 
 class _KanbanPageState extends State<KanbanPage> {
+  late final ColumnsBloc columnsBloc;
+  late final TaskBloc taskBloc;
   ScrollController scrlCtrl = ScrollController();
 
   @override
+  void initState() {
+    super.initState();
+
+    columnsBloc = context.read<ColumnsBloc>()
+      ..add(ColumnsInitialEvent(context));
+    taskBloc = context.read<TaskBloc>()..add(TaskInitialEvent(context));
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final columnsBloc = context.read<ColumnsBloc>();
-    final taskBloc = context.read<TaskBloc>();
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
       appBar: AppBar(

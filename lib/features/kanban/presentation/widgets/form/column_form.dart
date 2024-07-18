@@ -49,14 +49,7 @@ class ColumnForm {
       isScrollControlled: true,
       context: context,
       builder: (context) {
-        return MultiBlocProvider(
-          providers: [
-            BlocProvider(create: (context) {
-              return ColumnsBloc()..add(ColumnsInitialEvent(context));
-            }),
-          ],
-          child: _EditColumnForm(column, formType: formType),
-        );
+        return _EditColumnForm(column, formType: formType);
       },
     );
   }
