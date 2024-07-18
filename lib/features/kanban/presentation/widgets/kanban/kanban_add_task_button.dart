@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/features/kanban/bloc/task/task_bloc.dart';
 
+///TODO: refactor [KanbanAddTaskButton] to initialize task creation with current column status
 class KanbanAddTaskButton extends StatelessWidget {
   const KanbanAddTaskButton({super.key});
 

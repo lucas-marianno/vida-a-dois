@@ -31,8 +31,18 @@ class CreateColumnEvent extends ColumnsEvent {}
 
 class RenameColumnEvent extends ColumnsEvent {
   final ColumnEntity column;
+  final String newColumnTitle;
 
-  const RenameColumnEvent(this.column);
+  const RenameColumnEvent(this.column, this.newColumnTitle);
+
+  @override
+  List<Object> get props => [newColumnTitle];
+}
+
+class EditColumnEvent extends ColumnsEvent {
+  final ColumnEntity column;
+
+  const EditColumnEvent(this.column);
 
   @override
   List<Object> get props => [column];

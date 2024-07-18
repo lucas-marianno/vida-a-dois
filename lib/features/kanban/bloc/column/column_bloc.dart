@@ -28,6 +28,7 @@ class ColumnsBloc extends Bloc<ColumnsEvent, ColumnsState> {
     on<ColumnsUpdatedEvent>(_onColumnsUpdatedEvent);
     on<CreateColumnEvent>(_onCreateColumnEvent);
     on<RenameColumnEvent>(_onRenameColumnEvent);
+    on<EditColumnEvent>(_onEditColumnEvent);
     on<DeleteColumnEvent>(_onDeleteColumnEvent);
     on<HandleColumnsException>(_onHandleColumnsException);
   }
@@ -71,6 +72,16 @@ class ColumnsBloc extends Bloc<ColumnsEvent, ColumnsState> {
 
   _onRenameColumnEvent(
     RenameColumnEvent event,
+    Emitter<ColumnsState> emit,
+  ) async {
+    await ColumnDataSource.updateColumnTitle(
+      event.column,
+      event.newColumnTitle,
+    );
+  }
+
+  _onEditColumnEvent(
+    EditColumnEvent event,
     Emitter<ColumnsState> emit,
   ) async {
     try {

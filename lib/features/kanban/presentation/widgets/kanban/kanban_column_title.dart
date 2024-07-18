@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/features/kanban/bloc/column/column_bloc.dart';
 import 'package:kanban/features/kanban/domain/entities/column_entity.dart';
 
-class KanbanColumnTitle extends StatelessWidget {
+class KanbanColumnTitle extends StatefulWidget {
   final ColumnEntity column;
 
   const KanbanColumnTitle({
@@ -12,52 +12,88 @@ class KanbanColumnTitle extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final columnBloc = context.read<ColumnsBloc>();
+  State<KanbanColumnTitle> createState() => _KanbanColumnTitleState();
+}
 
-    return Container(
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(10),
-          topRight: Radius.circular(10),
+class _KanbanColumnTitleState extends State<KanbanColumnTitle> {
+  late final ColumnsBloc columnBloc;
+  TextEditingController controller = TextEditingController();
+  bool editMode = false;
+
+  void toggleEditMode() => setState(() => editMode = !editMode);
+
+  void renameColumn() {
+    final newTitle = controller.text;
+
+    columnBloc.add(RenameColumnEvent(widget.column, newTitle));
+
+    toggleEditMode();
+    controller.clear();
+  }
+
+  void deleteColumn() {
+    columnBloc.add(DeleteColumnEvent(widget.column));
+  }
+
+  void editColumn() {
+    columnBloc.add(EditColumnEvent(widget.column));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    columnBloc = context.read<ColumnsBloc>();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (editMode) {
+      controller.text = widget.column.title;
+      return ListTile(
+        leading: IconButton(
+          onPressed: toggleEditMode,
+          icon: const Icon(Icons.close),
         ),
+        title: TextField(
+          decoration: const InputDecoration(border: OutlineInputBorder()),
+          controller: controller,
+          style: Theme.of(context).textTheme.titleMedium,
+          autofocus: true,
+          onSubmitted: (_) => renameColumn(),
+        ),
+        trailing: IconButton(
+          onPressed: renameColumn,
+          icon: const Icon(Icons.check),
+        ),
+      );
+    }
+
+    return ListTile(
+      leading: const SizedBox(width: 0),
+      titleAlignment: ListTileTitleAlignment.center,
+      title: Text(
+        widget.column.title,
+        style: Theme.of(context).textTheme.titleMedium,
+        textAlign: TextAlign.center,
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const SizedBox(width: 30),
-          Text(
-            column.title.toUpperCase(),
-            style: const TextStyle(
-              // color: Colors.white,
-              // fontWeight: FontWeight.w900,
-              letterSpacing: 3,
+      trailing: PopupMenuButton(
+        tooltip: 'Opções',
+        itemBuilder: (context) {
+          return [
+            PopupMenuItem(
+              onTap: deleteColumn,
+              child: const Text('Excluir'),
             ),
-          ),
-          PopupMenuButton(
-            tooltip: 'Opções',
-            itemBuilder: (context) {
-              return [
-                PopupMenuItem(
-                  child: const Text('Excluir'),
-                  onTap: () => columnBloc.add(DeleteColumnEvent(column)),
-                ),
-                PopupMenuItem(
-                  child: const Text('Renomear'),
-                  onTap: () => columnBloc.add(RenameColumnEvent(column)),
-                ),
-                const PopupMenuItem(child: Text('Mover?')),
-              ];
-            },
-          ),
-          // IconButton(
-          //   visualDensity: VisualDensity.compact,
-          //   icon: const Icon(Icons.more_vert),
-          //   onPressed: () {
-          //     //TODO: create sortby functionallity
-          //   },
-          // )
-        ],
+            PopupMenuItem(
+              onTap: editColumn,
+              child: const Text('Editar'),
+            ),
+            PopupMenuItem(
+              onTap: toggleEditMode,
+              child: const Text('Renomear'),
+            ),
+          ];
+        },
       ),
     );
   }

@@ -36,22 +36,23 @@ abstract class ColumnDataSource {
   ) async {
     if (column.equals(newColumn)) return;
 
-    await _updateColumnTitle(column, newColumn.title);
+    await updateColumnTitle(column, newColumn.title);
     await _updateColumnIndex(column..title = newColumn.title, newColumn.index);
   }
 
-  static Future<void> _updateColumnTitle(
+  static Future<void> updateColumnTitle(
     ColumnEntity column,
     String newTitle,
   ) async {
     if (column.title == newTitle) return;
 
-    await TaskDataSource.updateTasksStatusToNewStatus(column.title, newTitle);
-
     final columns = await _getColumns;
-    columns[column.index] = (column..title = newTitle);
+    columns[column.index] = (column.copy()..title = newTitle);
 
-    await _updateColumns(columns);
+    await Future.wait([
+      TaskDataSource.updateTasksStatusToNewStatus(column.title, newTitle),
+      _updateColumns(columns),
+    ]);
   }
 
   static Future<void> _updateColumnIndex(

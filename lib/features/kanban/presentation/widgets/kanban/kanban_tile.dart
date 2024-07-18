@@ -63,12 +63,14 @@ class _KanbanTileState extends State<KanbanTile> {
 
     return LongPressDraggable(
       onDragUpdate: (details) async {
-        final pos = details.globalPosition.dx;
-        if (pos < maxLeft + sentitiveArea) {
-          await startScrollingPage(false);
-        } else if (pos > maxRight - sentitiveArea) {
-          await startScrollingPage(true);
-        }
+        // TODO: this is horrible, refactor this.
+
+        // final pos = details.globalPosition.dx;
+        // if (pos < maxLeft + sentitiveArea) {
+        //   await startScrollingPage(false);
+        // } else if (pos > maxRight - sentitiveArea) {
+        //   await startScrollingPage(true);
+        // }
       },
       data: widget.task,
       feedback: Material(
