@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/features/kanban/bloc/task/task_bloc.dart';
-import 'package:kanban/features/kanban/domain/entities/column_entity.dart';
+import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 
 class KanbanAddTaskButton extends StatelessWidget {
-  final ColumnEntity currentColumn;
-  const KanbanAddTaskButton(this.currentColumn, {super.key});
+  final BoardEntity currentBoard;
+  const KanbanAddTaskButton(this.currentBoard, {super.key});
 
   void addTask(BuildContext context) {
-    context.read<TaskBloc>().add(CreateTaskEvent(currentColumn));
+    context.read<TaskBloc>().add(CreateTaskEvent(currentBoard));
   }
 
   @override

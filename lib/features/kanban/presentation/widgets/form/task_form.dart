@@ -5,7 +5,7 @@ import 'package:kanban/features/kanban/bloc/task/task_bloc.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_assignee.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
 import 'package:kanban/core/widgets/form/modal_form.dart';
-import 'package:kanban/features/kanban/bloc/column/column_bloc.dart';
+import 'package:kanban/features/kanban/bloc/board/board_bloc.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 
 enum _TaskFormType {
@@ -55,7 +55,7 @@ class _EditTaskForm extends StatefulWidget {
 
 class _EditTaskFormState extends State<_EditTaskForm> {
   late TaskBloc taskBloc;
-  late ColumnsBloc columnBloc;
+  late BoardBloc boardBloc;
   late Task newTask;
   late bool readOnly;
   late _TaskFormType formType;
@@ -93,11 +93,11 @@ class _EditTaskFormState extends State<_EditTaskForm> {
     newTask = widget.task?.copy() ??
         Task(
           title: 'Nova tarefa',
-          status: columnBloc.statusList[0].title,
+          status: boardBloc.statusList[0].title,
         );
     formType = widget.formType;
     taskBloc = context.read<TaskBloc>();
-    columnBloc = context.read<ColumnsBloc>();
+    boardBloc = context.read<BoardBloc>();
   }
 
   @override
@@ -165,7 +165,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
               flex: 1,
               enabled: !readOnly,
               initialValue: newTask.status,
-              items: columnBloc.statusList.map((e) => e.title).toList(),
+              items: boardBloc.statusList.map((e) => e.title).toList(),
               onChanged: (newValue) {
                 newTask.status = newValue ??= newTask.status;
               },

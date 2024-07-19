@@ -1,54 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kanban/features/kanban/bloc/column/column_bloc.dart';
-import 'package:kanban/features/kanban/domain/entities/column_entity.dart';
+import 'package:kanban/features/kanban/bloc/board/board_bloc.dart';
+import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 
-class KanbanColumnTitle extends StatefulWidget {
-  final ColumnEntity column;
+class KanbanBoardTitle extends StatefulWidget {
+  final BoardEntity board;
 
-  const KanbanColumnTitle({
+  const KanbanBoardTitle({
     super.key,
-    required this.column,
+    required this.board,
   });
 
   @override
-  State<KanbanColumnTitle> createState() => _KanbanColumnTitleState();
+  State<KanbanBoardTitle> createState() => _KanbanBoardTitleState();
 }
 
-class _KanbanColumnTitleState extends State<KanbanColumnTitle> {
-  late final ColumnsBloc columnBloc;
+class _KanbanBoardTitleState extends State<KanbanBoardTitle> {
+  late final BoardBloc boardBloc;
   TextEditingController controller = TextEditingController();
   bool editMode = false;
 
   void toggleEditMode() => setState(() => editMode = !editMode);
 
-  void renameColumn() {
+  void renameBoard() {
     final newTitle = controller.text;
 
-    columnBloc.add(RenameColumnEvent(widget.column, newTitle));
+    boardBloc.add(RenameBoardEvent(widget.board, newTitle));
 
     toggleEditMode();
     controller.clear();
   }
 
-  void deleteColumn() {
-    columnBloc.add(DeleteColumnEvent(widget.column));
+  void deleteBoard() {
+    boardBloc.add(DeleteBoardEvent(widget.board));
   }
 
-  void editColumn() {
-    columnBloc.add(EditColumnEvent(widget.column));
+  void editBoard() {
+    boardBloc.add(EditBoardEvent(widget.board));
   }
 
   @override
   void initState() {
     super.initState();
-    columnBloc = context.read<ColumnsBloc>();
+    boardBloc = context.read<BoardBloc>();
   }
 
   @override
   Widget build(BuildContext context) {
     if (editMode) {
-      controller.text = widget.column.title;
+      controller.text = widget.board.title;
       return ListTile(
         leading: IconButton(
           onPressed: toggleEditMode,
@@ -59,10 +59,10 @@ class _KanbanColumnTitleState extends State<KanbanColumnTitle> {
           controller: controller,
           style: Theme.of(context).textTheme.titleMedium,
           autofocus: true,
-          onSubmitted: (_) => renameColumn(),
+          onSubmitted: (_) => renameBoard(),
         ),
         trailing: IconButton(
-          onPressed: renameColumn,
+          onPressed: renameBoard,
           icon: const Icon(Icons.check),
         ),
       );
@@ -72,7 +72,7 @@ class _KanbanColumnTitleState extends State<KanbanColumnTitle> {
       leading: const SizedBox(width: 0),
       titleAlignment: ListTileTitleAlignment.center,
       title: Text(
-        widget.column.title,
+        widget.board.title,
         style: Theme.of(context).textTheme.titleMedium,
         textAlign: TextAlign.center,
       ),
@@ -81,11 +81,11 @@ class _KanbanColumnTitleState extends State<KanbanColumnTitle> {
         itemBuilder: (context) {
           return [
             PopupMenuItem(
-              onTap: deleteColumn,
+              onTap: deleteBoard,
               child: const Text('Excluir'),
             ),
             PopupMenuItem(
-              onTap: editColumn,
+              onTap: editBoard,
               child: const Text('Editar'),
             ),
             PopupMenuItem(

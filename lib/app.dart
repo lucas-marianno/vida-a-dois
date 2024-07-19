@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/core/constants/routes.dart';
 import 'package:kanban/core/theme/app_theme.dart';
-import 'package:kanban/features/kanban/bloc/column/column_bloc.dart';
+import 'package:kanban/features/kanban/bloc/board/board_bloc.dart';
 import 'package:kanban/features/kanban/bloc/task/task_bloc.dart';
 
 class VidaADoidApp extends StatelessWidget {
@@ -12,8 +12,8 @@ class VidaADoidApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<ColumnsBloc>(
-          create: (context) => ColumnsBloc(),
+        BlocProvider<BoardBloc>(
+          create: (context) => BoardBloc(),
         ),
         BlocProvider<TaskBloc>(
           create: (context) => TaskBloc(),

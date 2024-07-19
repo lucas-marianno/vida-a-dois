@@ -17,31 +17,31 @@ class TaskInitialEvent extends TaskEvent {
 }
 
 class LoadTasksEvent extends TaskEvent {
-  final List<ColumnEntity> columnList;
+  final List<BoardEntity> boardList;
 
-  const LoadTasksEvent(this.columnList);
+  const LoadTasksEvent(this.boardList);
 
   @override
-  List<Object> get props => [columnList];
+  List<Object> get props => [boardList];
 }
 
 class TasksUpdatedEvent extends TaskEvent {
   final List<Task> updatedTasks;
-  final List<ColumnEntity> columnList;
+  final List<BoardEntity> boardList;
 
-  const TasksUpdatedEvent(this.updatedTasks, this.columnList);
+  const TasksUpdatedEvent(this.updatedTasks, this.boardList);
 
   @override
   List<Object> get props => [updatedTasks];
 }
 
 class CreateTaskEvent extends TaskEvent {
-  final ColumnEntity currentColumn;
+  final BoardEntity currentBoard;
 
-  const CreateTaskEvent(this.currentColumn);
+  const CreateTaskEvent(this.currentBoard);
 
   @override
-  List<Object> get props => [currentColumn];
+  List<Object> get props => [currentBoard];
 }
 
 class ReadTaskEvent extends TaskEvent {

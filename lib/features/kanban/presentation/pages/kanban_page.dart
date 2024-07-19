@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kanban/features/kanban/bloc/column/column_bloc.dart';
+import 'package:kanban/features/kanban/bloc/board/board_bloc.dart';
 import 'package:kanban/features/kanban/bloc/task/task_bloc.dart';
-import '../widgets/kanban/kanban_column.dart';
+import '../widgets/kanban/kanban_board.dart';
 
 class KanbanPage extends StatefulWidget {
   const KanbanPage({super.key});
@@ -12,7 +12,7 @@ class KanbanPage extends StatefulWidget {
 }
 
 class _KanbanPageState extends State<KanbanPage> {
-  late final ColumnsBloc columnsBloc;
+  late final BoardBloc boardBloc;
   late final TaskBloc taskBloc;
   ScrollController scrlCtrl = ScrollController();
 
@@ -20,8 +20,7 @@ class _KanbanPageState extends State<KanbanPage> {
   void initState() {
     super.initState();
 
-    columnsBloc = context.read<ColumnsBloc>()
-      ..add(ColumnsInitialEvent(context));
+    boardBloc = context.read<BoardBloc>()..add(BoardInitialEvent(context));
     taskBloc = context.read<TaskBloc>()..add(TaskInitialEvent(context));
   }
 
@@ -42,23 +41,23 @@ class _KanbanPageState extends State<KanbanPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
-        child: BlocBuilder<ColumnsBloc, ColumnsState>(
+        child: BlocBuilder<BoardBloc, BoardsState>(
           builder: (context, state) {
-            if (state is ColumnLoadingState) {
+            if (state is BoardLoadingState) {
               return const Center(child: CircularProgressIndicator());
-            } else if (state is ColumnLoadedState) {
-              final columns = state.columns;
+            } else if (state is BoardLoadedState) {
+              final boards = state.boards;
 
-              taskBloc.add(LoadTasksEvent(columns));
+              taskBloc.add(LoadTasksEvent(boards));
 
               return ListView.builder(
                 controller: scrlCtrl,
                 scrollDirection: Axis.horizontal,
-                itemCount: columns.length + 1,
+                itemCount: boards.length + 1,
                 itemBuilder: (context, index) {
-                  if (index < columns.length) {
-                    return KanbanColumn(
-                      column: state.columns[index],
+                  if (index < boards.length) {
+                    return KanbanBoard(
+                      board: state.boards[index],
                       horizontalParentScrollController: scrlCtrl,
                     );
                   } else {
@@ -67,20 +66,20 @@ class _KanbanPageState extends State<KanbanPage> {
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: ElevatedButton(
                           child: const Icon(Icons.add),
-                          onPressed: () => columnsBloc.add(CreateColumnEvent()),
+                          onPressed: () => boardBloc.add(CreateBoardEvent()),
                         ),
                       ),
                     );
                   }
                 },
               );
-            } else if (state is ColumnErrorState) {
+            } else if (state is BoardErrorState) {
               return Center(
                 child: Text(state.error),
               );
             } else {
               throw UnimplementedError(
-                  '$state implementation wasn\'t found in $ColumnsState!');
+                  '$state implementation wasn\'t found in $BoardsState!');
             }
           },
         ),

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_assignee.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
 import 'package:kanban/features/kanban/data/remote/task_data_source.dart';
-import 'package:kanban/features/kanban/domain/entities/column_entity.dart';
+import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 import 'package:kanban/features/kanban/domain/repository/task_repository.dart';
 import 'package:kanban/features/kanban/util/parse_tasklist_into_taskmap.dart';
@@ -36,7 +36,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   _onCreateTaskEvent(CreateTaskEvent event, Emitter<TaskState> emit) async {
     await _taskRepo.createTask(Task(
       title: 'Nova Tarefa',
-      status: event.currentColumn.title,
+      status: event.currentBoard.title,
     ));
   }
 
@@ -67,7 +67,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       final taskStream = TaskDataSource.readTasks;
 
       _streamSubscription = taskStream.listen((data) {
-        add(TasksUpdatedEvent(data, event.columnList));
+        add(TasksUpdatedEvent(data, event.boardList));
       });
     } catch (e) {
       emit(TasksErrorState(e.toString()));
@@ -77,7 +77,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   _onTasksUpdatedEvent(TasksUpdatedEvent event, Emitter<TaskState> emit) async {
     final organized = parseListIntoMap(
       event.updatedTasks,
-      event.columnList,
+      event.boardList,
     );
     emit(TasksLoadedState(organized));
   }

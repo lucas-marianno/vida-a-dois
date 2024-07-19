@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/features/kanban/bloc/task/task_bloc.dart';
-import 'package:kanban/features/kanban/domain/entities/column_entity.dart';
-import 'package:kanban/features/kanban/presentation/widgets/kanban/column_drag_target.dart';
-import 'package:kanban/features/kanban/presentation/widgets/kanban/kanban_column_title.dart';
+import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
+import 'package:kanban/features/kanban/presentation/widgets/kanban/board_drag_target.dart';
+import 'package:kanban/features/kanban/presentation/widgets/kanban/kanban_board_title.dart';
 import 'kanban_add_task_button.dart';
 
-class KanbanColumn extends StatelessWidget {
-  final ColumnEntity column;
+class KanbanBoard extends StatelessWidget {
+  final BoardEntity board;
   final ScrollController horizontalParentScrollController;
-  const KanbanColumn({
-    required this.column,
+  const KanbanBoard({
+    required this.board,
     required this.horizontalParentScrollController,
     super.key,
   });
@@ -32,14 +32,14 @@ class KanbanColumn extends StatelessWidget {
       ),
       child: Column(
         children: [
-          KanbanColumnTitle(column: column),
+          KanbanBoardTitle(board: board),
           BlocBuilder<TaskBloc, TaskState>(
             builder: (context, state) {
               if (state is TasksLoadingState) {
                 return loading(context);
               } else if (state is TasksLoadedState) {
-                return KanbanColumnDragTarget(
-                  column: column,
+                return KanbanBoardDragTarget(
+                  board: board,
                   width: width,
                   mappedTasks: state.mappedTasks,
                   horizontalParentScrollController:
@@ -54,7 +54,7 @@ class KanbanColumn extends StatelessWidget {
               }
             },
           ),
-          KanbanAddTaskButton(column),
+          KanbanAddTaskButton(board),
         ],
       ),
     );

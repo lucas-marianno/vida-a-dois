@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kanban/features/kanban/domain/entities/column_entity.dart';
+import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 import 'package:kanban/core/widgets/form/modal_form.dart';
-import 'package:kanban/features/kanban/bloc/column/column_bloc.dart';
+import 'package:kanban/features/kanban/bloc/board/board_bloc.dart';
 
-enum _ColumnFormType {
+enum _BoardFormType {
   create,
   edit,
   read;
@@ -21,9 +21,9 @@ enum _ColumnFormType {
   }
 }
 
-class ColumnForm {
-  static Future<ColumnEntity?> readColumn(
-    ColumnEntity column,
+class BoardForm {
+  static Future<BoardEntity?> readBoard(
+    BoardEntity board,
     BuildContext context, {
     bool initAsReadOnly = true,
   }) async {
@@ -31,51 +31,51 @@ class ColumnForm {
       isScrollControlled: true,
       context: context,
       builder: (context) {
-        return _EditColumnForm(
-          column,
+        return _EditBoardForm(
+          board,
           formType:
-              initAsReadOnly ? _ColumnFormType.read : _ColumnFormType.create,
+              initAsReadOnly ? _BoardFormType.read : _BoardFormType.create,
         );
       },
     );
   }
 }
 
-class _EditColumnForm extends StatefulWidget {
-  final ColumnEntity column;
-  final _ColumnFormType formType;
-  const _EditColumnForm(this.column, {required this.formType});
+class _EditBoardForm extends StatefulWidget {
+  final BoardEntity board;
+  final _BoardFormType formType;
+  const _EditBoardForm(this.board, {required this.formType});
 
   @override
-  State<_EditColumnForm> createState() => _EditColumnFormState();
+  State<_EditBoardForm> createState() => _EditBoardFormState();
 }
 
-class _EditColumnFormState extends State<_EditColumnForm> {
-  late ColumnsBloc columnsBloc;
-  late ColumnEntity newColumn;
+class _EditBoardFormState extends State<_EditBoardForm> {
+  late BoardBloc boardBloc;
+  late BoardEntity newBoard;
   late bool readOnly;
-  late _ColumnFormType formType;
+  late _BoardFormType formType;
 
   void cancelForm() => Navigator.pop(context);
   void sendForm() {
-    if (newColumn.title == '') return;
+    if (newBoard.title == '') return;
 
     toggleEditMode();
 
-    Navigator.pop(context, newColumn);
+    Navigator.pop(context, newBoard);
   }
 
-  void deleteColumnAndClose() {
+  void deleteBoardAndClose() {
     Navigator.pop(context);
 
-    columnsBloc.add(DeleteColumnEvent(widget.column));
+    boardBloc.add(DeleteBoardEvent(widget.board));
   }
 
   void toggleEditMode() {
     setState(() {
-      formType = formType == _ColumnFormType.edit
-          ? _ColumnFormType.read
-          : _ColumnFormType.edit;
+      formType = formType == _BoardFormType.edit
+          ? _BoardFormType.read
+          : _BoardFormType.edit;
     });
   }
 
@@ -83,17 +83,17 @@ class _EditColumnFormState extends State<_EditColumnForm> {
   void initState() {
     super.initState();
     formType = widget.formType;
-    columnsBloc = context.read<ColumnsBloc>();
-    newColumn = widget.column.copy()
-      ..index = widget.column.index.clamp(
+    boardBloc = context.read<BoardBloc>();
+    newBoard = widget.board.copy()
+      ..index = widget.board.index.clamp(
         0,
-        columnsBloc.statusList.length,
+        boardBloc.statusList.length,
       );
   }
 
   @override
   Widget build(BuildContext context) {
-    readOnly = formType == _ColumnFormType.read;
+    readOnly = formType == _BoardFormType.read;
 
     String formTitle = formType.typeTitle;
 
@@ -101,8 +101,8 @@ class _EditColumnFormState extends State<_EditColumnForm> {
       context: context,
       formTitle: FormTitle(
         title: formTitle,
-        onIconPressed: deleteColumnAndClose,
-        icon: formType != _ColumnFormType.edit ? null : Icons.delete,
+        onIconPressed: deleteBoardAndClose,
+        icon: formType != _BoardFormType.edit ? null : Icons.delete,
         color: Colors.red[800],
       ),
       body: [
@@ -116,25 +116,25 @@ class _EditColumnFormState extends State<_EditColumnForm> {
         MyFormField(
           label: 'Nome da coluna',
           enabled: !readOnly,
-          initialValue: newColumn.title,
+          initialValue: newBoard.title,
           onChanged: (newString) {
-            newColumn.title = newString!;
+            newBoard.title = newString!;
           },
           mandatory: true,
         ),
         () {
-          final items = columnsBloc.statusList.map((e) {
+          final items = boardBloc.statusList.map((e) {
                 return '${e.index} - Antes de "${e.title}"';
               }).toList() +
-              ['${columnsBloc.statusList.length} - Adicionar ao final'];
+              ['${boardBloc.statusList.length} - Adicionar ao final'];
           return FormDropDownMenuButton(
             enabled: !readOnly,
             label: 'Posição',
-            initialValue: items[newColumn.index],
+            initialValue: items[newBoard.index],
             items: items,
             onChanged: (e) {
-              newColumn.index =
-                  int.tryParse(e?.substring(0, 1) ?? '') ?? newColumn.index;
+              newBoard.index =
+                  int.tryParse(e?.substring(0, 1) ?? '') ?? newBoard.index;
             },
           );
         }(),
@@ -149,13 +149,13 @@ class _EditColumnFormState extends State<_EditColumnForm> {
                       foregroundColor: Theme.of(context).colorScheme.onPrimary,
                     )
                   : null,
-              onPressed: formType == _ColumnFormType.create
+              onPressed: formType == _BoardFormType.create
                   ? cancelForm
                   : toggleEditMode,
               child: Text(readOnly ? 'Editar Coluna' : '    Cancelar   '),
             ),
             FilledButton(
-              onPressed: formType == _ColumnFormType.read ? null : sendForm,
+              onPressed: formType == _BoardFormType.read ? null : sendForm,
               child: const Text('  Concluído  '),
             ),
           ],
