@@ -12,7 +12,11 @@ class ColumnRepository {
   ColumnRepository(this.context);
 
   Future<void> createColumn() async {
-    final newColumn = await ColumnForm.newColumn(context);
+    final newColumn = await ColumnForm.readColumn(
+      ColumnEntity(title: 'Nova coluna', index: 500),
+      context,
+      initAsReadOnly: false,
+    );
 
     if (newColumn == null || newColumn.title.isEmpty) return;
 

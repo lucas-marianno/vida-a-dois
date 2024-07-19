@@ -11,17 +11,6 @@ part 'column_event.dart';
 part 'column_state.dart';
 
 class ColumnsBloc extends Bloc<ColumnsEvent, ColumnsState> {
-  /// Do not use [statusList]!
-  ///
-  /// A new way to quickly access the latest statusList without new API calls
-  /// must be implemented.
-  @Deprecated("statusList should not be used!")
-  static List<ColumnEntity> statusList = [];
-
-  final _columnsStream = ColumnDataSource.readColumns;
-  late final StreamSubscription _columnsSubscription;
-  late final ColumnRepository _columnRepo;
-
   ColumnsBloc() : super(ColumnLoadingState()) {
     on<ColumnsInitialEvent>(_onColumnsInitialEvent);
     on<LoadColumnsEvent>(_onLoadColumnsEvent);
@@ -33,11 +22,20 @@ class ColumnsBloc extends Bloc<ColumnsEvent, ColumnsState> {
     on<HandleColumnsException>(_onHandleColumnsException);
   }
 
+  late List<ColumnEntity> _statusList;
+  late final BuildContext _context;
+  late final _columnsStream = ColumnDataSource.readColumns;
+  late final StreamSubscription _columnsSubscription;
+  late final ColumnRepository _columnRepo;
+
+  List<ColumnEntity> get statusList => _statusList;
+
   _onColumnsInitialEvent(
     ColumnsInitialEvent event,
     Emitter<ColumnsState> emit,
   ) {
-    _columnRepo = ColumnRepository(event.context);
+    _context = event.context;
+    _columnRepo = ColumnRepository(_context);
     add(LoadColumnsEvent());
   }
 
@@ -46,7 +44,7 @@ class ColumnsBloc extends Bloc<ColumnsEvent, ColumnsState> {
     Emitter<ColumnsState> emit,
   ) {
     _columnsSubscription = _columnsStream.listen((snapshot) {
-      statusList = snapshot;
+      _statusList = snapshot;
       add(ColumnsUpdatedEvent(snapshot));
     });
   }

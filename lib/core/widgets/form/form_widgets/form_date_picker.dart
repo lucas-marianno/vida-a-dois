@@ -2,20 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:kanban/core/util/datetime_util.dart';
 
 class FormDatePicker extends StatefulWidget {
-  final double? maxWidth;
-  final double? maxHeight;
   final String label;
   final bool enabled;
   final DateTime? initialDate;
   final void Function(DateTime? newDate) onChanged;
+  final int flex;
   const FormDatePicker({
     super.key,
     required this.label,
     required this.onChanged,
     this.enabled = true,
+    this.flex = 0,
     this.initialDate,
-    this.maxWidth,
-    this.maxHeight,
   });
 
   @override
@@ -55,9 +53,8 @@ class _FormDatePickerState extends State<FormDatePicker> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: widget.maxHeight,
-      width: widget.maxWidth,
+    return Expanded(
+      flex: widget.flex,
       child: TextFormField(
         enabled: widget.enabled,
         style: TextStyle(color: Theme.of(context).colorScheme.onSurface),

@@ -24,11 +24,8 @@ class FormTitle extends StatelessWidget {
       ),
       trailing: icon == null
           ? null
-          : ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: color ?? Theme.of(context).colorScheme.primary,
-                foregroundColor: Theme.of(context).colorScheme.onPrimary,
-              ),
+          : FilledButton(
+              style: FilledButton.styleFrom(backgroundColor: color),
               onPressed: onIconPressed,
               child: Icon(icon),
             ),
