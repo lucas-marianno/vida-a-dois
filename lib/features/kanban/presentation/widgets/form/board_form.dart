@@ -12,11 +12,11 @@ enum _BoardFormType {
   String get typeTitle {
     switch (this) {
       case create:
-        return 'Criando uma nova coluna';
+        return 'Criando um novo quadro';
       case edit:
-        return 'Editando uma coluna';
+        return 'Editando um quadro';
       case read:
-        return 'Lendo uma coluna';
+        return 'Lendo um quadro';
     }
   }
 }
@@ -114,7 +114,7 @@ class _EditBoardFormState extends State<_EditBoardForm> {
           ),
         ),
         MyFormField(
-          label: 'Nome da coluna',
+          label: 'Nome do quadro',
           enabled: !readOnly,
           initialValue: newBoard.title,
           onChanged: (newString) {
@@ -152,7 +152,7 @@ class _EditBoardFormState extends State<_EditBoardForm> {
               onPressed: formType == _BoardFormType.create
                   ? cancelForm
                   : toggleEditMode,
-              child: Text(readOnly ? 'Editar Coluna' : '    Cancelar   '),
+              child: Text(readOnly ? 'Editar Quadro' : '    Cancelar   '),
             ),
             FilledButton(
               onPressed: formType == _BoardFormType.read ? null : sendForm,

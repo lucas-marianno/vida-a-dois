@@ -1,4 +1,4 @@
-package com.example.kanban
+package com.example.vida_a_dois
 
 import io.flutter.embedding.android.FlutterActivity
 

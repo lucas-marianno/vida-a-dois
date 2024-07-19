@@ -19,10 +19,16 @@ final class BoardLoadedState extends BoardsState {
 }
 
 final class BoardErrorState extends BoardsState {
-  final String error;
+  final Object error;
+  final String errorTitle;
+  final String errorMessage;
 
-  const BoardErrorState(this.error);
+  const BoardErrorState(
+    this.errorMessage, {
+    this.error = '',
+    this.errorTitle = '',
+  });
 
   @override
-  List<Object> get props => [error];
+  List<Object> get props => [errorMessage, error, errorTitle];
 }

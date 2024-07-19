@@ -12,7 +12,8 @@
                 "lib/firebase_options.dart": {
                     "projectId": "vida-a-dois-app",
                     "configurations": {
-                        "android": "1:870868222481:android:3b4fcada83547ace7427b0"
+                        "android": "1:870868222481:android:3b4fcada83547ace7427b0",
+                        "web": "1:870868222481:web:5b82324c74296b077427b0"
                     }
                 }
             }

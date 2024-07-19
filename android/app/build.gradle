@@ -27,7 +27,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace = "com.example.kanban"
+    namespace = "com.example.VidaADois"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 

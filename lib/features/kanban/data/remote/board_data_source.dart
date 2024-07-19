@@ -7,9 +7,8 @@ part 'board_data_source_exception.dart';
 
 /// [BoardDataSource] provides Firebase integration for CRUD operations
 abstract class BoardDataSource {
-  static final _firestore = FireStoreConstants.mockCollectionReference;
-
-  static final DocumentReference _boardsReference = _firestore.doc('boards');
+  static final DocumentReference _firebase =
+      FireStoreConstants.boardsDocReference;
 
   static Future<void> createBoard(BoardEntity? board) async {
     if (board == null) return;
@@ -73,18 +72,24 @@ abstract class BoardDataSource {
       boards.add(element.title);
     }
 
-    await _boardsReference.set({'status': boards});
+    await _firebase.set({'status': boards});
   }
 
   static Stream<List<BoardEntity>> get readBoards {
-    final stream = _boardsReference.snapshots().map((snapshot) {
-      final List<BoardEntity> a = [];
-      for (int i = 0; i < snapshot['status'].length; i++) {
-        a.add(BoardEntity(title: snapshot['status'][i], index: i));
-      }
-      return a;
-    });
-    return stream;
+    try {
+      final stream = _firebase.snapshots().map((snapshot) {
+        final List<BoardEntity> a = [];
+        for (int i = 0; i < snapshot['status'].length; i++) {
+          a.add(BoardEntity(title: snapshot['status'][i], index: i));
+        }
+        return a;
+      });
+      return stream;
+    } catch (e) {
+      print('error in $BoardDataSource ######################################');
+      print(e);
+      rethrow;
+    }
   }
 
   static Future<void> deleteBoard(BoardEntity board) async {
@@ -94,7 +99,7 @@ abstract class BoardDataSource {
   }
 
   static Future<List<BoardEntity>> get _getBoards async {
-    final a = List<String>.from((await _boardsReference.get())['status']);
+    final a = List<String>.from((await _firebase.get())['status']);
 
     return a.map((e) => BoardEntity(title: e, index: a.indexOf(e))).toList();
   }

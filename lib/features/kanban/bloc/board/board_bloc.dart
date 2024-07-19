@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
@@ -23,9 +25,9 @@ class BoardBloc extends Bloc<BoardEvent, BoardsState> {
   }
 
   late List<BoardEntity> _statusList;
+  late StreamSubscription _boardSubscription;
+  final _boardsStream = BoardDataSource.readBoards;
   late final BuildContext _context;
-  late final _boardsStream = BoardDataSource.readBoards;
-  late final StreamSubscription _boardSubscription;
   late final BoardRepository _boardRepo;
 
   List<BoardEntity> get statusList => _statusList;
@@ -34,25 +36,46 @@ class BoardBloc extends Bloc<BoardEvent, BoardsState> {
     BoardInitialEvent event,
     Emitter<BoardsState> emit,
   ) {
-    _context = event.context;
-    _boardRepo = BoardRepository(_context);
-    add(LoadBoardsEvent());
+    print(event);
+    try {
+      _context = event.context;
+      _boardRepo = BoardRepository(_context);
+      add(LoadBoardsEvent());
+    } catch (e) {
+      add(HandleBoardException(error: e, errorMessage: e.toString()));
+    }
   }
 
   _onLoadBoardsEvent(
     LoadBoardsEvent event,
     Emitter<BoardsState> emit,
   ) {
-    _boardSubscription = _boardsStream.listen((snapshot) {
-      _statusList = snapshot;
-      add(BoardsUpdatedEvent(snapshot));
-    });
+    print(event);
+    print('a');
+    _boardSubscription = _boardsStream.listen(
+      (snapshot) {
+        print('boardStream');
+        _statusList = snapshot;
+        add(BoardsUpdatedEvent(snapshot));
+      },
+      onError: (e) {
+        add(HandleBoardException(
+          error: e,
+          errorMessage: e.toString(),
+        ));
+      },
+      onDone: () {
+        print('done');
+      },
+      cancelOnError: true,
+    );
   }
 
   _onBoardsUpdatedEvent(
     BoardsUpdatedEvent event,
     Emitter<BoardsState> emit,
   ) {
+    print(event);
     emit(BoardLoadedState(event.boards));
   }
 
@@ -60,11 +83,11 @@ class BoardBloc extends Bloc<BoardEvent, BoardsState> {
     CreateBoardEvent event,
     Emitter<BoardsState> emit,
   ) async {
+    print(event);
     try {
       await _boardRepo.createBoard();
     } catch (e) {
-      throw UnimplementedError(
-          "$e: \n${e.toString()} \n\n Implement error handling");
+      add(HandleBoardException(error: e, errorMessage: e.toString()));
     }
   }
 
@@ -72,21 +95,26 @@ class BoardBloc extends Bloc<BoardEvent, BoardsState> {
     RenameBoardEvent event,
     Emitter<BoardsState> emit,
   ) async {
-    await BoardDataSource.updateBoardTitle(
-      event.board,
-      event.newBoardTitle,
-    );
+    print(event);
+    try {
+      await BoardDataSource.updateBoardTitle(
+        event.board,
+        event.newBoardTitle,
+      );
+    } catch (e) {
+      add(HandleBoardException(error: e, errorMessage: e.toString()));
+    }
   }
 
   _onEditBoardEvent(
     EditBoardEvent event,
     Emitter<BoardsState> emit,
   ) async {
+    print(event);
     try {
       await _boardRepo.updateBoard(event.board);
     } catch (e) {
-      throw UnimplementedError(
-          "$e: \n${e.toString()} \n\n Implement error handling");
+      add(HandleBoardException(error: e, errorMessage: e.toString()));
     }
   }
 
@@ -94,11 +122,11 @@ class BoardBloc extends Bloc<BoardEvent, BoardsState> {
     DeleteBoardEvent event,
     Emitter<BoardsState> emit,
   ) async {
+    print(event);
     try {
       await _boardRepo.deleteBoard(event.board);
     } catch (e) {
-      throw UnimplementedError(
-          "$e: \n${e.toString()} \n\n Implement error handling");
+      add(HandleBoardException(error: e, errorMessage: e.toString()));
     }
   }
 
@@ -106,12 +134,42 @@ class BoardBloc extends Bloc<BoardEvent, BoardsState> {
     HandleBoardException event,
     Emitter<BoardsState> emit,
   ) async {
-    //TODO: finish implementing this
-    throw UnimplementedError();
+    print(event);
+    print("An error has ocurred--------------------------------------------- \n"
+        "\n"
+        "${event.error.runtimeType}"
+        "\n"
+        "${event.errorMessage}\n"
+        "----------------------------------------------------------------- \n");
+
+    await showDialog(
+      context: _context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Algo de errado não está certo!'),
+          content: Column(mainAxisSize: MainAxisSize.min, children: [
+            Text('${event.error.runtimeType}'),
+            const SizedBox(height: 10),
+            Text(event.errorMessage),
+          ]),
+          actions: [
+            FilledButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Ok'),
+            )
+          ],
+        );
+      },
+    );
+    // emit(BoardErrorState(
+    //   error: event.error,
+    //   event.errorMessage,
+    // ));
   }
 
   @override
   Future<void> close() {
+    print('BoardBloc close');
     _boardSubscription.cancel();
     return super.close();
   }

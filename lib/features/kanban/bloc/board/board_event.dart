@@ -58,14 +58,14 @@ class DeleteBoardEvent extends BoardEvent {
 }
 
 class HandleBoardException extends BoardEvent {
-  final String errorTitle;
+  final Object error;
   final String errorMessage;
 
   const HandleBoardException({
-    this.errorTitle = '',
+    this.error = '',
     required this.errorMessage,
   });
 
   @override
-  List<Object> get props => [errorTitle, errorMessage];
+  List<Object> get props => [error, errorMessage];
 }

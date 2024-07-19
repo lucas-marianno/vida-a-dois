@@ -4,10 +4,8 @@ import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 
 /// [TaskDataSource] provides Firebase integration for CRUD operations
 abstract class TaskDataSource {
-  static final _firestore = FireStoreConstants.mockCollectionReference;
-
   static final CollectionReference _taskReference =
-      _firestore.doc('columns').collection('tasks');
+      FireStoreConstants.taskCollectionReference;
 
   static Future<void> createTask(Task? task) async {
     if (task == null || task.title.isEmpty) return;

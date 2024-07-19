@@ -22,11 +22,7 @@ class Dialogs {
                 child:
                     cancelButtonLabel == null ? null : Text(cancelButtonLabel),
               ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                ),
+              FilledButton(
                 onPressed: () => Navigator.pop(context, true),
                 child: confirmButtonLabel == null
                     ? null

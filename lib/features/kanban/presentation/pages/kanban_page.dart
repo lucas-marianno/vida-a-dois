@@ -75,7 +75,11 @@ class _KanbanPageState extends State<KanbanPage> {
               );
             } else if (state is BoardErrorState) {
               return Center(
-                child: Text(state.error),
+                child: Text("An error has ocurred \n"
+                    "\n"
+                    "${state.error.runtimeType}\n"
+                    "\n"
+                    "${state.errorMessage}"),
               );
             } else {
               throw UnimplementedError(
