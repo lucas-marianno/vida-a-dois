@@ -1,8 +1,9 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kanban/features/kanban/bloc/task/task_bloc.dart';
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
-import 'package:kanban/features/kanban/domain/repository/task_repository.dart';
 import 'kanban_tile.dart';
 
 class KanbanBoardDragTarget extends StatelessWidget {
@@ -21,14 +22,14 @@ class KanbanBoardDragTarget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final taskBloc = context.read<TaskBloc>();
     List<Task> taskList = mappedTasks[board.title] ?? [];
     ScrollController verticalController = ScrollController();
     return Expanded(
       child: DragTarget(
         onAcceptWithDetails: (data) {
           if (data.data is Task) {
-            TaskRepository(context)
-                .updateTaskStatus(data.data as Task, board.title);
+            taskBloc.add(UpdateTaskStatusEvent(data.data as Task, board.title));
           }
         },
         builder: (context, candidateData, rejectedData) {

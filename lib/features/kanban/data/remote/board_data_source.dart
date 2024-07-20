@@ -76,20 +76,13 @@ abstract class BoardDataSource {
   }
 
   static Stream<List<BoardEntity>> get readBoards {
-    try {
-      final stream = _firebase.snapshots().map((snapshot) {
-        final List<BoardEntity> a = [];
-        for (int i = 0; i < snapshot['status'].length; i++) {
-          a.add(BoardEntity(title: snapshot['status'][i], index: i));
-        }
-        return a;
-      });
-      return stream;
-    } catch (e) {
-      print('error in $BoardDataSource ######################################');
-      print(e);
-      rethrow;
-    }
+    return _firebase.snapshots().map((snapshot) {
+      final List<BoardEntity> a = [];
+      for (int i = 0; i < snapshot['status'].length; i++) {
+        a.add(BoardEntity(title: snapshot['status'][i], index: i));
+      }
+      return a;
+    });
   }
 
   static Future<void> deleteBoard(BoardEntity board) async {

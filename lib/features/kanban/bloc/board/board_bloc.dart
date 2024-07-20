@@ -1,10 +1,9 @@
-// ignore_for_file: avoid_print
-
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:kanban/core/util/logger/logger.dart';
 import 'package:kanban/features/kanban/data/remote/board_data_source.dart';
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 import 'package:kanban/features/kanban/domain/repository/board_repository.dart';
@@ -12,16 +11,18 @@ import 'package:kanban/features/kanban/domain/repository/board_repository.dart';
 part 'board_event.dart';
 part 'board_state.dart';
 
-class BoardBloc extends Bloc<BoardEvent, BoardsState> {
+final class BoardBloc extends Bloc<BoardEvent, BoardsState> {
   BoardBloc() : super(BoardLoadingState()) {
     on<BoardInitialEvent>(_onBoardInitialEvent);
     on<LoadBoardsEvent>(_onLoadBoardsEvent);
-    on<BoardsUpdatedEvent>(_onBoardsUpdatedEvent);
+    on<BoardStreamDataUpdate>(_onBoardStreamDataUpdate);
     on<CreateBoardEvent>(_onCreateBoardEvent);
     on<RenameBoardEvent>(_onRenameBoardEvent);
     on<EditBoardEvent>(_onEditBoardEvent);
     on<DeleteBoardEvent>(_onDeleteBoardEvent);
     on<HandleBoardException>(_onHandleBoardException);
+
+    Log.initializing(BoardBloc);
   }
 
   late List<BoardEntity> _statusList;
@@ -36,13 +37,13 @@ class BoardBloc extends Bloc<BoardEvent, BoardsState> {
     BoardInitialEvent event,
     Emitter<BoardsState> emit,
   ) {
-    print(event);
+    Log.trace('$BoardBloc $BoardInitialEvent \n $event');
     try {
       _context = event.context;
       _boardRepo = BoardRepository(_context);
       add(LoadBoardsEvent());
     } catch (e) {
-      add(HandleBoardException(error: e, errorMessage: e.toString()));
+      add(HandleBoardException(error: e));
     }
   }
 
@@ -50,32 +51,24 @@ class BoardBloc extends Bloc<BoardEvent, BoardsState> {
     LoadBoardsEvent event,
     Emitter<BoardsState> emit,
   ) {
-    print(event);
-    print('a');
+    Log.trace('$BoardBloc $LoadBoardsEvent \n $event');
+
     _boardSubscription = _boardsStream.listen(
       (snapshot) {
-        print('boardStream');
         _statusList = snapshot;
-        add(BoardsUpdatedEvent(snapshot));
+        add(BoardStreamDataUpdate(snapshot));
       },
-      onError: (e) {
-        add(HandleBoardException(
-          error: e,
-          errorMessage: e.toString(),
-        ));
-      },
-      onDone: () {
-        print('done');
-      },
+      onError: (e) => add(HandleBoardException(error: e)),
+      onDone: () => Log.debug('_boardSubscription is `done`!'),
       cancelOnError: true,
     );
   }
 
-  _onBoardsUpdatedEvent(
-    BoardsUpdatedEvent event,
+  _onBoardStreamDataUpdate(
+    BoardStreamDataUpdate event,
     Emitter<BoardsState> emit,
   ) {
-    print(event);
+    Log.trace('$BoardBloc $BoardStreamDataUpdate \n $event');
     emit(BoardLoadedState(event.boards));
   }
 
@@ -83,11 +76,11 @@ class BoardBloc extends Bloc<BoardEvent, BoardsState> {
     CreateBoardEvent event,
     Emitter<BoardsState> emit,
   ) async {
-    print(event);
+    Log.trace('$BoardBloc $CreateBoardEvent \n $event');
     try {
       await _boardRepo.createBoard();
     } catch (e) {
-      add(HandleBoardException(error: e, errorMessage: e.toString()));
+      add(HandleBoardException(error: e));
     }
   }
 
@@ -95,14 +88,14 @@ class BoardBloc extends Bloc<BoardEvent, BoardsState> {
     RenameBoardEvent event,
     Emitter<BoardsState> emit,
   ) async {
-    print(event);
+    Log.trace('$BoardBloc $RenameBoardEvent \n $event');
     try {
       await BoardDataSource.updateBoardTitle(
         event.board,
         event.newBoardTitle,
       );
     } catch (e) {
-      add(HandleBoardException(error: e, errorMessage: e.toString()));
+      add(HandleBoardException(error: e));
     }
   }
 
@@ -110,11 +103,11 @@ class BoardBloc extends Bloc<BoardEvent, BoardsState> {
     EditBoardEvent event,
     Emitter<BoardsState> emit,
   ) async {
-    print(event);
+    Log.trace('$BoardBloc $EditBoardEvent \n $event');
     try {
       await _boardRepo.updateBoard(event.board);
     } catch (e) {
-      add(HandleBoardException(error: e, errorMessage: e.toString()));
+      add(HandleBoardException(error: e));
     }
   }
 
@@ -122,11 +115,11 @@ class BoardBloc extends Bloc<BoardEvent, BoardsState> {
     DeleteBoardEvent event,
     Emitter<BoardsState> emit,
   ) async {
-    print(event);
+    Log.trace('$BoardBloc $DeleteBoardEvent \n $event');
     try {
       await _boardRepo.deleteBoard(event.board);
     } catch (e) {
-      add(HandleBoardException(error: e, errorMessage: e.toString()));
+      add(HandleBoardException(error: e));
     }
   }
 
@@ -134,13 +127,11 @@ class BoardBloc extends Bloc<BoardEvent, BoardsState> {
     HandleBoardException event,
     Emitter<BoardsState> emit,
   ) async {
-    print(event);
-    print("An error has ocurred--------------------------------------------- \n"
-        "\n"
-        "${event.error.runtimeType}"
-        "\n"
-        "${event.errorMessage}\n"
-        "----------------------------------------------------------------- \n");
+    Log.debug(
+      "$BoardBloc $HandleBoardException $event \n"
+      " ${event.error.runtimeType}",
+    );
+    Log.error(event.error.runtimeType, error: event.error);
 
     await showDialog(
       context: _context,
@@ -150,7 +141,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardsState> {
           content: Column(mainAxisSize: MainAxisSize.min, children: [
             Text('${event.error.runtimeType}'),
             const SizedBox(height: 10),
-            Text(event.errorMessage),
+            Text(event.error.toString()),
           ]),
           actions: [
             FilledButton(
@@ -161,15 +152,11 @@ class BoardBloc extends Bloc<BoardEvent, BoardsState> {
         );
       },
     );
-    // emit(BoardErrorState(
-    //   error: event.error,
-    //   event.errorMessage,
-    // ));
   }
 
   @override
   Future<void> close() {
-    print('BoardBloc close');
+    Log.trace('$BoardBloc close()');
     _boardSubscription.cancel();
     return super.close();
   }

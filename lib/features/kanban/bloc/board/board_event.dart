@@ -7,7 +7,7 @@ sealed class BoardEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class BoardInitialEvent extends BoardEvent {
+final class BoardInitialEvent extends BoardEvent {
   final BuildContext context;
 
   const BoardInitialEvent(this.context);
@@ -16,20 +16,20 @@ class BoardInitialEvent extends BoardEvent {
   List<Object> get props => [context];
 }
 
-class LoadBoardsEvent extends BoardEvent {}
+final class LoadBoardsEvent extends BoardEvent {}
 
-class BoardsUpdatedEvent extends BoardEvent {
+final class BoardStreamDataUpdate extends BoardEvent {
   final List<BoardEntity> boards;
 
-  const BoardsUpdatedEvent(this.boards);
+  const BoardStreamDataUpdate(this.boards);
 
   @override
   List<Object> get props => [boards];
 }
 
-class CreateBoardEvent extends BoardEvent {}
+final class CreateBoardEvent extends BoardEvent {}
 
-class RenameBoardEvent extends BoardEvent {
+final class RenameBoardEvent extends BoardEvent {
   final BoardEntity board;
   final String newBoardTitle;
 
@@ -39,7 +39,7 @@ class RenameBoardEvent extends BoardEvent {
   List<Object> get props => [newBoardTitle];
 }
 
-class EditBoardEvent extends BoardEvent {
+final class EditBoardEvent extends BoardEvent {
   final BoardEntity board;
 
   const EditBoardEvent(this.board);
@@ -48,7 +48,7 @@ class EditBoardEvent extends BoardEvent {
   List<Object> get props => [board];
 }
 
-class DeleteBoardEvent extends BoardEvent {
+final class DeleteBoardEvent extends BoardEvent {
   final BoardEntity board;
 
   const DeleteBoardEvent(this.board);
@@ -57,15 +57,13 @@ class DeleteBoardEvent extends BoardEvent {
   List<Object> get props => [board];
 }
 
-class HandleBoardException extends BoardEvent {
+final class HandleBoardException extends BoardEvent {
   final Object error;
-  final String errorMessage;
 
   const HandleBoardException({
-    this.error = '',
-    required this.errorMessage,
+    required this.error,
   });
 
   @override
-  List<Object> get props => [error, errorMessage];
+  List<Object> get props => [error];
 }

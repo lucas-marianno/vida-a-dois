@@ -7,7 +7,16 @@ sealed class TaskEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class TaskInitialEvent extends TaskEvent {
+final class HandleTaskError extends TaskEvent {
+  final Object error;
+
+  const HandleTaskError(this.error);
+
+  @override
+  List<Object> get props => [error];
+}
+
+final class TaskInitialEvent extends TaskEvent {
   final BuildContext context;
 
   const TaskInitialEvent(this.context);
@@ -16,7 +25,7 @@ class TaskInitialEvent extends TaskEvent {
   List<Object> get props => [context];
 }
 
-class LoadTasksEvent extends TaskEvent {
+final class LoadTasksEvent extends TaskEvent {
   final List<BoardEntity> boardList;
 
   const LoadTasksEvent(this.boardList);
@@ -25,17 +34,17 @@ class LoadTasksEvent extends TaskEvent {
   List<Object> get props => [boardList];
 }
 
-class TasksUpdatedEvent extends TaskEvent {
+final class TaskStreamDataUpdate extends TaskEvent {
   final List<Task> updatedTasks;
   final List<BoardEntity> boardList;
 
-  const TasksUpdatedEvent(this.updatedTasks, this.boardList);
+  const TaskStreamDataUpdate(this.updatedTasks, this.boardList);
 
   @override
   List<Object> get props => [updatedTasks];
 }
 
-class CreateTaskEvent extends TaskEvent {
+final class CreateTaskEvent extends TaskEvent {
   final BoardEntity currentBoard;
 
   const CreateTaskEvent(this.currentBoard);
@@ -44,7 +53,7 @@ class CreateTaskEvent extends TaskEvent {
   List<Object> get props => [currentBoard];
 }
 
-class ReadTaskEvent extends TaskEvent {
+final class ReadTaskEvent extends TaskEvent {
   final Task task;
 
   const ReadTaskEvent(this.task);
@@ -53,7 +62,7 @@ class ReadTaskEvent extends TaskEvent {
   List<Object> get props => [task];
 }
 
-class UpdateTaskImportanceEvent extends TaskEvent {
+final class UpdateTaskImportanceEvent extends TaskEvent {
   final Task task;
   final TaskImportance importance;
 
@@ -63,7 +72,7 @@ class UpdateTaskImportanceEvent extends TaskEvent {
   List<Object> get props => [task, importance];
 }
 
-class UpdateTaskAssigneeEvent extends TaskEvent {
+final class UpdateTaskAssigneeEvent extends TaskEvent {
   final Task task;
   final TaskAssignee assignee;
 
@@ -73,7 +82,17 @@ class UpdateTaskAssigneeEvent extends TaskEvent {
   List<Object> get props => [task, assignee];
 }
 
-class DeleteTaskEvent extends TaskEvent {
+final class UpdateTaskStatusEvent extends TaskEvent {
+  final Task task;
+  final String newStatus;
+
+  const UpdateTaskStatusEvent(this.task, this.newStatus);
+
+  @override
+  List<Object> get props => [task, newStatus];
+}
+
+final class DeleteTaskEvent extends TaskEvent {
   final Task task;
 
   const DeleteTaskEvent(this.task);
@@ -81,4 +100,3 @@ class DeleteTaskEvent extends TaskEvent {
   @override
   List<Object> get props => [task];
 }
-// TODO: implement CRUD events

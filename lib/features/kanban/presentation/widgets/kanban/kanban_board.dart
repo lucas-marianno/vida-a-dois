@@ -47,7 +47,7 @@ class KanbanBoard extends StatelessWidget {
                 );
               } else if (state is TasksErrorState) {
                 return Center(
-                  child: Text(state.error),
+                  child: Text(state.error.toString()),
                 );
               } else {
                 throw UnimplementedError();

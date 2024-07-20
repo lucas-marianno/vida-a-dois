@@ -19,7 +19,7 @@ final class TasksLoadedState extends TaskState {
 }
 
 final class TasksErrorState extends TaskState {
-  final String error;
+  final Object error;
 
   const TasksErrorState(this.error);
 
