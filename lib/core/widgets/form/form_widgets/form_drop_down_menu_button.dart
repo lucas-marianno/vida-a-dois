@@ -54,39 +54,43 @@ class _FormDropDownMenuButtonState extends State<FormDropDownMenuButton> {
 
   @override
   Widget build(BuildContext context) {
-    if (!widget.enabled) {
+    if (widget.flex >= 1) {
       return Expanded(
         flex: widget.flex,
-        child: MyFormField(
-          label: widget.label,
-          initialValue: value,
-          enabled: false,
-          onChanged: (_) {},
-        ),
+        child: child(),
       );
     }
-    return Expanded(
-      flex: widget.flex,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 5),
-        child: DropdownButtonFormField<String>(
-          value: value,
-          decoration: InputDecoration(
-            labelText: widget.label,
-            border: const OutlineInputBorder(),
-            floatingLabelBehavior: FloatingLabelBehavior.always,
-          ),
-          icon: const Icon(Icons.expand_more),
-          alignment: AlignmentDirectional.topStart,
-          items: [
-            for (String item in widget.items)
-              DropdownMenuItem(
-                value: item,
-                child: Text(item),
-              ),
-          ],
-          onChanged: (item) => changeValue(item!),
+    return child();
+  }
+
+  Widget child() {
+    if (!widget.enabled) {
+      return MyFormField(
+        label: widget.label,
+        initialValue: value,
+        enabled: false,
+        onChanged: (_) {},
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: DropdownButtonFormField<String>(
+        value: value,
+        decoration: InputDecoration(
+          labelText: widget.label,
+          border: const OutlineInputBorder(),
+          floatingLabelBehavior: FloatingLabelBehavior.always,
         ),
+        icon: const Icon(Icons.expand_more),
+        alignment: AlignmentDirectional.topStart,
+        items: [
+          for (String item in widget.items)
+            DropdownMenuItem(
+              value: item,
+              child: Text(item),
+            ),
+        ],
+        onChanged: (item) => changeValue(item!),
       ),
     );
   }
