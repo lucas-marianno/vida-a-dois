@@ -17,3 +17,11 @@ final class LocaleLoaded extends LocaleState {
   @override
   List<Object> get props => [locale];
 }
+
+final class LocaleErrorState extends LocaleState {
+  final Object error;
+
+  const LocaleErrorState(this.error);
+  @override
+  List<Object> get props => [error];
+}

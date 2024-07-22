@@ -7,14 +7,7 @@ sealed class LocaleEvent extends Equatable {
   List<Object> get props => [];
 }
 
-final class Initialize extends LocaleEvent {
-  final BuildContext context;
-
-  const Initialize(this.context);
-
-  @override
-  List<Object> get props => [context];
-}
+final class Initialize extends LocaleEvent {}
 
 final class ChangeLocaleEvent extends LocaleEvent {
   final Locale locale;

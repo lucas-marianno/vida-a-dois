@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -16,8 +14,10 @@ class LocaleBloc extends Bloc<LocaleEvent, LocaleState> {
     on<Initialize>(_onInitialize);
     on<ChangeLocaleEvent>(_onChangeLocaleEvent);
     on<HandleLocaleError>(_onHandleLocaleError);
+
+    add(Initialize());
   }
-  _onInitialize(Initialize event, Emitter<LocaleState> emit) {
+  _onInitialize(Initialize _, Emitter<LocaleState> emit) {
     Log.initializing(LocaleBloc);
     emit(LocaleLoading());
     try {
@@ -32,10 +32,12 @@ class LocaleBloc extends Bloc<LocaleEvent, LocaleState> {
     Log.trace("$LocaleBloc $ChangeLocaleEvent \n $event");
 
     if (!L10n.all.contains(event.locale)) {
-      throw UnimplementedError(
-        "$LocaleBloc:\n"
-        " Unimplemented locale: ${event.locale}",
-      );
+      add(HandleLocaleError(
+        UnimplementedError(
+          "$LocaleBloc:\n Unimplemented locale: ${event.locale}",
+        ),
+      ));
+      return;
     }
 
     _locale = event.locale;
@@ -49,5 +51,6 @@ class LocaleBloc extends Bloc<LocaleEvent, LocaleState> {
 
   _onHandleLocaleError(HandleLocaleError event, Emitter<LocaleState> emit) {
     Log.error(event.error.runtimeType, error: event.error);
+    emit(LocaleErrorState(event.error));
   }
 }
