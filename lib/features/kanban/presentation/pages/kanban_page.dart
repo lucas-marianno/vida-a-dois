@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kanban/core/i18n/bloc/locale_bloc.dart';
+import 'package:kanban/core/i18n/l10n.dart';
 import 'package:kanban/features/kanban/bloc/board/board_bloc.dart';
 import 'package:kanban/features/kanban/bloc/task/task_bloc.dart';
 import '../widgets/kanban/kanban_board.dart';
@@ -14,6 +16,7 @@ class KanbanPage extends StatefulWidget {
 class _KanbanPageState extends State<KanbanPage> {
   late final BoardBloc boardBloc;
   late final TaskBloc taskBloc;
+  late final LocaleBloc localeBloc;
   ScrollController scrlCtrl = ScrollController();
 
   @override
@@ -22,6 +25,7 @@ class _KanbanPageState extends State<KanbanPage> {
 
     boardBloc = context.read<BoardBloc>()..add(BoardInitialEvent(context));
     taskBloc = context.read<TaskBloc>()..add(TaskInitialEvent(context));
+    localeBloc = context.read<LocaleBloc>();
   }
 
   @override
@@ -33,11 +37,29 @@ class _KanbanPageState extends State<KanbanPage> {
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
         centerTitle: true,
         title: Text(
-          'Kanban app concept'.toUpperCase(),
-          style: const TextStyle(
-            letterSpacing: 4,
-          ),
+          L10n.of(context).appTitle.toUpperCase() + L10n.getflag(context),
+          style: const TextStyle(letterSpacing: 4),
         ),
+        actions: [
+          PopupMenuButton(
+            itemBuilder: (context) {
+              return [
+                PopupMenuItem(
+                  child: const Text('pt 🇧🇷'),
+                  onTap: () => localeBloc.add(
+                    const ChangeLocaleEvent(Locale('pt')),
+                  ),
+                ),
+                PopupMenuItem(
+                  child: const Text('en 🇺🇸'),
+                  onTap: () => localeBloc.add(
+                    const ChangeLocaleEvent(Locale('en')),
+                  ),
+                ),
+              ];
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
