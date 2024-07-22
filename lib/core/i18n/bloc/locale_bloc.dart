@@ -15,20 +15,27 @@ class LocaleBloc extends Bloc<LocaleEvent, LocaleState> {
   LocaleBloc() : super(LocaleLoading()) {
     on<Initialize>(_onInitialize);
     on<ChangeLocaleEvent>(_onChangeLocaleEvent);
+    on<HandleLocaleError>(_onHandleLocaleError);
   }
   _onInitialize(Initialize event, Emitter<LocaleState> emit) {
     Log.initializing(LocaleBloc);
     emit(LocaleLoading());
-    _locale = L10n.locale;
-    add(ChangeLocaleEvent(_locale));
+    try {
+      _locale = L10n.locale;
+      add(ChangeLocaleEvent(_locale));
+    } catch (e) {
+      add(HandleLocaleError(e));
+    }
   }
 
   _onChangeLocaleEvent(ChangeLocaleEvent event, Emitter<LocaleState> emit) {
     Log.trace("$LocaleBloc $ChangeLocaleEvent \n $event");
 
     if (!L10n.all.contains(event.locale)) {
-      Log.trace("Unimplemented locale: ${event.locale}");
-      return;
+      throw UnimplementedError(
+        "$LocaleBloc:\n"
+        " Unimplemented locale: ${event.locale}",
+      );
     }
 
     _locale = event.locale;
@@ -38,5 +45,9 @@ class LocaleBloc extends Bloc<LocaleEvent, LocaleState> {
       "$LocaleBloc $ChangeLocaleEvent $LocaleLoaded\n"
       "Locale changed to: ${event.locale}",
     );
+  }
+
+  _onHandleLocaleError(HandleLocaleError event, Emitter<LocaleState> emit) {
+    Log.error(event.error.runtimeType, error: event.error);
   }
 }

@@ -24,3 +24,12 @@ final class ChangeLocaleEvent extends LocaleEvent {
   @override
   List<Object> get props => [locale];
 }
+
+final class HandleLocaleError extends LocaleEvent {
+  final Object error;
+
+  const HandleLocaleError(this.error);
+
+  @override
+  List<Object> get props => [error];
+}
