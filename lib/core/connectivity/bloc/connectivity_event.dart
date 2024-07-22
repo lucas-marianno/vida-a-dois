@@ -17,3 +17,5 @@ final class GotResponseEvent extends ConnectivityEvent {
   @override
   List<Object> get props => [result];
 }
+
+final class ListenToConnectivityChanges extends ConnectivityEvent {}

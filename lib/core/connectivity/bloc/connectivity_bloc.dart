@@ -14,6 +14,7 @@ final class ConnectivityBloc
   ConnectivityBloc() : super(ConnectivityLoadingState()) {
     on<CheckConnectivityEvent>(_onCheckConnectivityEvent);
     on<GotResponseEvent>(_onGotResponseEvent);
+    on<ListenToConnectivityChanges>(_onListenToConnectivityChanges);
 
     Log.initializing(ConnectivityBloc);
   }
@@ -25,6 +26,16 @@ final class ConnectivityBloc
     Log.trace("$ConnectivityBloc $CheckConnectivityEvent \n $event");
     emit(ConnectivityLoadingState());
 
+    try {
+      final connectionStatus = await Connectivity().checkConnectivity();
+      add(GotResponseEvent(connectionStatus));
+    } catch (e) {
+      emit(ConnectivityErrorState(e));
+      add(ListenToConnectivityChanges());
+    }
+  }
+
+  _onListenToConnectivityChanges(_, Emitter<ConnectivityState> emit) {
     _connection = Connectivity().onConnectivityChanged.listen(
           (response) => add(GotResponseEvent(response)),
           onError: (e) => emit(ConnectivityErrorState(e)),
@@ -52,6 +63,7 @@ final class ConnectivityBloc
       Log.error("$ConnectivityBloc $ConnectivityErrorState \n $result");
       emit(ConnectivityErrorState(result));
     }
+    add(ListenToConnectivityChanges());
   }
 
   @override
