@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/core/i18n/l10n.dart';
+import 'package:kanban/core/util/dialogs/alert_dialog.dart';
 import 'package:kanban/features/kanban/bloc/board/board_bloc.dart';
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
+import 'package:kanban/features/kanban/presentation/widgets/form/board_form.dart';
 
 class KanbanBoardTitle extends StatefulWidget {
   final BoardEntity board;
@@ -32,12 +34,30 @@ class _KanbanBoardTitleState extends State<KanbanBoardTitle> {
     controller.clear();
   }
 
-  void deleteBoard() {
+  void deleteBoard() async {
+    final l10n = L10n.of(context);
+    final response = await showDialog(
+      context: context,
+      builder: (context) => ConfirmationDialog(
+        context: context,
+        title: '${l10n.delete} ${l10n.board.toLowerCase()}?',
+        content: l10n.deleteBoardPromptDescription(widget.board.title),
+        onAccept: () => Navigator.pop(context, true),
+        onCancel: () => Navigator.pop(context),
+      ),
+    );
+
+    if (response != true) return;
+
     boardBloc.add(DeleteBoardEvent(widget.board));
   }
 
-  void editBoard() {
-    boardBloc.add(EditBoardEvent(widget.board));
+  void editBoard() async {
+    final newBoard = await BoardForm.readBoard(widget.board, context);
+
+    if (newBoard == null || newBoard.equals(widget.board)) return;
+
+    boardBloc.add(EditBoardEvent(widget.board, newBoard));
   }
 
   @override

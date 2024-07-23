@@ -61,11 +61,17 @@ class TaskRepository {
 
   Future<void> deleteTask(Task task) async {
     final l10n = L10n.of(context);
-    final response = await Dialogs(context).alertDialog(
-      title: '${l10n.delete} ${l10n.task.toLowerCase()}?',
-      content: l10n.deleteTaskPromptDescription(task.title),
-      cancelButtonLabel: l10n.delete,
-      confirmButtonLabel: '${l10n.delete} ${l10n.task.toLowerCase()}',
+
+    final response = await showDialog(
+      context: context,
+      builder: (context) {
+        return ConfirmationDialog(
+          context: context,
+          title: '${l10n.delete} ${l10n.task.toLowerCase()}?',
+          content: l10n.deleteTaskPromptDescription(task.title),
+          onAccept: () => Navigator.pop(context, true),
+        );
+      },
     );
 
     if (response != true) return;

@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/core/i18n/bloc/locale_bloc.dart';
 import 'package:kanban/core/i18n/l10n.dart';
+import 'package:kanban/core/util/dialogs/error_dialog.dart';
+import 'package:kanban/core/util/logger/logger.dart';
 import 'package:kanban/features/kanban/bloc/board/board_bloc.dart';
 import 'package:kanban/features/kanban/bloc/task/task_bloc.dart';
+import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
+import 'package:kanban/features/kanban/presentation/widgets/form/board_form.dart';
 import '../widgets/kanban/kanban_board.dart';
 
 class KanbanPage extends StatefulWidget {
@@ -19,11 +23,23 @@ class _KanbanPageState extends State<KanbanPage> {
   late final LocaleBloc localeBloc;
   ScrollController scrlCtrl = ScrollController();
 
+  void createBoard(BoardEntity board) async {
+    final newBoard = await BoardForm.readBoard(
+      BoardEntity(title: L10n.of(context).newBoard, index: 500),
+      context,
+      initAsReadOnly: false,
+    );
+
+    if (newBoard == null) return;
+
+    boardBloc.add(CreateBoardEvent(newBoard));
+  }
+
   @override
   void initState() {
     super.initState();
 
-    boardBloc = context.read<BoardBloc>()..add(BoardInitialEvent(context));
+    boardBloc = context.read<BoardBloc>();
     taskBloc = context.read<TaskBloc>()..add(TaskInitialEvent(context));
     localeBloc = context.read<LocaleBloc>();
   }
@@ -79,7 +95,7 @@ class _KanbanPageState extends State<KanbanPage> {
                 itemBuilder: (context, index) {
                   if (index < boards.length) {
                     return KanbanBoard(
-                      board: state.boards[index],
+                      board: boards[index],
                       horizontalParentScrollController: scrlCtrl,
                     );
                   } else {
@@ -87,8 +103,8 @@ class _KanbanPageState extends State<KanbanPage> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: ElevatedButton(
+                          onPressed: () => createBoard(boards.last),
                           child: const Icon(Icons.add),
-                          onPressed: () => boardBloc.add(CreateBoardEvent()),
                         ),
                       ),
                     );
@@ -96,18 +112,17 @@ class _KanbanPageState extends State<KanbanPage> {
                 },
               );
             } else if (state is BoardErrorState) {
-              //TODO: this is not correct, fix this
-
-              final error = state.error;
+              Log.error("aquiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
               return Center(
-                child: Text(
-                  L10n.of(context)
-                      .uninplementedException('$error', '${error.runtimeType}'),
+                child: ErrorDialog(
+                  state.error,
+                  onAccept: () => boardBloc.add(BoardInitialEvent()),
                 ),
               );
             } else {
               throw UnimplementedError(
-                  '$state implementation wasn\'t found in $BoardsState!');
+                '$state implementation wasn\'t found in $BoardsState!',
+              );
             }
           },
         ),

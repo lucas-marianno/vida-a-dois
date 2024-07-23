@@ -1,35 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:kanban/core/i18n/l10n.dart';
 
-class Dialogs {
+class ConfirmationDialog extends StatelessWidget {
   final BuildContext context;
-  Dialogs(this.context);
+  final String? title;
+  final String content;
+  final void Function() onAccept;
+  final void Function()? onCancel;
 
-  Future<bool?> alertDialog({
-    String? title,
-    String? content,
-    String? confirmButtonLabel,
-    String? cancelButtonLabel,
-  }) async =>
-      await showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: title == null ? null : Text(title),
-            content: content == null ? null : Text(content),
-            actions: [
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                child:
-                    cancelButtonLabel == null ? null : Text(cancelButtonLabel),
+  const ConfirmationDialog({
+    required this.context,
+    this.title,
+    required this.content,
+    required this.onAccept,
+    this.onCancel,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: title == null ? null : Text(title!),
+      content: Text(content),
+      actions: [
+        onCancel == null
+            ? const SizedBox()
+            : ElevatedButton(
+                onPressed: onCancel,
+                child: Text(L10n.of(context).cancel),
               ),
-              FilledButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: confirmButtonLabel == null
-                    ? null
-                    : Text(confirmButtonLabel),
-              ),
-            ],
-          );
-        },
-      );
+        FilledButton(
+          onPressed: onAccept,
+          child: Text(L10n.of(context).ok),
+        )
+      ],
+    );
+  }
 }

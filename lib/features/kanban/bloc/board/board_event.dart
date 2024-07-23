@@ -7,27 +7,18 @@ sealed class BoardEvent extends Equatable {
   List<Object> get props => [];
 }
 
-final class BoardInitialEvent extends BoardEvent {
-  final BuildContext context;
+final class BoardInitialEvent extends BoardEvent {}
 
-  const BoardInitialEvent(this.context);
+final class BoardStreamDataUpdate extends BoardEvent {}
 
-  @override
-  List<Object> get props => [context];
-}
+final class CreateBoardEvent extends BoardEvent {
+  final BoardEntity newBoard;
 
-final class LoadBoardsEvent extends BoardEvent {}
-
-final class BoardStreamDataUpdate extends BoardEvent {
-  final List<BoardEntity> boards;
-
-  const BoardStreamDataUpdate(this.boards);
+  const CreateBoardEvent(this.newBoard);
 
   @override
-  List<Object> get props => [boards];
+  List<Object> get props => [newBoard];
 }
-
-final class CreateBoardEvent extends BoardEvent {}
 
 final class RenameBoardEvent extends BoardEvent {
   final BoardEntity board;
@@ -40,12 +31,13 @@ final class RenameBoardEvent extends BoardEvent {
 }
 
 final class EditBoardEvent extends BoardEvent {
-  final BoardEntity board;
+  final BoardEntity oldBoard;
+  final BoardEntity newBoard;
 
-  const EditBoardEvent(this.board);
+  const EditBoardEvent(this.oldBoard, this.newBoard);
 
   @override
-  List<Object> get props => [board];
+  List<Object> get props => [oldBoard, newBoard];
 }
 
 final class DeleteBoardEvent extends BoardEvent {

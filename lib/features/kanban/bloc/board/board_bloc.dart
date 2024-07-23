@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:kanban/core/util/logger/logger.dart';
 import 'package:kanban/features/kanban/data/remote/board_data_source.dart';
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
@@ -14,7 +13,6 @@ part 'board_state.dart';
 final class BoardBloc extends Bloc<BoardEvent, BoardsState> {
   BoardBloc() : super(BoardLoadingState()) {
     on<BoardInitialEvent>(_onBoardInitialEvent);
-    on<LoadBoardsEvent>(_onLoadBoardsEvent);
     on<BoardStreamDataUpdate>(_onBoardStreamDataUpdate);
     on<CreateBoardEvent>(_onCreateBoardEvent);
     on<RenameBoardEvent>(_onRenameBoardEvent);
@@ -23,40 +21,28 @@ final class BoardBloc extends Bloc<BoardEvent, BoardsState> {
     on<HandleBoardException>(_onHandleBoardException);
 
     Log.initializing(BoardBloc);
+    add(BoardInitialEvent());
   }
 
-  late List<BoardEntity> _statusList;
+  List<BoardEntity>? _statusList;
   late StreamSubscription _boardSubscription;
   final _boardsStream = BoardDataSource.readBoards;
-  late final BuildContext _context;
-  late final BoardRepository _boardRepo;
 
-  List<BoardEntity> get statusList => _statusList;
+  List<BoardEntity> get statusList => _statusList ?? [];
 
   _onBoardInitialEvent(
     BoardInitialEvent event,
     Emitter<BoardsState> emit,
   ) {
+    emit(BoardLoadingState());
     Log.trace('$BoardBloc $BoardInitialEvent \n $event');
-    try {
-      _context = event.context;
-      _boardRepo = BoardRepository(_context);
-      add(LoadBoardsEvent());
-    } catch (e) {
-      add(HandleBoardException(error: e));
-    }
-  }
 
-  _onLoadBoardsEvent(
-    LoadBoardsEvent event,
-    Emitter<BoardsState> emit,
-  ) {
-    Log.trace('$BoardBloc $LoadBoardsEvent \n $event');
+    add(BoardStreamDataUpdate());
 
     _boardSubscription = _boardsStream.listen(
       (snapshot) {
         _statusList = snapshot;
-        add(BoardStreamDataUpdate(snapshot));
+        add(BoardStreamDataUpdate());
       },
       onError: (e) => add(HandleBoardException(error: e)),
       onDone: () => Log.debug('_boardSubscription is `done`!'),
@@ -64,12 +50,9 @@ final class BoardBloc extends Bloc<BoardEvent, BoardsState> {
     );
   }
 
-  _onBoardStreamDataUpdate(
-    BoardStreamDataUpdate event,
-    Emitter<BoardsState> emit,
-  ) {
-    Log.trace('$BoardBloc $BoardStreamDataUpdate \n $event');
-    emit(BoardLoadedState(event.boards));
+  _onBoardStreamDataUpdate(_, Emitter<BoardsState> emit) {
+    Log.trace('$BoardBloc $BoardStreamDataUpdate\n$_statusList');
+    emit(BoardLoadedState(_statusList ?? []));
   }
 
   _onCreateBoardEvent(
@@ -78,7 +61,7 @@ final class BoardBloc extends Bloc<BoardEvent, BoardsState> {
   ) async {
     Log.trace('$BoardBloc $CreateBoardEvent \n $event');
     try {
-      await _boardRepo.createBoard();
+      await BoardRepository.createBoard(event.newBoard);
     } catch (e) {
       add(HandleBoardException(error: e));
     }
@@ -88,7 +71,7 @@ final class BoardBloc extends Bloc<BoardEvent, BoardsState> {
     RenameBoardEvent event,
     Emitter<BoardsState> emit,
   ) async {
-    Log.trace('$BoardBloc $RenameBoardEvent \n $event');
+    Log.info('$BoardBloc $RenameBoardEvent \n $event');
     try {
       await BoardDataSource.updateBoardTitle(
         event.board,
@@ -105,7 +88,7 @@ final class BoardBloc extends Bloc<BoardEvent, BoardsState> {
   ) async {
     Log.trace('$BoardBloc $EditBoardEvent \n $event');
     try {
-      await _boardRepo.updateBoard(event.board);
+      await BoardRepository.updateBoard(event.oldBoard, event.newBoard);
     } catch (e) {
       add(HandleBoardException(error: e));
     }
@@ -117,7 +100,7 @@ final class BoardBloc extends Bloc<BoardEvent, BoardsState> {
   ) async {
     Log.trace('$BoardBloc $DeleteBoardEvent \n $event');
     try {
-      await _boardRepo.deleteBoard(event.board);
+      await BoardRepository.deleteBoard(event.board);
     } catch (e) {
       add(HandleBoardException(error: e));
     }
@@ -130,28 +113,6 @@ final class BoardBloc extends Bloc<BoardEvent, BoardsState> {
     final error = event.error;
     Log.error(error.runtimeType, error: error);
     emit(BoardErrorState(error.runtimeType.toString(), error: error));
-
-    //TODO: this should not be here, it is part of the presentation layer
-    // this is horrible and breaks separation of concerns principle
-    await showDialog(
-      context: _context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Algo de errado não está certo!'),
-          content: Column(mainAxisSize: MainAxisSize.min, children: [
-            Text('${event.error.runtimeType}'),
-            const SizedBox(height: 10),
-            Text(event.error.toString()),
-          ]),
-          actions: [
-            FilledButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Ok'),
-            )
-          ],
-        );
-      },
-    );
   }
 
   @override

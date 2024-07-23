@@ -21,14 +21,12 @@
       }
     }
   },
-  "uninplementedException": "Something bad happened!\n\nAn unexpected error happened:\n\n{errorType}\n{error}\n",
-  "@uninplementedException": {
+  "somethingBadHappened": "Something bad happened!",
+  "unexpectedError": "An unexpected error happened:\n{error}\n\n",
+  "@unexpectedError": {
     "description": "Unexpected error.",
     "placeholders": {
       "error": {
-        "type": "String"
-      },
-      "errorType": {
         "type": "String"
       }
     }
@@ -57,6 +55,7 @@
   "cancel": "Cancel",
   "done": "Done",
   "ok": "Ok",
+  "tryAgain": "Try again",
   "delete": "Delete",
   "board": "Board",
   "task": "Task",

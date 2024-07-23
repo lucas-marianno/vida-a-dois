@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kanban/core/i18n/l10n.dart';
+import 'package:kanban/core/util/dialogs/error_dialog.dart';
 import 'package:kanban/features/kanban/bloc/task/task_bloc.dart';
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 import 'package:kanban/features/kanban/presentation/widgets/kanban/board_drag_target.dart';
@@ -36,7 +38,16 @@ class KanbanBoard extends StatelessWidget {
           BlocBuilder<TaskBloc, TaskState>(
             builder: (context, state) {
               if (state is TasksLoadingState) {
-                return loading(context);
+                return Expanded(
+                  child: Container(
+                    width: width,
+                    margin: const EdgeInsets.symmetric(horizontal: 3),
+                    padding: const EdgeInsets.all(5),
+                    child: LinearProgressIndicator(
+                      color: Theme.of(context).colorScheme.surfaceContainerLow,
+                    ),
+                  ),
+                );
               } else if (state is TasksLoadedState) {
                 return KanbanBoardDragTarget(
                   board: board,
@@ -45,41 +56,20 @@ class KanbanBoard extends StatelessWidget {
                   horizontalParentScrollController:
                       horizontalParentScrollController,
                 );
-              } else if (state is TasksErrorState) {
-                return Center(
-                  child: Text(state.error.toString()),
-                );
               } else {
-                throw UnimplementedError();
+                return Expanded(
+                  child: Center(
+                    child: ErrorDialog(
+                      UnimplementedError('\n\n$state\n'),
+                      onAccept: () {},
+                    ),
+                  ),
+                );
               }
             },
           ),
           KanbanAddTaskButton(board),
         ],
-      ),
-    );
-  }
-
-  static Widget loading(BuildContext context, {String? label}) {
-    double widthMultiplier = 0.6;
-    double width = MediaQuery.of(context).size.width * widthMultiplier;
-
-    return Expanded(
-      child: Container(
-        width: width,
-        margin: const EdgeInsets.symmetric(horizontal: 3),
-        padding: const EdgeInsets.all(5),
-        decoration: BoxDecoration(
-          color: Colors.blueGrey[100],
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (label != null) Text(label),
-            const CircularProgressIndicator(),
-          ],
-        ),
       ),
     );
   }
