@@ -127,12 +127,12 @@ final class BoardBloc extends Bloc<BoardEvent, BoardsState> {
     HandleBoardException event,
     Emitter<BoardsState> emit,
   ) async {
-    Log.debug(
-      "$BoardBloc $HandleBoardException $event \n"
-      " ${event.error.runtimeType}",
-    );
-    Log.error(event.error.runtimeType, error: event.error);
+    final error = event.error;
+    Log.error(error.runtimeType, error: error);
+    emit(BoardErrorState(error.runtimeType.toString(), error: error));
 
+    //TODO: this should not be here, it is part of the presentation layer
+    // this is horrible and breaks separation of concerns principle
     await showDialog(
       context: _context,
       builder: (context) {

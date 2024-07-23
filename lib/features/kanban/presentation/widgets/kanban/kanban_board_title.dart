@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kanban/core/i18n/l10n.dart';
 import 'package:kanban/features/kanban/bloc/board/board_bloc.dart';
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 
@@ -68,6 +69,8 @@ class _KanbanBoardTitleState extends State<KanbanBoardTitle> {
       );
     }
 
+    final l10n = L10n.of(context);
+
     return ListTile(
       leading: const SizedBox(width: 0),
       titleAlignment: ListTileTitleAlignment.center,
@@ -77,20 +80,20 @@ class _KanbanBoardTitleState extends State<KanbanBoardTitle> {
         textAlign: TextAlign.center,
       ),
       trailing: PopupMenuButton(
-        tooltip: 'Opções',
+        tooltip: l10n.options,
         itemBuilder: (context) {
           return [
             PopupMenuItem(
               onTap: deleteBoard,
-              child: const Text('Excluir'),
+              child: Text(l10n.delete),
             ),
             PopupMenuItem(
               onTap: editBoard,
-              child: const Text('Editar'),
+              child: Text(l10n.edit),
             ),
             PopupMenuItem(
               onTap: toggleEditMode,
-              child: const Text('Renomear'),
+              child: Text(l10n.rename),
             ),
           ];
         },

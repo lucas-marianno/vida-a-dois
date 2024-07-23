@@ -1,29 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kanban/core/constants/enum.dart';
+import 'package:kanban/core/i18n/l10n.dart';
+import 'package:kanban/core/widgets/form/modal_form.dart';
 import 'package:kanban/features/kanban/bloc/task/task_bloc.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_assignee.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
-import 'package:kanban/core/widgets/form/modal_form.dart';
 import 'package:kanban/features/kanban/bloc/board/board_bloc.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
-
-enum _TaskFormType {
-  create,
-  edit,
-  read;
-
-  String get typeTitle {
-    switch (this) {
-      case create:
-        return 'Criando uma Tarefa';
-      case edit:
-        return 'Editando uma Tarefa';
-      case read:
-        return 'Lendo uma Tarefa';
-    }
-  }
-}
 
 class TaskForm {
   static Future<Task?> readTask(
@@ -37,7 +22,7 @@ class TaskForm {
       builder: (context) {
         return _EditTaskForm(
           task,
-          formType: initAsReadOnly ? _TaskFormType.read : _TaskFormType.create,
+          formType: initAsReadOnly ? FormType.read : FormType.create,
         );
       },
     );
@@ -46,7 +31,7 @@ class TaskForm {
 
 class _EditTaskForm extends StatefulWidget {
   final Task? task;
-  final _TaskFormType formType;
+  final FormType formType;
   const _EditTaskForm(this.task, {required this.formType});
 
   @override
@@ -58,7 +43,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
   late BoardBloc boardBloc;
   late Task newTask;
   late bool readOnly;
-  late _TaskFormType formType;
+  late FormType formType;
 
   late String formTitle;
 
@@ -81,10 +66,19 @@ class _EditTaskFormState extends State<_EditTaskForm> {
 
   void toggleEditMode() {
     setState(() {
-      formType = formType == _TaskFormType.edit
-          ? _TaskFormType.read
-          : _TaskFormType.edit;
+      formType = formType == FormType.edit ? FormType.read : FormType.edit;
     });
+  }
+
+  String typeTitle(l10n) {
+    switch (formType) {
+      case FormType.create:
+        return l10n.creatingATask;
+      case FormType.edit:
+        return l10n.editingATask;
+      case FormType.read:
+        return l10n.readingATask;
+    }
   }
 
   @override
@@ -92,7 +86,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
     super.initState();
     newTask = widget.task?.copy() ??
         Task(
-          title: 'Nova tarefa',
+          title: L10n.of(context).newTask,
           status: boardBloc.statusList[0].title,
         );
     formType = widget.formType;
@@ -102,27 +96,28 @@ class _EditTaskFormState extends State<_EditTaskForm> {
 
   @override
   Widget build(BuildContext context) {
-    formTitle = formType.typeTitle;
-    readOnly = formType == _TaskFormType.read;
+    final l10n = L10n.of(context);
+    formTitle = typeTitle(l10n);
+    readOnly = formType == FormType.read;
 
     return ModalBottomForm(
       context: context,
       formTitle: FormTitle(
         title: formTitle,
         onIconPressed: deleteTaskAndClose,
-        icon: formType != _TaskFormType.edit ? null : Icons.delete,
+        icon: formType != FormType.edit ? null : Icons.delete,
         color: Colors.red[800],
       ),
       body: [
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Text(
-            readOnly ? ' ' : "* campos obrigatórios!",
+            readOnly ? ' ' : l10n.mandatoryFields,
             textAlign: TextAlign.end,
           ),
         ),
         MyFormField(
-          label: 'Tarefa',
+          label: l10n.task,
           enabled: !readOnly,
           initialValue: newTask.title,
           onChanged: (newString) {
@@ -131,7 +126,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
           mandatory: true,
         ),
         MyFormField(
-          label: 'Descrição da tarefa',
+          label: l10n.taskDescription,
           enabled: !readOnly,
           initialValue: newTask.description,
           multilineFormField: true,
@@ -140,7 +135,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
           },
         ),
         FormDropDownMenuButton(
-          label: 'Responsável pela tarefa',
+          label: l10n.taskAssignee,
           enabled: !readOnly,
           initialValue: newTask.assingnee.name,
           items: TaskAssignee.values.map((e) => e.name).toList(),
@@ -149,7 +144,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
           },
         ),
         FormDropDownMenuButton(
-          label: 'Importância da tarefa',
+          label: l10n.taskImportance,
           enabled: !readOnly,
           initialValue: newTask.taskImportance.name,
           items: TaskImportance.values.map((e) => e.name).toList(),
@@ -161,7 +156,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
           mainAxisSize: MainAxisSize.min,
           children: [
             FormDropDownMenuButton(
-              label: 'Status da tarefa',
+              label: l10n.taskStatus,
               flex: 1,
               enabled: !readOnly,
               initialValue: newTask.status,
@@ -172,7 +167,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
             ),
             const SizedBox(width: 6),
             FormDatePicker(
-              label: 'Prazo da tarefa',
+              label: l10n.taskDeadline,
               flex: 1,
               enabled: !readOnly,
               initialDate: newTask.dueDate?.toDate(),
@@ -194,14 +189,13 @@ class _EditTaskFormState extends State<_EditTaskForm> {
                       foregroundColor: Theme.of(context).colorScheme.onPrimary,
                     )
                   : null,
-              onPressed: formType == _TaskFormType.create
-                  ? cancelForm
-                  : toggleEditMode,
-              child: Text(readOnly ? 'Editar tarefa' : '    Cancelar   '),
+              onPressed:
+                  formType == FormType.create ? cancelForm : toggleEditMode,
+              child: Text(readOnly ? l10n.edit : l10n.cancel),
             ),
             FilledButton(
-              onPressed: formType == _TaskFormType.read ? null : sendForm,
-              child: const Text('  Concluído  '),
+              onPressed: formType == FormType.read ? null : sendForm,
+              child: Text(l10n.done),
             ),
           ],
         )

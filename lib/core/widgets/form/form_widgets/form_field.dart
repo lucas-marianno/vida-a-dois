@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kanban/core/i18n/l10n.dart';
 
 class MyFormField extends StatelessWidget {
   final String label;
@@ -48,7 +49,7 @@ class MyFormField extends StatelessWidget {
             if (!mandatory) return null;
 
             if (value == null || value.isEmpty) {
-              return "'$label' é obrigatório!";
+              return "'$label' ${L10n.of(context).isMandatory}";
             }
             return null;
           },

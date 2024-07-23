@@ -1,25 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
+import 'package:kanban/core/constants/enum.dart';
+import 'package:kanban/core/i18n/l10n.dart';
 import 'package:kanban/core/widgets/form/modal_form.dart';
+import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 import 'package:kanban/features/kanban/bloc/board/board_bloc.dart';
-
-enum _BoardFormType {
-  create,
-  edit,
-  read;
-
-  String get typeTitle {
-    switch (this) {
-      case create:
-        return 'Criando um novo quadro';
-      case edit:
-        return 'Editando um quadro';
-      case read:
-        return 'Lendo um quadro';
-    }
-  }
-}
 
 class BoardForm {
   static Future<BoardEntity?> readBoard(
@@ -33,8 +18,7 @@ class BoardForm {
       builder: (context) {
         return _EditBoardForm(
           board,
-          formType:
-              initAsReadOnly ? _BoardFormType.read : _BoardFormType.create,
+          formType: initAsReadOnly ? FormType.read : FormType.create,
         );
       },
     );
@@ -43,7 +27,7 @@ class BoardForm {
 
 class _EditBoardForm extends StatefulWidget {
   final BoardEntity board;
-  final _BoardFormType formType;
+  final FormType formType;
   const _EditBoardForm(this.board, {required this.formType});
 
   @override
@@ -54,7 +38,7 @@ class _EditBoardFormState extends State<_EditBoardForm> {
   late BoardBloc boardBloc;
   late BoardEntity newBoard;
   late bool readOnly;
-  late _BoardFormType formType;
+  late FormType formType;
 
   void cancelForm() => Navigator.pop(context);
   void sendForm() {
@@ -71,11 +55,20 @@ class _EditBoardFormState extends State<_EditBoardForm> {
     boardBloc.add(DeleteBoardEvent(widget.board));
   }
 
+  String typeTitle(l10n) {
+    switch (formType) {
+      case FormType.create:
+        return l10n.creatingABoard;
+      case FormType.edit:
+        return l10n.editingABoard;
+      case FormType.read:
+        return l10n.readingABoard;
+    }
+  }
+
   void toggleEditMode() {
     setState(() {
-      formType = formType == _BoardFormType.edit
-          ? _BoardFormType.read
-          : _BoardFormType.edit;
+      formType = formType == FormType.edit ? FormType.read : FormType.edit;
     });
   }
 
@@ -93,28 +86,28 @@ class _EditBoardFormState extends State<_EditBoardForm> {
 
   @override
   Widget build(BuildContext context) {
-    readOnly = formType == _BoardFormType.read;
-
-    String formTitle = formType.typeTitle;
+    readOnly = formType == FormType.read;
+    final l10n = L10n.of(context);
+    String formTitle = typeTitle(l10n);
 
     return ModalBottomForm(
       context: context,
       formTitle: FormTitle(
         title: formTitle,
         onIconPressed: deleteBoardAndClose,
-        icon: formType != _BoardFormType.edit ? null : Icons.delete,
+        icon: formType != FormType.edit ? null : Icons.delete,
         color: Colors.red[800],
       ),
       body: [
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Text(
-            readOnly ? ' ' : "* campos obrigatórios!",
+            readOnly ? ' ' : l10n.mandatoryFields,
             textAlign: TextAlign.end,
           ),
         ),
         MyFormField(
-          label: 'Nome do quadro',
+          label: l10n.boardName,
           enabled: !readOnly,
           initialValue: newBoard.title,
           onChanged: (newString) {
@@ -124,12 +117,12 @@ class _EditBoardFormState extends State<_EditBoardForm> {
         ),
         () {
           final items = boardBloc.statusList.map((e) {
-                return '${e.index} - Antes de "${e.title}"';
+                return '${e.index} - ${l10n.before} "${e.title}"';
               }).toList() +
-              ['${boardBloc.statusList.length} - Adicionar ao final'];
+              ['${boardBloc.statusList.length} - ${l10n.addToEnd}'];
           return FormDropDownMenuButton(
             enabled: !readOnly,
-            label: 'Posição',
+            label: l10n.position,
             initialValue: items[newBoard.index],
             items: items,
             onChanged: (e) {
@@ -149,14 +142,13 @@ class _EditBoardFormState extends State<_EditBoardForm> {
                       foregroundColor: Theme.of(context).colorScheme.onPrimary,
                     )
                   : null,
-              onPressed: formType == _BoardFormType.create
-                  ? cancelForm
-                  : toggleEditMode,
-              child: Text(readOnly ? 'Editar Quadro' : '    Cancelar   '),
+              onPressed:
+                  formType == FormType.create ? cancelForm : toggleEditMode,
+              child: Text(readOnly ? l10n.edit : l10n.cancel),
             ),
             FilledButton(
-              onPressed: formType == _BoardFormType.read ? null : sendForm,
-              child: const Text('  Concluído  '),
+              onPressed: formType == FormType.read ? null : sendForm,
+              child: Text(l10n.done),
             ),
           ],
         )

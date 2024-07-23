@@ -15,9 +15,7 @@ abstract class BoardDataSource {
     final List<BoardEntity> boards = await _getBoards;
 
     if (boards.map((e) => e.title).contains(board.title)) {
-      throw _BoardDataSourceException(
-        "Os quadros não podem ter nomes repetidos",
-      );
+      throw _BoardUniqueNameException();
     }
     board.index = board.index.clamp(0, boards.length);
 

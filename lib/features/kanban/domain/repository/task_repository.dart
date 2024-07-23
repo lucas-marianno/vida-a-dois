@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kanban/core/i18n/l10n.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_assignee.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
 
@@ -59,14 +60,12 @@ class TaskRepository {
   }
 
   Future<void> deleteTask(Task task) async {
+    final l10n = L10n.of(context);
     final response = await Dialogs(context).alertDialog(
-      title: 'Excluir tarefa?',
-      content: 'Tem certeza que deseja exluir a tarefa "${task.title}"?'
-          '\n'
-          '\n'
-          'Atenção! Após excluída, não será possível a recuperação da tarefa!',
-      cancelButtonLabel: 'Cancelar',
-      confirmButtonLabel: 'Excluir Tarefa',
+      title: '${l10n.delete} ${l10n.task.toLowerCase()}?',
+      content: l10n.deleteTaskPromptDescription(task.title),
+      cancelButtonLabel: l10n.delete,
+      confirmButtonLabel: '${l10n.delete} ${l10n.task.toLowerCase()}',
     );
 
     if (response != true) return;

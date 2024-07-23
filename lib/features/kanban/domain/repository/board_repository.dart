@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kanban/core/i18n/l10n.dart';
 import 'package:kanban/core/util/dialogs/alert_dialog.dart';
 import 'package:kanban/features/kanban/data/remote/board_data_source.dart';
 import 'package:kanban/features/kanban/data/remote/task_data_source.dart';
@@ -13,14 +14,13 @@ class BoardRepository {
 
   Future<void> createBoard() async {
     final newBoard = await BoardForm.readBoard(
-      BoardEntity(title: 'Novo quadro', index: 500),
+      BoardEntity(title: L10n.of(context).newBoard, index: 500),
       context,
       initAsReadOnly: false,
     );
 
     if (newBoard == null || newBoard.title.isEmpty) return;
 
-    // update boards list
     await BoardDataSource.createBoard(newBoard);
   }
 
@@ -33,17 +33,13 @@ class BoardRepository {
   }
 
   Future<void> deleteBoard(BoardEntity board) async {
+    final l10n = L10n.of(context);
+
     final response = await Dialogs(context).alertDialog(
-      title: 'Excluir quadro?',
-      content: 'Tem certeza que deseja exluir o quadro "${board.title}"?'
-          '\n'
-          '\n'
-          'Todas as tarefas marcadas com status "${board.title}" também serão excluídas.'
-          '\n'
-          '\n'
-          'Atenção! Após a exclusão, não será possível a recuperação do quadro e de nenhuma tarefa!',
-      cancelButtonLabel: 'Cancelar',
-      confirmButtonLabel: 'Excluir quadro',
+      title: '${l10n.delete} ${l10n.board.toLowerCase()}?',
+      content: l10n.deleteBoardPromptDescription(board.title),
+      cancelButtonLabel: l10n.cancel,
+      confirmButtonLabel: '${l10n.delete} ${l10n.board.toLowerCase()}',
     );
 
     if (response != true) return;

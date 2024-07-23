@@ -96,12 +96,14 @@ class _KanbanPageState extends State<KanbanPage> {
                 },
               );
             } else if (state is BoardErrorState) {
+              //TODO: this is not correct, fix this
+
+              final error = state.error;
               return Center(
-                child: Text("An error has ocurred \n"
-                    "\n"
-                    "${state.error.runtimeType}\n"
-                    "\n"
-                    "${state.errorMessage}"),
+                child: Text(
+                  L10n.of(context)
+                      .uninplementedException('$error', '${error.runtimeType}'),
+                ),
               );
             } else {
               throw UnimplementedError(

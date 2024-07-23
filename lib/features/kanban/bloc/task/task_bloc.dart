@@ -43,10 +43,7 @@ final class TaskBloc extends Bloc<TaskEvent, TaskState> {
     Log.trace('$TaskBloc $CreateTaskEvent \n $event');
 
     try {
-      await _taskRepo.createTask(Task(
-        title: 'Nova Tarefa',
-        status: event.currentBoard.title,
-      ));
+      await _taskRepo.createTask(event.newTask);
     } catch (e) {
       add(HandleTaskError(e));
     }

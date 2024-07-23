@@ -45,12 +45,12 @@ final class TaskStreamDataUpdate extends TaskEvent {
 }
 
 final class CreateTaskEvent extends TaskEvent {
-  final BoardEntity currentBoard;
+  final Task newTask;
 
-  const CreateTaskEvent(this.currentBoard);
+  const CreateTaskEvent(this.newTask);
 
   @override
-  List<Object> get props => [currentBoard];
+  List<Object> get props => [newTask];
 }
 
 final class ReadTaskEvent extends TaskEvent {
