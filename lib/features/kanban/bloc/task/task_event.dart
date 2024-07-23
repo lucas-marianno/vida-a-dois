@@ -34,6 +34,8 @@ final class LoadTasksEvent extends TaskEvent {
   List<Object> get props => [boardList];
 }
 
+final class ReloadTasks extends TaskEvent {}
+
 final class TaskStreamDataUpdate extends TaskEvent {
   final List<Task> updatedTasks;
   final List<BoardEntity> boardList;

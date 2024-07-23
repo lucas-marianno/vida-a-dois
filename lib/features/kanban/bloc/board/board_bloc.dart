@@ -13,12 +13,13 @@ part 'board_state.dart';
 final class BoardBloc extends Bloc<BoardEvent, BoardsState> {
   BoardBloc() : super(BoardLoadingState()) {
     on<BoardInitialEvent>(_onBoardInitialEvent);
-    on<BoardStreamDataUpdate>(_onBoardStreamDataUpdate);
+    on<BoardsListUpdate>(_onBoardStreamDataUpdate);
     on<CreateBoardEvent>(_onCreateBoardEvent);
     on<RenameBoardEvent>(_onRenameBoardEvent);
     on<EditBoardEvent>(_onEditBoardEvent);
     on<DeleteBoardEvent>(_onDeleteBoardEvent);
     on<HandleBoardException>(_onHandleBoardException);
+    on<ReloadBoards>(_onReloadBoards);
 
     Log.initializing(BoardBloc);
     add(BoardInitialEvent());
@@ -34,25 +35,42 @@ final class BoardBloc extends Bloc<BoardEvent, BoardsState> {
     BoardInitialEvent event,
     Emitter<BoardsState> emit,
   ) {
-    emit(BoardLoadingState());
     Log.trace('$BoardBloc $BoardInitialEvent \n $event');
+    emit(BoardLoadingState());
 
-    _boardSubscription = _boardsStream.listen(
-      (snapshot) {
-        if (snapshot == _statusList) return;
-
-        _statusList = snapshot;
-      },
-      onError: (e) => add(HandleBoardException(error: e)),
-      onDone: () => Log.debug('_boardSubscription is `done`!'),
-      cancelOnError: true,
-    );
-
-    add(BoardStreamDataUpdate());
+    try {
+      _boardSubscription = _boardsStream.listen(
+        (snapshot) => add(BoardsListUpdate(snapshot)),
+        onError: (e) => add(HandleBoardException(error: e)),
+        onDone: () => Log.debug('_boardSubscription is `done`!'),
+        cancelOnError: true,
+      );
+    } catch (e) {
+      add(HandleBoardException(error: e));
+    }
   }
 
-  _onBoardStreamDataUpdate(_, Emitter<BoardsState> emit) {
-    Log.trace('$BoardBloc $BoardStreamDataUpdate\n$_statusList');
+  /// Similar to [BoardsListUpdate].
+  /// Except it will emit a [BoardLoadedState] even if there were no changes
+  /// to [_statusList].
+  ///
+  /// [ReloadBoards] emits a [BoardLoadedState]
+  /// with the last known `List<ColumnEntity>`.
+  ///
+  /// This event should only be called after an error has been properly
+  /// handled by [HandleBoardException] event.
+  _onReloadBoards(_, Emitter<BoardsState> emit) {
+    Log.info("$BoardBloc $ReloadBoards");
+    emit(BoardLoadedState(_statusList));
+  }
+
+  _onBoardStreamDataUpdate(
+      BoardsListUpdate event, Emitter<BoardsState> emit) async {
+    if (event.boardsList == _statusList) return;
+
+    _statusList = event.boardsList;
+
+    Log.trace('$BoardBloc $BoardsListUpdate\n$_statusList');
     emit(BoardLoadedState(_statusList));
   }
 

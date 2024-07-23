@@ -10,6 +10,7 @@ import 'package:kanban/features/kanban/data/remote/task_data_source.dart';
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 import 'package:kanban/features/kanban/domain/repository/task_repository.dart';
+import 'package:kanban/features/kanban/util/flatten_task_map.dart';
 import 'package:kanban/features/kanban/util/parse_tasklist_into_taskmap.dart';
 
 part 'task_event.dart';
@@ -18,10 +19,12 @@ part 'task_state.dart';
 final class TaskBloc extends Bloc<TaskEvent, TaskState> {
   StreamSubscription? _streamSubscription;
   late TaskRepository _taskRepo;
+  Map<String, List<Task>> _taskList = {};
 
   TaskBloc() : super(TasksLoadingState()) {
     on<TaskInitialEvent>(_onTaskInitialEvent);
     on<LoadTasksEvent>(_onLoadTaskEvent);
+    on<ReloadTasks>(_onReloadTask);
     on<TaskStreamDataUpdate>(_onTaskStreamDataUpdate);
     on<CreateTaskEvent>(_onCreateTaskEvent);
     on<ReadTaskEvent>(_onReadTaskEvent);
@@ -35,6 +38,7 @@ final class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   _onTaskInitialEvent(TaskInitialEvent event, Emitter<TaskState> emit) {
+    emit(TasksLoadingState());
     Log.trace('$TaskBloc $TaskInitialEvent \n $event');
     _taskRepo = TaskRepository(event.context);
   }
@@ -106,14 +110,11 @@ final class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   _onLoadTaskEvent(LoadTasksEvent event, Emitter<TaskState> emit) {
     Log.trace('$TaskBloc $LoadTasksEvent \n $event');
-    emit(TasksLoadingState());
     try {
       final taskStream = TaskDataSource.readTasks;
 
       _streamSubscription = taskStream.listen(
-        (data) {
-          add(TaskStreamDataUpdate(data, event.boardList));
-        },
+        (data) => add(TaskStreamDataUpdate(data, event.boardList)),
         onError: (e) => HandleTaskError(e),
         onDone: () => Log.debug('$TaskBloc streamSubscription is Done!'),
         cancelOnError: true,
@@ -123,14 +124,25 @@ final class TaskBloc extends Bloc<TaskEvent, TaskState> {
     }
   }
 
+  _onReloadTask(_, Emitter<TaskState> emit) {
+    Log.info('$TaskBloc $ReloadTasks');
+    emit(TasksLoadedState(_taskList));
+  }
+
   _onTaskStreamDataUpdate(
-      TaskStreamDataUpdate event, Emitter<TaskState> emit) async {
-    final organized = parseListIntoMap(
-      event.updatedTasks,
-      event.boardList,
-    );
-    Log.trace('$TaskBloc $TaskStreamDataUpdate \n $event \n $TasksLoadedState');
-    emit(TasksLoadedState(organized));
+    TaskStreamDataUpdate event,
+    Emitter<TaskState> emit,
+  ) async {
+    final organized = parseListIntoMap(event.updatedTasks, event.boardList);
+
+    bool noTaskChanged = flattenTaskMap(_taskList) == flattenTaskMap(organized);
+
+    if (noTaskChanged) return;
+
+    Log.trace('$TaskBloc $TaskStreamDataUpdate\n');
+
+    _taskList = organized;
+    emit(TasksLoadedState(_taskList));
   }
 
   _onHandleTaskError(HandleTaskError event, Emitter<TaskState> emit) {

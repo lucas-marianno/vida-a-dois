@@ -2,7 +2,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/core/i18n/l10n.dart';
-import 'package:kanban/core/util/logger/logger.dart';
 import 'package:kanban/features/kanban/bloc/task/task_bloc.dart';
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
@@ -12,13 +11,11 @@ class KanbanBoardDragTarget extends StatelessWidget {
   final BoardEntity board;
   final double width;
   final Map<String, List<Task>> mappedTasks;
-  final ScrollController horizontalParentScrollController;
 
   const KanbanBoardDragTarget({
     required this.board,
     required this.width,
     required this.mappedTasks,
-    required this.horizontalParentScrollController,
     super.key,
   });
 
@@ -47,9 +44,6 @@ class KanbanBoardDragTarget extends StatelessWidget {
                 task: taskList[index],
                 tileHeight: width / 3,
                 tileWidth: width,
-                horizontalParentScrollController:
-                    horizontalParentScrollController,
-                verticalParentScrollController: verticalController,
               );
             },
           );

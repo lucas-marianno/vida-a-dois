@@ -9,10 +9,8 @@ import 'kanban_add_task_button.dart';
 
 class KanbanBoard extends StatelessWidget {
   final BoardEntity board;
-  final ScrollController horizontalParentScrollController;
   const KanbanBoard({
     required this.board,
-    required this.horizontalParentScrollController,
     super.key,
   });
 
@@ -52,15 +50,15 @@ class KanbanBoard extends StatelessWidget {
                   board: board,
                   width: width,
                   mappedTasks: state.mappedTasks,
-                  horizontalParentScrollController:
-                      horizontalParentScrollController,
                 );
               } else {
                 return Expanded(
                   child: Center(
                     child: ErrorDialog(
                       UnimplementedError('\n\n$state\n'),
-                      onAccept: () {},
+                      onAccept: () {
+                        context.read<TaskBloc>().add(ReloadTasks());
+                      },
                     ),
                   ),
                 );

@@ -9,7 +9,15 @@ sealed class BoardEvent extends Equatable {
 
 final class BoardInitialEvent extends BoardEvent {}
 
-final class BoardStreamDataUpdate extends BoardEvent {}
+final class BoardsListUpdate extends BoardEvent {
+  final List<BoardEntity> boardsList;
+
+  const BoardsListUpdate(this.boardsList);
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [boardsList];
+}
 
 final class CreateBoardEvent extends BoardEvent {
   final BoardEntity newBoard;
@@ -59,3 +67,5 @@ final class HandleBoardException extends BoardEvent {
   @override
   List<Object> get props => [error];
 }
+
+final class ReloadBoards extends BoardEvent {}

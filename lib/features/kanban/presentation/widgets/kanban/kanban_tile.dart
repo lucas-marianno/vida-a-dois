@@ -12,14 +12,14 @@ class KanbanTile extends StatefulWidget {
   final Task task;
   final double tileHeight;
   final double tileWidth;
-  final ScrollController horizontalParentScrollController;
-  final ScrollController verticalParentScrollController;
+  // final ScrollController horizontalParentScrollController;
+  // final ScrollController verticalParentScrollController;
   const KanbanTile({
     required this.task,
     required this.tileHeight,
     required this.tileWidth,
-    required this.horizontalParentScrollController,
-    required this.verticalParentScrollController,
+    // required this.horizontalParentScrollController,
+    // required this.verticalParentScrollController,
     super.key,
   });
 
@@ -30,8 +30,6 @@ class KanbanTile extends StatefulWidget {
 class _KanbanTileState extends State<KanbanTile> {
   late Widget tile;
   late Timer? timer;
-  late ScrollController verticalCtrl;
-  late ScrollController horizontalCtrl;
   late double maxRight;
   late double maxLeft;
   Duration interval = const Duration(milliseconds: 100);
@@ -40,20 +38,20 @@ class _KanbanTileState extends State<KanbanTile> {
   /// [direction] == true: right
   ///
   /// [direction] == false: left
-  Future<void> startScrollingPage(bool direction) async {
-    horizontalCtrl.animateTo(
-      direction ? maxRight : maxLeft,
-      duration: interval,
-      curve: Curves.linear,
-    );
-  }
+  // Future<void> startScrollingPage(bool direction) async {
+  //   horizontalCtrl.animateTo(
+  //     direction ? maxRight : maxLeft,
+  //     duration: interval,
+  //     curve: Curves.linear,
+  //   );
+  // }
 
   @override
   void initState() {
-    verticalCtrl = widget.verticalParentScrollController;
-    horizontalCtrl = widget.horizontalParentScrollController;
-    maxRight = horizontalCtrl.position.maxScrollExtent;
-    maxLeft = horizontalCtrl.position.minScrollExtent;
+    // verticalCtrl = widget.verticalParentScrollController;
+    // horizontalCtrl = widget.horizontalParentScrollController;
+    // maxRight = horizontalCtrl.position.maxScrollExtent;
+    // maxLeft = horizontalCtrl.position.minScrollExtent;
     super.initState();
   }
 

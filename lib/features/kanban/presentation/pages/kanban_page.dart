@@ -93,10 +93,7 @@ class _KanbanPageState extends State<KanbanPage> {
                 itemCount: boards.length + 1,
                 itemBuilder: (context, index) {
                   if (index < boards.length) {
-                    return KanbanBoard(
-                      board: boards[index],
-                      horizontalParentScrollController: scrlCtrl,
-                    );
+                    return KanbanBoard(board: boards[index]);
                   } else {
                     return Center(
                       child: Padding(
@@ -114,7 +111,7 @@ class _KanbanPageState extends State<KanbanPage> {
               return Center(
                 child: ErrorDialog(
                   state.error,
-                  onAccept: () => boardBloc.add(BoardInitialEvent()),
+                  onAccept: () => boardBloc.add(ReloadBoards()),
                 ),
               );
             } else {

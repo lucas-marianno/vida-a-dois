@@ -44,7 +44,7 @@ class _EditBoardFormState extends State<_EditBoardForm> {
   void sendForm() {
     if (newBoard.title == '') return;
 
-    toggleEditMode();
+    setState(() => formType = FormType.read);
 
     Navigator.pop(context, newBoard);
   }
