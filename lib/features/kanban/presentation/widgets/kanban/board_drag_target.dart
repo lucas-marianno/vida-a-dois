@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/core/i18n/l10n.dart';
+import 'package:kanban/core/util/logger/logger.dart';
 import 'package:kanban/features/kanban/bloc/task/task_bloc.dart';
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
@@ -33,16 +34,15 @@ class KanbanBoardDragTarget extends StatelessWidget {
             taskBloc.add(UpdateTaskStatusEvent(data.data as Task, board.title));
           }
         },
-        builder: (context, candidateData, rejectedData) {
+        builder: (context, _, __) {
+          if (taskList.isEmpty) {
+            return Center(child: Text(L10n.of(context).noTasksHere));
+          }
           return ListView.builder(
             controller: verticalController,
             shrinkWrap: true,
             itemCount: max(taskList.length, 1),
             itemBuilder: (context, index) {
-              if (taskList.isEmpty) {
-                return Center(child: Text(L10n.of(context).noTasksHere));
-              }
-
               return KanbanTile(
                 task: taskList[index],
                 tileHeight: width / 3,

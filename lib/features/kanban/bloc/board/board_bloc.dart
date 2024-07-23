@@ -24,11 +24,11 @@ final class BoardBloc extends Bloc<BoardEvent, BoardsState> {
     add(BoardInitialEvent());
   }
 
-  List<BoardEntity>? _statusList;
+  List<BoardEntity> _statusList = [];
   late StreamSubscription _boardSubscription;
   final _boardsStream = BoardDataSource.readBoards;
 
-  List<BoardEntity> get statusList => _statusList ?? [];
+  List<BoardEntity> get statusList => _statusList;
 
   _onBoardInitialEvent(
     BoardInitialEvent event,
@@ -37,22 +37,23 @@ final class BoardBloc extends Bloc<BoardEvent, BoardsState> {
     emit(BoardLoadingState());
     Log.trace('$BoardBloc $BoardInitialEvent \n $event');
 
-    add(BoardStreamDataUpdate());
-
     _boardSubscription = _boardsStream.listen(
       (snapshot) {
+        if (snapshot == _statusList) return;
+
         _statusList = snapshot;
-        add(BoardStreamDataUpdate());
       },
       onError: (e) => add(HandleBoardException(error: e)),
       onDone: () => Log.debug('_boardSubscription is `done`!'),
       cancelOnError: true,
     );
+
+    add(BoardStreamDataUpdate());
   }
 
   _onBoardStreamDataUpdate(_, Emitter<BoardsState> emit) {
     Log.trace('$BoardBloc $BoardStreamDataUpdate\n$_statusList');
-    emit(BoardLoadedState(_statusList ?? []));
+    emit(BoardLoadedState(_statusList));
   }
 
   _onCreateBoardEvent(
