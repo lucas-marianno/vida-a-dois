@@ -15,7 +15,6 @@ final class BoardsListUpdate extends BoardEvent {
   const BoardsListUpdate(this.boardsList);
 
   @override
-  // TODO: implement props
   List<Object> get props => [boardsList];
 }
 

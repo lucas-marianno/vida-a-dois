@@ -9,8 +9,10 @@ import 'kanban_add_task_button.dart';
 
 class KanbanBoard extends StatelessWidget {
   final Board board;
+  final ScrollController horizontalController;
   const KanbanBoard({
     required this.board,
+    required this.horizontalController,
     super.key,
   });
 
@@ -50,6 +52,7 @@ class KanbanBoard extends StatelessWidget {
                   board: board,
                   width: width,
                   mappedTasks: state.mappedTasks,
+                  horizontalController: horizontalController,
                 );
               } else {
                 return Expanded(

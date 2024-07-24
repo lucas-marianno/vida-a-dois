@@ -93,7 +93,10 @@ class _KanbanPageState extends State<KanbanPage> {
                 itemCount: boards.length + 1,
                 itemBuilder: (context, index) {
                   if (index < boards.length) {
-                    return KanbanBoard(board: boards[index]);
+                    return KanbanBoard(
+                      board: boards[index],
+                      horizontalController: scrlCtrl,
+                    );
                   } else {
                     return Center(
                       child: Padding(

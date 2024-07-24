@@ -11,15 +11,14 @@ import '../../../domain/entities/task_entity.dart';
 
 class KanbanTile extends StatefulWidget {
   final Task task;
-  final double tileHeight;
   final double tileWidth;
-  // final ScrollController horizontalParentScrollController;
+  final ScrollController horizontalScrollController;
+
   // final ScrollController verticalParentScrollController;
   const KanbanTile({
     required this.task,
-    required this.tileHeight,
     required this.tileWidth,
-    // required this.horizontalParentScrollController,
+    required this.horizontalScrollController,
     // required this.verticalParentScrollController,
     super.key,
   });
@@ -29,24 +28,52 @@ class KanbanTile extends StatefulWidget {
 }
 
 class _KanbanTileState extends State<KanbanTile> {
-  late Widget tile;
-  late Timer? timer;
-  late double maxRight;
-  late double maxLeft;
   late final TaskBloc taskBloc;
-  Duration interval = const Duration(milliseconds: 100);
-  double sentitiveArea = 10;
+  late final ScrollController horzCtrl;
+  double edgeArea = 10;
+  bool isOnEdge = false;
 
   /// [direction] == true: right
   ///
   /// [direction] == false: left
-  // Future<void> startScrollingPage(bool direction) async {
-  //   horizontalCtrl.animateTo(
-  //     direction ? maxRight : maxLeft,
-  //     duration: interval,
-  //     curve: Curves.linear,
-  //   );
-  // }
+  Future<void> startScrollingPage(bool direction, double width) async {
+    const Duration interval = Duration(milliseconds: 100);
+
+    if (direction) {
+      print('scroll right');
+    } else {
+      print('scroll left');
+    }
+    horzCtrl.animateTo(
+      direction ? width : 0,
+      duration: interval,
+      curve: Curves.linear,
+    );
+  }
+
+  void checkEdgeAreaEnter(Offset draggableGlobalPosition) {
+    final pos = draggableGlobalPosition.dx;
+    final width = MediaQuery.of(context).size.width;
+
+    final isOnLeftEdge = pos < 0 + edgeArea;
+    final isOnRightEdge = pos > width - edgeArea;
+
+    if (isOnLeftEdge) {
+      if (!isOnEdge) {
+        isOnEdge = true;
+        startScrollingPage(false, width);
+      }
+    } else if (isOnRightEdge) {
+      if (!isOnEdge) {
+        isOnEdge = true;
+        startScrollingPage(true, width);
+      }
+    } else {
+      if (isOnEdge) {
+        isOnEdge = false;
+      }
+    }
+  }
 
   void readTask() async {
     final newTask = await TaskForm.readTask(widget.task, context);
@@ -60,7 +87,7 @@ class _KanbanTileState extends State<KanbanTile> {
   void initState() {
     super.initState();
     // verticalCtrl = widget.verticalParentScrollController;
-    // horizontalCtrl = widget.horizontalParentScrollController;
+    horzCtrl = widget.horizontalScrollController;
     // maxRight = horizontalCtrl.position.maxScrollExtent;
     // maxLeft = horizontalCtrl.position.minScrollExtent;
     taskBloc = context.read<TaskBloc>();
@@ -68,19 +95,9 @@ class _KanbanTileState extends State<KanbanTile> {
 
   @override
   Widget build(BuildContext context) {
-    tile = _createTile(context);
-
+    Widget tile = _createTile(context);
     return LongPressDraggable(
-      onDragUpdate: (details) async {
-        // TODO: this is horrible, refactor this.
-
-        // final pos = details.globalPosition.dx;
-        // if (pos < maxLeft + sentitiveArea) {
-        //   await startScrollingPage(false);
-        // } else if (pos > maxRight - sentitiveArea) {
-        //   await startScrollingPage(true);
-        // }
-      },
+      onDragUpdate: (details) => checkEdgeAreaEnter(details.globalPosition),
       data: widget.task,
       feedback: Material(
         color: Colors.transparent,

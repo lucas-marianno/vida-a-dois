@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/core/i18n/l10n.dart';
@@ -10,25 +9,28 @@ import 'kanban_tile.dart';
 class KanbanBoardDragTarget extends StatelessWidget {
   final Board board;
   final double width;
+  final ScrollController horizontalController;
   final Map<String, List<Task>> mappedTasks;
 
   const KanbanBoardDragTarget({
     required this.board,
     required this.width,
     required this.mappedTasks,
+    required this.horizontalController,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    final taskBloc = context.read<TaskBloc>();
     List<Task> taskList = mappedTasks[board.title] ?? [];
     ScrollController verticalController = ScrollController();
     return Expanded(
       child: DragTarget(
         onAcceptWithDetails: (data) {
           if (data.data is Task) {
-            taskBloc.add(UpdateTaskStatusEvent(data.data as Task, board.title));
+            context.read<TaskBloc>().add(
+                  UpdateTaskStatusEvent(data.data as Task, board.title),
+                );
           }
         },
         builder: (context, _, __) {
@@ -38,14 +40,12 @@ class KanbanBoardDragTarget extends StatelessWidget {
           return ListView.builder(
             controller: verticalController,
             shrinkWrap: true,
-            itemCount: max(taskList.length, 1),
-            itemBuilder: (context, index) {
-              return KanbanTile(
-                task: taskList[index],
-                tileHeight: width / 3,
-                tileWidth: width,
-              );
-            },
+            itemCount: taskList.length,
+            itemBuilder: (context, i) => KanbanTile(
+              task: taskList[i],
+              horizontalScrollController: horizontalController,
+              tileWidth: width,
+            ),
           );
         },
       ),

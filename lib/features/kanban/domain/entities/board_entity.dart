@@ -1,4 +1,3 @@
-/// TODO: rename from `BoardEntity` to `Board`
 class Board {
   String title;
   int index;
