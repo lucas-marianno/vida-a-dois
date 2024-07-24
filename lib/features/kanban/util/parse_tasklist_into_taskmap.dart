@@ -3,11 +3,11 @@ import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 
 Map<String, List<Task>> parseListIntoMap(
   List<Task> taskList,
-  List<BoardEntity> boards,
+  List<Board> boards,
 ) {
   Map<String, List<Task>> map = {};
 
-  for (BoardEntity board in boards) {
+  for (Board board in boards) {
     map[board.title] = [];
   }
 

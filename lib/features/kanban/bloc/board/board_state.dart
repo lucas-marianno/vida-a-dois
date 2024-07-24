@@ -10,7 +10,7 @@ sealed class BoardsState extends Equatable {
 final class BoardLoadingState extends BoardsState {}
 
 final class BoardLoadedState extends BoardsState {
-  final List<BoardEntity> boards;
+  final List<Board> boards;
 
   const BoardLoadedState(this.boards);
 

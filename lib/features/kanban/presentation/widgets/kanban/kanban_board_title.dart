@@ -7,7 +7,7 @@ import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 import 'package:kanban/features/kanban/presentation/widgets/form/board_form.dart';
 
 class KanbanBoardTitle extends StatefulWidget {
-  final BoardEntity board;
+  final Board board;
 
   const KanbanBoardTitle({
     super.key,

@@ -1,15 +1,15 @@
 /// TODO: rename from `BoardEntity` to `Board`
-class BoardEntity {
+class Board {
   String title;
   int index;
 
-  BoardEntity({
+  Board({
     required this.title,
     required this.index,
   });
 
-  factory BoardEntity.fromJson(Map<String, dynamic> json) {
-    return BoardEntity(
+  factory Board.fromJson(Map<String, dynamic> json) {
+    return Board(
       title: json['title'],
       index: json['index'],
     );
@@ -22,10 +22,10 @@ class BoardEntity {
     };
   }
 
-  /// Returns a new [BoardEntity] with the same values as the original.
-  BoardEntity copy() => BoardEntity.fromJson(toJson);
+  /// Returns a new [Board] with the same values as the original.
+  Board copy() => Board.fromJson(toJson);
 
-  /// [equalsTo] makes a deep comparison between two [BoardEntity] objects
+  /// [equalsTo] makes a deep comparison between two [Board] objects
   /// and returns `true` if all parameters match.
-  bool equalsTo(BoardEntity board) => '${board.toJson}' == '$toJson';
+  bool equalsTo(Board board) => '${board.toJson}' == '$toJson';
 }

@@ -4,29 +4,29 @@ import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 
 //CRUD
 class BoardRepository {
-  static Future<void> createBoard(BoardEntity newBoard) async {
+  static Future<void> createBoard(Board newBoard) async {
     if (newBoard.title.isEmpty) return;
 
     await BoardDataSource.createBoard(newBoard);
   }
 
-  static Stream<List<BoardEntity>> get readBoards => BoardDataSource.readBoards;
+  static Stream<List<Board>> get readBoards => BoardDataSource.readBoards;
 
   static Future<void> updateBoard(
-    BoardEntity oldBoard,
-    BoardEntity newBoard,
+    Board oldBoard,
+    Board newBoard,
   ) async {
     await BoardDataSource.updateBoard(oldBoard, newBoard);
   }
 
   static Future<void> updateBoardTitle(
-    BoardEntity board,
+    Board board,
     String newTitle,
   ) async {
     await BoardDataSource.updateBoardTitle(board, newTitle);
   }
 
-  static Future<void> deleteBoard(BoardEntity board) async {
+  static Future<void> deleteBoard(Board board) async {
     await Future.wait([
       BoardDataSource.deleteBoard(board),
       TaskDataSource.deleteAllTasksWithStatus(board.title),

@@ -8,7 +8,7 @@ import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 import 'kanban_tile.dart';
 
 class KanbanBoardDragTarget extends StatelessWidget {
-  final BoardEntity board;
+  final Board board;
   final double width;
   final Map<String, List<Task>> mappedTasks;
 

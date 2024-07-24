@@ -24,11 +24,11 @@ final class BoardBloc extends Bloc<BoardEvent, BoardsState> {
     add(BoardInitialEvent());
   }
 
-  List<BoardEntity> _statusList = [];
+  List<Board> _statusList = [];
   late StreamSubscription _boardSubscription;
   final _boardsStream = BoardRepository.readBoards;
 
-  List<BoardEntity> get statusList => _statusList;
+  List<Board> get statusList => _statusList;
 
   _onBoardInitialEvent(
     BoardInitialEvent event,

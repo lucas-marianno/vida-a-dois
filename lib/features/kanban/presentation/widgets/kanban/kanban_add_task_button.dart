@@ -7,7 +7,7 @@ import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 import 'package:kanban/features/kanban/presentation/widgets/form/task_form.dart';
 
 class KanbanAddTaskButton extends StatelessWidget {
-  final BoardEntity currentBoard;
+  final Board currentBoard;
   const KanbanAddTaskButton(this.currentBoard, {super.key});
 
   void addTask(BuildContext context) async {

@@ -26,7 +26,7 @@ final class TaskInitialEvent extends TaskEvent {
 }
 
 final class LoadTasksEvent extends TaskEvent {
-  final List<BoardEntity> boardList;
+  final List<Board> boardList;
 
   const LoadTasksEvent(this.boardList);
 
@@ -38,7 +38,7 @@ final class ReloadTasks extends TaskEvent {}
 
 final class TaskStreamDataUpdate extends TaskEvent {
   final List<Task> updatedTasks;
-  final List<BoardEntity> boardList;
+  final List<Board> boardList;
 
   const TaskStreamDataUpdate(this.updatedTasks, this.boardList);
 

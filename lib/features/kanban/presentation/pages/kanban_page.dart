@@ -22,9 +22,9 @@ class _KanbanPageState extends State<KanbanPage> {
   late final LocaleBloc localeBloc;
   ScrollController scrlCtrl = ScrollController();
 
-  void createBoard(BoardEntity board) async {
+  void createBoard(Board board) async {
     final newBoard = await BoardForm.readBoard(
-      BoardEntity(title: L10n.of(context).newBoard, index: 500),
+      Board(title: L10n.of(context).newBoard, index: 500),
       context,
       initAsReadOnly: false,
     );

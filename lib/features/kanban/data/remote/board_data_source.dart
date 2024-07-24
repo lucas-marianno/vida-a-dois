@@ -10,9 +10,9 @@ abstract class BoardDataSource {
   static final DocumentReference _firebase =
       FireStoreConstants.boardsDocReference;
 
-  static Future<void> createBoard(BoardEntity? board) async {
+  static Future<void> createBoard(Board? board) async {
     if (board == null) return;
-    final List<BoardEntity> boards = await _getBoards;
+    final List<Board> boards = await _getBoards;
 
     if (boards.map((e) => e.title).contains(board.title)) {
       throw _BoardUniqueNameException();
@@ -28,8 +28,8 @@ abstract class BoardDataSource {
   }
 
   static Future<void> updateBoard(
-    BoardEntity board,
-    BoardEntity newBoard,
+    Board board,
+    Board newBoard,
   ) async {
     if (board.equalsTo(newBoard)) return;
 
@@ -38,7 +38,7 @@ abstract class BoardDataSource {
   }
 
   static Future<void> updateBoardTitle(
-    BoardEntity board,
+    Board board,
     String newTitle,
   ) async {
     if (board.title == newTitle) return;
@@ -53,7 +53,7 @@ abstract class BoardDataSource {
   }
 
   static Future<void> _updateBoardIndex(
-    BoardEntity board,
+    Board board,
     int newIndex,
   ) async {
     if (board.index == newIndex) return;
@@ -64,34 +64,34 @@ abstract class BoardDataSource {
     await createBoard(board..index = newIndex);
   }
 
-  static Future<void> _updateBoards(List<BoardEntity> boardsList) async {
+  static Future<void> _updateBoards(List<Board> boardsList) async {
     final boards = [];
-    for (BoardEntity element in boardsList) {
+    for (Board element in boardsList) {
       boards.add(element.title);
     }
 
     await _firebase.set({'status': boards});
   }
 
-  static Stream<List<BoardEntity>> get readBoards {
+  static Stream<List<Board>> get readBoards {
     return _firebase.snapshots().map((snapshot) {
-      final List<BoardEntity> a = [];
+      final List<Board> a = [];
       for (int i = 0; i < snapshot['status'].length; i++) {
-        a.add(BoardEntity(title: snapshot['status'][i], index: i));
+        a.add(Board(title: snapshot['status'][i], index: i));
       }
       return a;
     });
   }
 
-  static Future<void> deleteBoard(BoardEntity board) async {
+  static Future<void> deleteBoard(Board board) async {
     final boards = await _getBoards;
     boards.removeWhere((e) => e.title == board.title);
     return _updateBoards(boards);
   }
 
-  static Future<List<BoardEntity>> get _getBoards async {
+  static Future<List<Board>> get _getBoards async {
     final a = List<String>.from((await _firebase.get())['status']);
 
-    return a.map((e) => BoardEntity(title: e, index: a.indexOf(e))).toList();
+    return a.map((e) => Board(title: e, index: a.indexOf(e))).toList();
   }
 }
