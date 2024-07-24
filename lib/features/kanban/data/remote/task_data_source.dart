@@ -23,8 +23,8 @@ abstract class TaskDataSource {
     );
   }
 
-  static Future<void> updateTask(Task? task) async {
-    if (task == null || task.title.isEmpty) return;
+  static Future<void> updateTask(Task task) async {
+    if (task.title.isEmpty) return;
 
     await _taskReference.doc(task.id).set(
           task.toJson,

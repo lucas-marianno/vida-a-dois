@@ -1,3 +1,4 @@
+/// TODO: rename from `BoardEntity` to `Board`
 class BoardEntity {
   String title;
   int index;
@@ -24,6 +25,7 @@ class BoardEntity {
   /// Returns a new [BoardEntity] with the same values as the original.
   BoardEntity copy() => BoardEntity.fromJson(toJson);
 
-  /// Compares each item value in both boards and returns [true] or [false].
-  bool equals(BoardEntity board) => '${board.toJson}' == '$toJson';
+  /// [equalsTo] makes a deep comparison between two [BoardEntity] objects
+  /// and returns `true` if all parameters match.
+  bool equalsTo(BoardEntity board) => '${board.toJson}' == '$toJson';
 }

@@ -55,7 +55,7 @@ class _KanbanBoardTitleState extends State<KanbanBoardTitle> {
   void editBoard() async {
     final newBoard = await BoardForm.readBoard(widget.board, context);
 
-    if (newBoard == null || newBoard.equals(widget.board)) return;
+    if (newBoard == null || newBoard.equalsTo(widget.board)) return;
 
     boardBloc.add(EditBoardEvent(widget.board, newBoard));
   }

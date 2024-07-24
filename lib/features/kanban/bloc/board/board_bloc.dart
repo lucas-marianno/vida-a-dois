@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:kanban/core/util/logger/logger.dart';
-import 'package:kanban/features/kanban/data/remote/board_data_source.dart';
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 import 'package:kanban/features/kanban/domain/repository/board_repository.dart';
 
@@ -27,7 +26,7 @@ final class BoardBloc extends Bloc<BoardEvent, BoardsState> {
 
   List<BoardEntity> _statusList = [];
   late StreamSubscription _boardSubscription;
-  final _boardsStream = BoardDataSource.readBoards;
+  final _boardsStream = BoardRepository.readBoards;
 
   List<BoardEntity> get statusList => _statusList;
 
@@ -92,7 +91,7 @@ final class BoardBloc extends Bloc<BoardEvent, BoardsState> {
   ) async {
     Log.info('$BoardBloc $RenameBoardEvent \n $event');
     try {
-      await BoardDataSource.updateBoardTitle(
+      await BoardRepository.updateBoardTitle(
         event.board,
         event.newBoardTitle,
       );

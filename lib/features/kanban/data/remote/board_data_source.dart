@@ -31,7 +31,7 @@ abstract class BoardDataSource {
     BoardEntity board,
     BoardEntity newBoard,
   ) async {
-    if (board.equals(newBoard)) return;
+    if (board.equalsTo(newBoard)) return;
 
     await updateBoardTitle(board, newBoard.title);
     await _updateBoardIndex(board..title = newBoard.title, newBoard.index);

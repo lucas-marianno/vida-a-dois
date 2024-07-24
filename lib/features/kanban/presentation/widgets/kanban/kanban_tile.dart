@@ -6,6 +6,7 @@ import 'package:kanban/features/kanban/core/constants/enum/task_assignee.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
 import 'package:kanban/core/util/color_util.dart';
 import 'package:kanban/core/util/datetime_util.dart';
+import 'package:kanban/features/kanban/presentation/widgets/form/task_form.dart';
 import '../../../domain/entities/task_entity.dart';
 
 class KanbanTile extends StatefulWidget {
@@ -32,6 +33,7 @@ class _KanbanTileState extends State<KanbanTile> {
   late Timer? timer;
   late double maxRight;
   late double maxLeft;
+  late final TaskBloc taskBloc;
   Duration interval = const Duration(milliseconds: 100);
   double sentitiveArea = 10;
 
@@ -46,13 +48,22 @@ class _KanbanTileState extends State<KanbanTile> {
   //   );
   // }
 
+  void readTask() async {
+    final newTask = await TaskForm.readTask(widget.task, context);
+
+    if (newTask == null || newTask.equalsTo(widget.task)) return;
+
+    taskBloc.add(UpdateTaskEvent(newTask));
+  }
+
   @override
   void initState() {
+    super.initState();
     // verticalCtrl = widget.verticalParentScrollController;
     // horizontalCtrl = widget.horizontalParentScrollController;
     // maxRight = horizontalCtrl.position.maxScrollExtent;
     // maxLeft = horizontalCtrl.position.minScrollExtent;
-    super.initState();
+    taskBloc = context.read<TaskBloc>();
   }
 
   @override
@@ -91,8 +102,6 @@ class _KanbanTileState extends State<KanbanTile> {
   }
 
   Widget _createTile(BuildContext context) {
-    final taskBloc = context.read<TaskBloc>();
-
     return Container(
       width: widget.tileWidth,
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -102,7 +111,7 @@ class _KanbanTileState extends State<KanbanTile> {
         border: Border.all(color: Theme.of(context).colorScheme.shadow),
       ),
       child: GestureDetector(
-        onTap: () => taskBloc.add(ReadTaskEvent(widget.task)),
+        onTap: readTask,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [

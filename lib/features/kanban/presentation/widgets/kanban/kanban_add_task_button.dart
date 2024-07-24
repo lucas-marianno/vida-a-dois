@@ -4,18 +4,24 @@ import 'package:kanban/core/i18n/l10n.dart';
 import 'package:kanban/features/kanban/bloc/task/task_bloc.dart';
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
+import 'package:kanban/features/kanban/presentation/widgets/form/task_form.dart';
 
 class KanbanAddTaskButton extends StatelessWidget {
   final BoardEntity currentBoard;
   const KanbanAddTaskButton(this.currentBoard, {super.key});
 
-  void addTask(BuildContext context) {
-    context.read<TaskBloc>().add(CreateTaskEvent(
-          Task(
-            title: L10n.of(context).newTask,
-            status: currentBoard.title,
-          ),
-        ));
+  void addTask(BuildContext context) async {
+    TaskBloc taskBloc = context.read<TaskBloc>();
+
+    final newTask = await TaskForm.readTask(
+      Task(title: L10n.of(context).newTask, status: currentBoard.title),
+      context,
+      initAsReadOnly: false,
+    );
+
+    if (newTask == null) return;
+
+    taskBloc.add(CreateTaskEvent(newTask));
   }
 
   @override

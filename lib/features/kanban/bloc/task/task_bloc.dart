@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:kanban/core/util/logger/logger.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_assignee.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
-import 'package:kanban/features/kanban/data/remote/task_data_source.dart';
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 import 'package:kanban/features/kanban/domain/repository/task_repository.dart';
@@ -18,7 +17,7 @@ part 'task_state.dart';
 
 final class TaskBloc extends Bloc<TaskEvent, TaskState> {
   StreamSubscription? _streamSubscription;
-  late TaskRepository _taskRepo;
+  // late TaskRepository _taskRepo;
   Map<String, List<Task>> _taskList = {};
 
   TaskBloc() : super(TasksLoadingState()) {
@@ -27,7 +26,7 @@ final class TaskBloc extends Bloc<TaskEvent, TaskState> {
     on<ReloadTasks>(_onReloadTask);
     on<TaskStreamDataUpdate>(_onTaskStreamDataUpdate);
     on<CreateTaskEvent>(_onCreateTaskEvent);
-    on<ReadTaskEvent>(_onReadTaskEvent);
+    on<UpdateTaskEvent>(_onUpdateTaskEvent);
     on<UpdateTaskImportanceEvent>(_onUpdateTaskImportanceEvent);
     on<UpdateTaskAssigneeEvent>(_onUpdateTaskAssigneeEvent);
     on<UpdateTaskStatusEvent>(_onUpdateTaskStatusEvent);
@@ -40,24 +39,24 @@ final class TaskBloc extends Bloc<TaskEvent, TaskState> {
   _onTaskInitialEvent(TaskInitialEvent event, Emitter<TaskState> emit) {
     emit(TasksLoadingState());
     Log.trace('$TaskBloc $TaskInitialEvent \n $event');
-    _taskRepo = TaskRepository(event.context);
+    // _taskRepo = TaskRepository(event.context);
   }
 
   _onCreateTaskEvent(CreateTaskEvent event, Emitter<TaskState> emit) async {
     Log.trace('$TaskBloc $CreateTaskEvent \n $event');
 
     try {
-      await _taskRepo.createTask(event.newTask);
+      await TaskRepository.createTask(event.newTask);
     } catch (e) {
       add(HandleTaskError(e));
     }
   }
 
-  _onReadTaskEvent(ReadTaskEvent event, Emitter<TaskState> emit) async {
-    Log.trace('$TaskBloc $ReadTaskEvent \n $event');
+  _onUpdateTaskEvent(UpdateTaskEvent event, Emitter<TaskState> emit) async {
+    Log.trace('$TaskBloc $UpdateTaskEvent \n $event');
 
     try {
-      await _taskRepo.readTask(event.task);
+      await TaskRepository.updateTask(event.task);
     } catch (e) {
       add(HandleTaskError(e));
     }
@@ -70,7 +69,7 @@ final class TaskBloc extends Bloc<TaskEvent, TaskState> {
     Log.trace('$TaskBloc $UpdateTaskImportanceEvent \n $event');
 
     try {
-      await _taskRepo.updateTaskImportance(event.task, event.importance);
+      await TaskRepository.updateTaskImportance(event.task, event.importance);
     } catch (e) {
       add(HandleTaskError(e));
     }
@@ -82,7 +81,7 @@ final class TaskBloc extends Bloc<TaskEvent, TaskState> {
   ) async {
     Log.trace('$TaskBloc $UpdateTaskAssigneeEvent \n $event');
     try {
-      await _taskRepo.updateTaskAssignee(event.task, event.assignee);
+      await TaskRepository.updateTaskAssignee(event.task, event.assignee);
     } catch (e) {
       add(HandleTaskError(e));
     }
@@ -94,7 +93,7 @@ final class TaskBloc extends Bloc<TaskEvent, TaskState> {
   ) async {
     Log.trace('$TaskBloc $UpdateTaskStatusEvent \n $event');
     try {
-      await _taskRepo.updateTaskStatus(event.task, event.newStatus);
+      await TaskRepository.updateTaskStatus(event.task, event.newStatus);
     } catch (e) {
       add(HandleTaskError(e));
     }
@@ -102,7 +101,7 @@ final class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   _onDeleteTaskEvent(DeleteTaskEvent event, Emitter<TaskState> emit) async {
     try {
-      await _taskRepo.deleteTask(event.task);
+      await TaskRepository.deleteTask(event.task);
     } catch (e) {
       add(HandleTaskError(e));
     }
@@ -111,7 +110,7 @@ final class TaskBloc extends Bloc<TaskEvent, TaskState> {
   _onLoadTaskEvent(LoadTasksEvent event, Emitter<TaskState> emit) {
     Log.trace('$TaskBloc $LoadTasksEvent \n $event');
     try {
-      final taskStream = TaskDataSource.readTasks;
+      final taskStream = TaskRepository.readTasks;
 
       _streamSubscription = taskStream.listen(
         (data) => add(TaskStreamDataUpdate(data, event.boardList)),

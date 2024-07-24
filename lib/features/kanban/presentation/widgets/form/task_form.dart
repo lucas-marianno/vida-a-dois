@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/core/constants/enum.dart';
 import 'package:kanban/core/i18n/l10n.dart';
+import 'package:kanban/core/util/dialogs/alert_dialog.dart';
 import 'package:kanban/core/widgets/form/modal_form.dart';
 import 'package:kanban/features/kanban/bloc/task/task_bloc.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_assignee.dart';
@@ -56,10 +57,26 @@ class _EditTaskFormState extends State<_EditTaskForm> {
     Navigator.pop(context, newTask);
   }
 
-  void deleteTaskAndClose() {
+  void deleteTaskAndClose() async {
     Navigator.pop(context);
 
     if (widget.task == null) return;
+
+    final l10n = L10n.of(context);
+
+    final response = await showDialog(
+      context: context,
+      builder: (context) {
+        return ConfirmationDialog(
+          context: context,
+          title: '${l10n.delete} ${l10n.task.toLowerCase()}?',
+          content: l10n.deleteTaskPromptDescription(widget.task!.title),
+          onAccept: () => Navigator.pop(context, true),
+        );
+      },
+    );
+
+    if (response != true) return;
 
     taskBloc.add(DeleteTaskEvent(widget.task!));
   }

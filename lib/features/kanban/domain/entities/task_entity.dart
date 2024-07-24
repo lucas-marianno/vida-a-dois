@@ -56,5 +56,9 @@ class Task {
     };
   }
 
+  /// [equalsTo] makes a deep comparison between two [Task] objects
+  /// and returns `true` if all parameters match.
+  bool equalsTo(Task task) => '$toJson' == '${task.toJson}';
+
   Task copy() => Task.fromMap(toJson);
 }
