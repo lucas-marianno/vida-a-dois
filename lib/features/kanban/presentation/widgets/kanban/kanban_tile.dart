@@ -14,12 +14,10 @@ class KanbanTile extends StatefulWidget {
   final double tileWidth;
   final ScrollController horizontalScrollController;
 
-  // final ScrollController verticalParentScrollController;
   const KanbanTile({
     required this.task,
     required this.tileWidth,
     required this.horizontalScrollController,
-    // required this.verticalParentScrollController,
     super.key,
   });
 
@@ -32,7 +30,7 @@ class _KanbanTileState extends State<KanbanTile> {
   bool isOnEdge = false;
 
   /// `[direction] ? scrollRight : scrollLeft`
-  void startScrollingPage(bool direction, double width) {
+  void startScrollingPage(bool direction) {
     const Duration interval = Duration(milliseconds: 100);
     const double speedMultiplier = 1.5;
     final ScrollController horzCtrl = widget.horizontalScrollController;
@@ -62,12 +60,12 @@ class _KanbanTileState extends State<KanbanTile> {
     if (isOnLeftEdge) {
       if (!isOnEdge) {
         isOnEdge = true;
-        startScrollingPage(false, width);
+        startScrollingPage(false);
       }
     } else if (isOnRightEdge) {
       if (!isOnEdge) {
         isOnEdge = true;
-        startScrollingPage(true, width);
+        startScrollingPage(true);
       }
     } else {
       if (isOnEdge) {
@@ -82,6 +80,14 @@ class _KanbanTileState extends State<KanbanTile> {
     if (newTask == null || newTask.equalsTo(widget.task)) return;
 
     taskBloc.add(UpdateTaskEvent(newTask));
+  }
+
+  void updateTaskAssignee(TaskAssignee assignee) {
+    taskBloc.add(UpdateTaskAssigneeEvent(widget.task, assignee));
+  }
+
+  void updateTaskImportance(TaskImportance importance) {
+    taskBloc.add(UpdateTaskImportanceEvent(widget.task, importance));
   }
 
   @override
@@ -172,10 +178,7 @@ class _KanbanTileState extends State<KanbanTile> {
                                 Text(importance.name),
                               ],
                             ),
-                            onTap: () => taskBloc.add(UpdateTaskImportanceEvent(
-                              widget.task,
-                              importance,
-                            )),
+                            onTap: () => updateTaskImportance(importance),
                           ),
                       ];
                     },
@@ -225,10 +228,7 @@ class _KanbanTileState extends State<KanbanTile> {
                                 Text(assignee.name),
                               ],
                             ),
-                            onTap: () => taskBloc.add(UpdateTaskAssigneeEvent(
-                              widget.task,
-                              assignee,
-                            )),
+                            onTap: () => updateTaskAssignee(assignee),
                           ),
                       ];
                     },
