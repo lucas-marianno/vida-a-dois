@@ -17,6 +17,7 @@ final class ConnectivityBloc
     on<ListenToConnectivityChanges>(_onListenToConnectivityChanges);
 
     Log.initializing(ConnectivityBloc);
+    add(CheckConnectivityEvent());
   }
 
   _onCheckConnectivityEvent(
