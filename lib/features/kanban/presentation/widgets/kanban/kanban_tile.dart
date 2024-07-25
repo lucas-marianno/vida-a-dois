@@ -29,31 +29,32 @@ class KanbanTile extends StatefulWidget {
 
 class _KanbanTileState extends State<KanbanTile> {
   late final TaskBloc taskBloc;
-  late final ScrollController horzCtrl;
-  double edgeArea = 10;
   bool isOnEdge = false;
 
-  /// [direction] == true: right
-  ///
-  /// [direction] == false: left
-  Future<void> startScrollingPage(bool direction, double width) async {
+  /// `[direction] ? scrollRight : scrollLeft`
+  void startScrollingPage(bool direction, double width) {
     const Duration interval = Duration(milliseconds: 100);
+    const double speedMultiplier = 1.5;
+    final ScrollController horzCtrl = widget.horizontalScrollController;
 
-    if (direction) {
-      print('scroll right');
-    } else {
-      print('scroll left');
-    }
-    horzCtrl.animateTo(
-      direction ? width : 0,
-      duration: interval,
-      curve: Curves.linear,
-    );
+    double scrollAmount = 30 * (direction ? 1 : -1);
+
+    Timer.periodic(interval, (timer) {
+      if (!isOnEdge) timer.cancel();
+
+      horzCtrl.animateTo(
+        horzCtrl.offset + scrollAmount,
+        duration: interval,
+        curve: Curves.linear,
+      );
+      scrollAmount *= speedMultiplier;
+    });
   }
 
   void checkEdgeAreaEnter(Offset draggableGlobalPosition) {
-    final pos = draggableGlobalPosition.dx;
-    final width = MediaQuery.of(context).size.width;
+    const double edgeArea = 10;
+    final double pos = draggableGlobalPosition.dx;
+    final double width = MediaQuery.of(context).size.width;
 
     final isOnLeftEdge = pos < 0 + edgeArea;
     final isOnRightEdge = pos > width - edgeArea;
@@ -86,10 +87,6 @@ class _KanbanTileState extends State<KanbanTile> {
   @override
   void initState() {
     super.initState();
-    // verticalCtrl = widget.verticalParentScrollController;
-    horzCtrl = widget.horizontalScrollController;
-    // maxRight = horizontalCtrl.position.maxScrollExtent;
-    // maxLeft = horizontalCtrl.position.minScrollExtent;
     taskBloc = context.read<TaskBloc>();
   }
 
