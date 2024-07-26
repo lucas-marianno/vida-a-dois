@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/app.dart';
+import 'package:kanban/core/auth/bloc/auth_bloc.dart';
 import 'package:kanban/core/connectivity/bloc/connectivity_bloc.dart';
 import 'package:kanban/core/i18n/bloc/locale_bloc.dart';
 import 'package:kanban/core/util/logger/logger.dart';
@@ -17,10 +18,9 @@ void main() async {
   runApp(
     MultiBlocProvider(
       providers: [
-        BlocProvider<ConnectivityBloc>(
-          create: (_) => ConnectivityBloc()..add(CheckConnectivityEvent()),
-        ),
+        BlocProvider<ConnectivityBloc>(create: (_) => ConnectivityBloc()),
         BlocProvider<LocaleBloc>(create: (_) => LocaleBloc()),
+        BlocProvider<AuthBloc>(create: (_) => AuthBloc()),
         BlocProvider<BoardBloc>(create: (_) => BoardBloc()),
         BlocProvider<TaskBloc>(create: (_) => TaskBloc()),
       ],
