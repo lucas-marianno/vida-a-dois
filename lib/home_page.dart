@@ -20,7 +20,7 @@ class HomePage extends StatelessWidget {
             return BlocBuilder<AuthBloc, AuthState>(
               builder: (context, state) {
                 if (state is AuthAuthenticated) return const KanbanPage();
-                if (state is AuthLoading) return const Loading('Logging in');
+                if (state is AuthLoading) return const Loading('Autheticating');
                 if (state is AuthError) {
                   //TODO: handle error properly
                   return Center(

@@ -17,7 +17,7 @@ class _AuthPageState extends State<AuthPage> {
   final emailCtrl = TextEditingController();
   final passwordCtrl = TextEditingController();
   final confirmPasswordCtrl = TextEditingController();
-  final speed = Duration(milliseconds: 1000);
+  final speed = const Duration(milliseconds: 1000);
   final crappySentences = [
     'motivational sentence',
     'don\'t worry about whatever',
@@ -31,9 +31,19 @@ class _AuthPageState extends State<AuthPage> {
     'please buy my app',
   ];
 
+  String? emailValidator(String? value) {
+    if (value != null &&
+        value.isNotEmpty &&
+        value.contains(RegExp(r"^\w+.*\@{1}.+\.+.+$")) &&
+        !value.contains(' ')) {
+      return null;
+    }
+    return 'invalid email address';
+  }
+
   void createUser() {
-    if (passwordCtrl.text != confirmPasswordCtrl.text) {
-      //TODO: handle mismatched passwords
+    if ((emailCtrl.text.isEmpty || passwordCtrl.text.isEmpty) &&
+        passwordCtrl.text != confirmPasswordCtrl.text) {
       return;
     }
     authBloc.add(
@@ -43,7 +53,6 @@ class _AuthPageState extends State<AuthPage> {
 
   void signIn() {
     if (emailCtrl.text.isEmpty || passwordCtrl.text.isEmpty) {
-      //TODO: handle empty texts
       return;
     }
 
@@ -77,7 +86,15 @@ class _AuthPageState extends State<AuthPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  const Icon(Icons.lock),
+                  //TODO: replace wih app logo
+                  const Stack(
+                    alignment: Alignment.center,
+                    clipBehavior: Clip.none,
+                    children: [
+                      Positioned(child: Icon(Icons.favorite_outline)),
+                      Positioned(top: 5, child: Icon(Icons.favorite)),
+                    ],
+                  ),
                   // slogan
                   SizedBox(
                     height: 25,
@@ -90,27 +107,40 @@ class _AuthPageState extends State<AuthPage> {
                       ],
                     ),
                   ),
-                  TextField(
+                  TextFormField(
                     controller: emailCtrl,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     decoration: const InputDecoration(
                       hintText: 'email',
                       border: OutlineInputBorder(),
                     ),
+                    validator: emailValidator,
                   ),
-                  TextField(
+                  TextFormField(
                     controller: passwordCtrl,
+                    obscureText: true,
+                    autocorrect: false,
                     decoration: const InputDecoration(
                       hintText: 'password',
                       border: OutlineInputBorder(),
                     ),
                   ),
                   createAccount
-                      ? TextField(
+                      ? TextFormField(
                           controller: confirmPasswordCtrl,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          obscureText: true,
+                          autocorrect: false,
                           decoration: const InputDecoration(
                             hintText: 'confirm password',
                             border: OutlineInputBorder(),
                           ),
+                          validator: (value) {
+                            if (passwordCtrl.text == confirmPasswordCtrl.text) {
+                              return null;
+                            }
+                            return 'passwords don\'t match';
+                          },
                         )
                       : const SizedBox(),
                   ElevatedButton(
@@ -120,13 +150,35 @@ class _AuthPageState extends State<AuthPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('Not a member? '),
+                      Text(createAccount
+                          ? 'Already have an account?'
+                          : 'Not a member? '),
                       TextButton(
                         onPressed: toggleLoginSignup,
-                        child: const Text('Register now'),
+                        child: Text(
+                            createAccount ? 'Sign in now' : 'Register now'),
                       ),
                     ],
                   ),
+                  const Divider(),
+                  FilledButton(
+                    onPressed: () {},
+                    child: ListTile(
+                      visualDensity: VisualDensity.compact,
+                      contentPadding: EdgeInsets.zero,
+                      leading: Image.asset(
+                        'assets/signin-assets/android_light_rd_na@1x.png',
+                        scale: 1.2,
+                      ),
+                      title: Text(
+                        'Sign in with Google',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),

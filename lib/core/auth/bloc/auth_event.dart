@@ -9,7 +9,13 @@ sealed class AuthEvent extends Equatable {
 
 final class AuthStarted extends AuthEvent {}
 
-final class AuthLoggedIn extends AuthEvent {}
+final class AuthLoggedIn extends AuthEvent {
+  final User user;
+
+  const AuthLoggedIn(this.user);
+  @override
+  List<Object> get props => [user];
+}
 
 final class AuthLoggedOut extends AuthEvent {}
 

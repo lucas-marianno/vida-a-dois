@@ -31,7 +31,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       authServiceListener = AuthService.listenToChanges().listen(
         (data) {
-          if (data is User) add(AuthLoggedIn());
+          if (data is User) add(AuthLoggedIn(data));
           if (data == null) add(AuthLoggedOut());
         },
         cancelOnError: true,
@@ -44,7 +44,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   _onAuthLoggedIn(AuthLoggedIn event, Emitter<AuthState> emit) {
-    Log.trace("$AuthBloc $AuthLoggedIn \n $event");
+    Log.info("$AuthBloc $AuthLoggedIn \n $event");
     //TODO: Implement
     emit(AuthAuthenticated());
   }
@@ -59,6 +59,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     CreateUserWithEmailAndPassword event,
     Emitter<AuthState> emit,
   ) async {
+    emit(AuthLoading());
     try {
       await AuthService.createUserWithEmailAndPassword(
         event.email,
@@ -71,7 +72,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   _onSignInWithEmailAndPassword(
-      SignInWithEmailAndPassword event, Emitter<AuthState> emit) async {
+    SignInWithEmailAndPassword event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
     try {
       await AuthService.singInWithEmailAndPassword(event.email, event.password);
     } catch (e) {
@@ -86,6 +90,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   _onSignOut(_, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
     await AuthService.signout();
   }
 
