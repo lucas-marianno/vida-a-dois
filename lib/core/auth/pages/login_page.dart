@@ -12,8 +12,10 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
-  late final AuthBloc authBloc;
   bool createAccount = false;
+  bool obscurePassword = true;
+
+  late final AuthBloc authBloc;
   final emailCtrl = TextEditingController();
   final passwordCtrl = TextEditingController();
   final confirmPasswordCtrl = TextEditingController();
@@ -61,8 +63,16 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
+  void signInWithGoogle() {
+    //TODO: implement sign in with google
+  }
+
   void toggleLoginSignup() {
     setState(() => createAccount = !createAccount);
+  }
+
+  void toggleObscurePassword() {
+    setState(() => obscurePassword = !obscurePassword);
   }
 
   @override
@@ -81,7 +91,7 @@ class _AuthPageState extends State<AuthPage> {
           children: [
             const Spacer(),
             SizedBox(
-              height: MediaQuery.of(context).size.height / 3,
+              height: MediaQuery.of(context).size.height / 2.5,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -95,6 +105,7 @@ class _AuthPageState extends State<AuthPage> {
                       Positioned(top: 5, child: Icon(Icons.favorite)),
                     ],
                   ),
+                  const SizedBox(height: 10),
                   // slogan
                   SizedBox(
                     height: 25,
@@ -107,6 +118,7 @@ class _AuthPageState extends State<AuthPage> {
                       ],
                     ),
                   ),
+                  const SizedBox(height: 10),
                   TextFormField(
                     controller: emailCtrl,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -118,11 +130,17 @@ class _AuthPageState extends State<AuthPage> {
                   ),
                   TextFormField(
                     controller: passwordCtrl,
-                    obscureText: true,
+                    obscureText: obscurePassword,
                     autocorrect: false,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       hintText: 'password',
-                      border: OutlineInputBorder(),
+                      border: const OutlineInputBorder(),
+                      suffixIcon: IconButton(
+                        onPressed: toggleObscurePassword,
+                        icon: obscurePassword
+                            ? const Icon(Icons.visibility)
+                            : const Icon(Icons.visibility_off),
+                      ),
                     ),
                   ),
                   createAccount
@@ -143,10 +161,33 @@ class _AuthPageState extends State<AuthPage> {
                           },
                         )
                       : const SizedBox(),
+                  const SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: createAccount ? createUser : signIn,
-                    child: Text(createAccount ? 'create account' : 'sign in'),
+                    child: Text(createAccount ? 'Create account' : 'Sign in'),
                   ),
+
+                  FilledButton.icon(
+                    onPressed: signInWithGoogle,
+                    label: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          createAccount
+                              ? 'Sign up with Google'
+                              : 'Sign in with Google',
+                        ),
+                        SizedBox(width: 20),
+                      ],
+                    ),
+                    iconAlignment: IconAlignment.start,
+                    icon: Image.asset(
+                      'assets/signin-assets/android_light_rd_na@1x.png',
+                      scale: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -156,29 +197,11 @@ class _AuthPageState extends State<AuthPage> {
                       TextButton(
                         onPressed: toggleLoginSignup,
                         child: Text(
-                            createAccount ? 'Sign in now' : 'Register now'),
+                          createAccount ? 'Sign in now' : 'Register now',
+                        ),
                       ),
                     ],
                   ),
-                  const Divider(),
-                  FilledButton(
-                    onPressed: () {},
-                    child: ListTile(
-                      visualDensity: VisualDensity.compact,
-                      contentPadding: EdgeInsets.zero,
-                      leading: Image.asset(
-                        'assets/signin-assets/android_light_rd_na@1x.png',
-                        scale: 1.2,
-                      ),
-                      title: Text(
-                        'Sign in with Google',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                      ),
-                    ),
-                  )
                 ],
               ),
             ),
