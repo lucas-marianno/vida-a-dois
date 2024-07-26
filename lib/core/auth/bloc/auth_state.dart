@@ -16,3 +16,11 @@ final class AuthAuthenticated extends AuthState {
 }
 
 final class AuthUnauthenticated extends AuthState {}
+
+final class AuthError extends AuthState {
+  final Object error;
+
+  const AuthError(this.error);
+  @override
+  List<Object> get props => [error];
+}

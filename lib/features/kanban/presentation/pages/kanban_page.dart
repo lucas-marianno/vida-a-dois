@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kanban/core/auth/bloc/auth_bloc.dart';
 import 'package:kanban/core/i18n/bloc/locale_bloc.dart';
 import 'package:kanban/core/i18n/l10n.dart';
 import 'package:kanban/core/util/dialogs/error_dialog.dart';
@@ -70,6 +71,10 @@ class _KanbanPageState extends State<KanbanPage> {
                   onTap: () => localeBloc.add(
                     const ChangeLocaleEvent(Locale('en')),
                   ),
+                ),
+                PopupMenuItem(
+                  child: const Text('sign out'),
+                  onTap: () => context.read<AuthBloc>().add(SignOut()),
                 ),
               ];
             },

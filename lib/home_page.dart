@@ -7,6 +7,7 @@ import 'package:kanban/core/i18n/l10n.dart';
 import 'package:kanban/core/widgets/loading/loading.dart';
 import 'features/kanban/presentation/pages/kanban_page.dart';
 
+///TODO: implement L10n in [HomePage]
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -20,6 +21,14 @@ class HomePage extends StatelessWidget {
               builder: (context, state) {
                 if (state is AuthAuthenticated) return const KanbanPage();
                 if (state is AuthLoading) return const Loading('Logging in');
+                if (state is AuthError) {
+                  //TODO: handle error properly
+                  return Center(
+                    child: Text(
+                      L10n.of(context).unexpectedError('$state'),
+                    ),
+                  );
+                }
                 return const AuthPage();
               },
             );
@@ -30,6 +39,7 @@ class HomePage extends StatelessWidget {
               child: Text(L10n.of(context).warningNoInternet),
             );
           } else {
+            //TODO: handle error properly
             return Center(
               child: Text(
                 L10n.of(context).unexpectedInternetError(state.toString()),

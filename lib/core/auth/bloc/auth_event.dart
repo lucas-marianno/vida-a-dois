@@ -13,4 +13,33 @@ final class AuthLoggedIn extends AuthEvent {}
 
 final class AuthLoggedOut extends AuthEvent {}
 
-final class AuthFailed extends AuthEvent {}
+final class AuthFailed extends AuthEvent {
+  final Object error;
+
+  const AuthFailed(this.error);
+
+  @override
+  List<Object> get props => [error];
+}
+
+final class CreateUserWithEmailAndPassword extends AuthEvent {
+  final String email;
+  final String password;
+
+  const CreateUserWithEmailAndPassword(this.email, this.password);
+
+  @override
+  List<Object> get props => [email, password];
+}
+
+final class SignInWithEmailAndPassword extends AuthEvent {
+  final String email;
+  final String password;
+
+  const SignInWithEmailAndPassword(this.email, this.password);
+
+  @override
+  List<Object> get props => [email, password];
+}
+
+final class SignOut extends AuthEvent {}
