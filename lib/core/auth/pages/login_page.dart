@@ -2,8 +2,8 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/core/auth/bloc/auth_bloc.dart';
+import 'package:kanban/core/i18n/l10n.dart';
 
-///TODO: implement l10n in [AuthPage]
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
 
@@ -20,18 +20,6 @@ class _AuthPageState extends State<AuthPage> {
   final passwordCtrl = TextEditingController();
   final confirmPasswordCtrl = TextEditingController();
   final speed = const Duration(milliseconds: 1000);
-  final crappySentences = [
-    'motivational sentence',
-    'don\'t worry about whatever',
-    'love each other',
-    'leave the boring stuff for us',
-    'life is beautiful',
-    'tasks are boring',
-    'yada yada yada',
-    'some inspiring bs',
-    'help me pay my rent',
-    'please buy my app',
-  ];
 
   String? emailValidator(String? value) {
     if (value != null &&
@@ -40,7 +28,19 @@ class _AuthPageState extends State<AuthPage> {
         !value.contains(' ')) {
       return null;
     }
-    return 'invalid email address';
+    return L10n.of(context).invalidEmailAddress;
+  }
+
+  String? passwordValidator(String? value) {
+    final l10n = L10n.of(context);
+
+    if (value == null || value.isEmpty) return l10n.passwordCannotBeBlank;
+
+    if (!createAccount) return null;
+
+    if (passwordCtrl.text == confirmPasswordCtrl.text) return null;
+
+    return l10n.passwordsDontMatch;
   }
 
   void createUser() {
@@ -64,6 +64,7 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   void signInWithGoogle() {
+    print('Sign in with google');
     //TODO: implement sign in with google
   }
 
@@ -83,130 +84,127 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
+    final height = MediaQuery.of(context).size.height * 0.5;
+    final width = MediaQuery.of(context).size.width * 0.8;
     return Scaffold(
-      body: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 40),
-        alignment: Alignment.center,
-        child: Column(
-          children: [
-            const Spacer(),
-            SizedBox(
-              height: MediaQuery.of(context).size.height / 2.5,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+      body: Center(
+        child: SizedBox(
+          height: height,
+          width: width,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              //TODO: replace wih app logo
+              const Stack(
+                alignment: Alignment.center,
+                clipBehavior: Clip.none,
                 children: [
-                  //TODO: replace wih app logo
-                  const Stack(
-                    alignment: Alignment.center,
-                    clipBehavior: Clip.none,
-                    children: [
-                      Positioned(child: Icon(Icons.favorite_outline)),
-                      Positioned(top: 5, child: Icon(Icons.favorite)),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  // slogan
-                  SizedBox(
-                    height: 25,
-                    child: AnimatedTextKit(
-                      pause: Duration.zero,
-                      repeatForever: true,
-                      animatedTexts: [
-                        for (String sentence in crappySentences)
-                          RotateAnimatedText(sentence, duration: speed),
-                      ],
+                  Positioned(child: Icon(Icons.favorite_outline)),
+                  Positioned(top: 5, child: Icon(Icons.favorite)),
+                ],
+              ),
+              const SizedBox(height: 10),
+              // slogan
+              SizedBox(
+                height: 25,
+                child: AnimatedTextKit(
+                  pause: Duration.zero,
+                  repeatForever: true,
+                  animatedTexts: [
+                    for (String sentence in l10n.appSlogan.split('|'))
+                      RotateAnimatedText(sentence, duration: speed),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: emailCtrl,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                decoration: InputDecoration(
+                  hintText: l10n.email,
+                  border: const OutlineInputBorder(),
+                ),
+                validator: emailValidator,
+              ),
+              TextFormField(
+                  controller: passwordCtrl,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  obscureText: obscurePassword,
+                  autocorrect: false,
+                  decoration: InputDecoration(
+                    hintText: l10n.password,
+                    border: const OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      onPressed: toggleObscurePassword,
+                      icon: obscurePassword
+                          ? const Icon(Icons.visibility)
+                          : const Icon(Icons.visibility_off),
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  TextFormField(
-                    controller: emailCtrl,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    decoration: const InputDecoration(
-                      hintText: 'email',
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: emailValidator,
-                  ),
-                  TextFormField(
-                    controller: passwordCtrl,
-                    obscureText: obscurePassword,
-                    autocorrect: false,
-                    decoration: InputDecoration(
-                      hintText: 'password',
-                      border: const OutlineInputBorder(),
-                      suffixIcon: IconButton(
-                        onPressed: toggleObscurePassword,
-                        icon: obscurePassword
-                            ? const Icon(Icons.visibility)
-                            : const Icon(Icons.visibility_off),
+                  validator: passwordValidator),
+              createAccount
+                  ? TextFormField(
+                      controller: confirmPasswordCtrl,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      obscureText: true,
+                      autocorrect: false,
+                      decoration: InputDecoration(
+                        hintText: l10n.confirmPassword,
+                        border: const OutlineInputBorder(),
                       ),
+                      validator: passwordValidator,
+                    )
+                  : const SizedBox(),
+              const SizedBox(height: 10),
+              FilledButton(
+                onPressed: createAccount ? createUser : signIn,
+                child: Text(
+                  createAccount ? l10n.createAccount : l10n.signIn,
+                ),
+              ),
+              ElevatedButton.icon(
+                onPressed: signInWithGoogle,
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.surface,
+                  backgroundColor: Theme.of(context).colorScheme.onSurface,
+                ),
+                label: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      createAccount
+                          ? l10n.signUpWithGoogle
+                          : l10n.signInWithGoogle,
                     ),
-                  ),
-                  createAccount
-                      ? TextFormField(
-                          controller: confirmPasswordCtrl,
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          obscureText: true,
-                          autocorrect: false,
-                          decoration: const InputDecoration(
-                            hintText: 'confirm password',
-                            border: OutlineInputBorder(),
-                          ),
-                          validator: (value) {
-                            if (passwordCtrl.text == confirmPasswordCtrl.text) {
-                              return null;
-                            }
-                            return 'passwords don\'t match';
-                          },
-                        )
-                      : const SizedBox(),
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: createAccount ? createUser : signIn,
-                    child: Text(createAccount ? 'Create account' : 'Sign in'),
-                  ),
-
-                  FilledButton.icon(
-                    onPressed: signInWithGoogle,
-                    label: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          createAccount
-                              ? 'Sign up with Google'
-                              : 'Sign in with Google',
-                        ),
-                        SizedBox(width: 20),
-                      ],
+                    const SizedBox(width: 20),
+                  ],
+                ),
+                iconAlignment: IconAlignment.start,
+                icon: Image.asset(
+                  'assets/signin-assets/android_light_rd_na@1x.png',
+                  scale: 1.5,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(createAccount
+                      ? l10n.alreadyHaveAnAccount
+                      : l10n.notAMember),
+                  TextButton(
+                    onPressed: toggleLoginSignup,
+                    child: Text(
+                      createAccount ? l10n.signInNow : l10n.signUpNow,
                     ),
-                    iconAlignment: IconAlignment.start,
-                    icon: Image.asset(
-                      'assets/signin-assets/android_light_rd_na@1x.png',
-                      scale: 1.5,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(createAccount
-                          ? 'Already have an account?'
-                          : 'Not a member? '),
-                      TextButton(
-                        onPressed: toggleLoginSignup,
-                        child: Text(
-                          createAccount ? 'Sign in now' : 'Register now',
-                        ),
-                      ),
-                    ],
                   ),
                 ],
               ),
-            ),
-            const Spacer(),
-          ],
+            ],
+          ),
         ),
       ),
     );
