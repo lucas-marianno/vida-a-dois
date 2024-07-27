@@ -9,23 +9,18 @@ class Loading extends StatelessWidget {
   Widget build(BuildContext context) {
     const interval = Duration(milliseconds: 400);
 
-    return Center(
-      child: Column(
+    return AlertDialog(
+      title: const Center(child: CircularProgressIndicator()),
+      content: Row(
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const CircularProgressIndicator(),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(message),
-              AnimatedTextKit(
-                pause: interval,
-                repeatForever: true,
-                animatedTexts: [TyperAnimatedText(' ...', speed: interval)],
-              ),
-            ],
-          )
+          Text(message),
+          AnimatedTextKit(
+            pause: interval,
+            repeatForever: true,
+            animatedTexts: [TyperAnimatedText(' ...', speed: interval)],
+          ),
         ],
       ),
     );

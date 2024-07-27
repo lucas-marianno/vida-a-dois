@@ -20,8 +20,8 @@ class ConfirmationDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: title == null ? null : Text(title!),
-      content: Text(content),
+      title: title == null ? null : SelectableText(title!),
+      content: SelectableText(content),
       actions: [
         onCancel == null
             ? const SizedBox()

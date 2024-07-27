@@ -20,7 +20,7 @@ final class AuthLoggedIn extends AuthEvent {
 final class AuthLoggedOut extends AuthEvent {}
 
 final class AuthFailed extends AuthEvent {
-  final Object error;
+  final FirebaseAuthException error;
 
   const AuthFailed(this.error);
 

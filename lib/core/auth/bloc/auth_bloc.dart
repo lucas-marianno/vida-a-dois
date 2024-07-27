@@ -24,10 +24,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     add(AuthStarted());
   }
 
-  _onAuthStarted(AuthStarted event, Emitter<AuthState> emit) {
+  _onAuthStarted(AuthStarted event, Emitter<AuthState> emit) async {
     Log.trace('$AuthBloc $AuthStarted');
     emit(AuthLoading());
-    //TODO: Implement user authentication logic
+    //TODO: remove delay
+    await Future.delayed(const Duration(seconds: 2));
+
     try {
       authServiceListener = AuthService.listenToChanges().listen(
         (data) {
@@ -39,19 +41,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         onError: (e) => add(AuthFailed(e)),
       );
     } catch (e) {
-      add(AuthFailed(e));
+      add(AuthFailed(e as FirebaseAuthException));
     }
   }
 
   _onAuthLoggedIn(AuthLoggedIn event, Emitter<AuthState> emit) {
     Log.info("$AuthBloc $AuthLoggedIn \n $event");
-    //TODO: Implement
-    emit(AuthAuthenticated());
+    emit(AuthAuthenticated(event.user));
   }
 
   _onAuthLoggedOut(AuthLoggedOut event, Emitter<AuthState> emit) {
     Log.trace("$AuthBloc $AuthLoggedOut \n $event");
-    //TODO: Implement
     emit(AuthUnauthenticated());
   }
 
@@ -65,9 +65,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         event.email,
         event.password,
       );
-      AuthService.singInWithEmailAndPassword(event.email, event.password);
+      await AuthService.singInWithEmailAndPassword(event.email, event.password);
     } catch (e) {
-      add(AuthFailed(e));
+      add(AuthFailed(e as FirebaseAuthException));
     }
   }
 
@@ -76,26 +76,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(AuthLoading());
+    //TODO: remove delay
+    await Future.delayed(Duration(seconds: 2));
     try {
       await AuthService.singInWithEmailAndPassword(event.email, event.password);
     } catch (e) {
-      add(AuthFailed(e));
+      add(AuthFailed(e as FirebaseAuthException));
     }
   }
 
   _onAuthFailed(AuthFailed event, Emitter<AuthState> emit) {
-    Log.trace("$AuthBloc $AuthFailed \n $event");
-    //TODO: implement
+    Log.warning("$AuthBloc $AuthFailed \n $event");
     emit(AuthError(event.error));
   }
 
   _onSignOut(_, Emitter<AuthState> emit) async {
+    Log.trace('$AuthBloc $SignOut');
     emit(AuthLoading());
     await AuthService.signout();
   }
 
   @override
   Future<void> close() {
+    Log.trace('$AuthBloc Bloc closed');
     authServiceListener.cancel();
     return super.close();
   }

@@ -12,15 +12,19 @@ final class AuthInitial extends AuthState {}
 final class AuthLoading extends AuthState {}
 
 final class AuthAuthenticated extends AuthState {
-  //TODO: implement AuthAuthenticated
+  final User user;
+
+  const AuthAuthenticated(this.user);
+  @override
+  List<Object> get props => [user];
 }
 
 final class AuthUnauthenticated extends AuthState {}
 
 final class AuthError extends AuthState {
-  final Object error;
+  final FirebaseAuthException authError;
 
-  const AuthError(this.error);
+  const AuthError(this.authError);
   @override
-  List<Object> get props => [error];
+  List<Object> get props => [authError];
 }
