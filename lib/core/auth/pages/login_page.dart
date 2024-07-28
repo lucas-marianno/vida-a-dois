@@ -20,6 +20,15 @@ class _AuthPageState extends State<AuthPage> {
   final passwordCtrl = TextEditingController();
   final confirmPasswordCtrl = TextEditingController();
   final speed = const Duration(milliseconds: 1000);
+  final emailFocusNode = FocusNode();
+  final passwordFocusNode = FocusNode();
+  final confirmPasswordFocusNode = FocusNode();
+
+  void unfocusFields() {
+    emailFocusNode.unfocus();
+    passwordFocusNode.unfocus();
+    confirmPasswordFocusNode.unfocus();
+  }
 
   String? emailValidator(String? value) {
     if (value != null &&
@@ -44,10 +53,12 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   void forgotPassword() {
+    unfocusFields();
     //TODO: implement forgot password
   }
 
   void createUser() {
+    unfocusFields();
     if ((emailCtrl.text.isEmpty || passwordCtrl.text.isEmpty) &&
         passwordCtrl.text != confirmPasswordCtrl.text) {
       return;
@@ -58,6 +69,7 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   void signIn() {
+    unfocusFields();
     if (emailCtrl.text.isEmpty || passwordCtrl.text.isEmpty) {
       return;
     }
@@ -68,6 +80,7 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   void signInWithGoogle() {
+    unfocusFields();
     print('Sign in with google');
     //TODO: implement sign in with google
   }
@@ -125,6 +138,9 @@ class _AuthPageState extends State<AuthPage> {
               // email
               const SizedBox(height: 10),
               TextFormField(
+                autofocus: false,
+                focusNode: emailFocusNode,
+                keyboardType: TextInputType.emailAddress,
                 controller: emailCtrl,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 decoration: InputDecoration(
@@ -135,6 +151,8 @@ class _AuthPageState extends State<AuthPage> {
               ),
               // password
               TextFormField(
+                  autofocus: false,
+                  focusNode: passwordFocusNode,
                   controller: passwordCtrl,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   obscureText: obscurePassword,
@@ -153,6 +171,8 @@ class _AuthPageState extends State<AuthPage> {
               // confirm password | forgot password?
               createAccount
                   ? TextFormField(
+                      autofocus: false,
+                      focusNode: confirmPasswordFocusNode,
                       controller: confirmPasswordCtrl,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       obscureText: true,
