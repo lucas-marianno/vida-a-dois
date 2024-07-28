@@ -21,10 +21,13 @@ final class AuthAuthenticated extends AuthState {
 
 final class AuthUnauthenticated extends AuthState {}
 
+/// [AuthError] can throw:
+///
+/// `FirebaseAuthException` and unknown `Exception`
 final class AuthError extends AuthState {
-  final FirebaseAuthException authError;
+  final dynamic error;
 
-  const AuthError(this.authError);
+  const AuthError(this.error);
   @override
-  List<Object> get props => [authError];
+  List<Object> get props => [error];
 }

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:kanban/core/auth/data/auth_service.dart';
+import 'package:kanban/core/auth/data/auth_data.dart';
 import 'package:kanban/core/util/logger/logger.dart';
 
 part 'auth_event.dart';
@@ -13,11 +13,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   late StreamSubscription authServiceListener;
   AuthBloc() : super(AuthInitial()) {
     on<AuthStarted>(_onAuthStarted);
-    on<AuthLoggedIn>(_onAuthLoggedIn);
-    on<AuthLoggedOut>(_onAuthLoggedOut);
-    on<AuthFailed>(_onAuthFailed);
+    on<_AuthLoggedIn>(_onAuthLoggedIn);
+    on<_AuthLoggedOut>(_onAuthLoggedOut);
+    on<_AuthException>(_onAuthException);
     on<CreateUserWithEmailAndPassword>(_onCreateUserWithEmailAndPassword);
     on<SignInWithEmailAndPassword>(_onSignInWithEmailAndPassword);
+    on<SignInWithGoogle>(_onSignInWithGoogle);
+    on<_SignInWithCredential>(_onSignInWithCredential);
     on<SignOut>(_onSignOut);
 
     Log.initializing(AuthBloc);
@@ -29,27 +31,27 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
 
     try {
-      authServiceListener = AuthService.listenToChanges().listen(
+      authServiceListener = AuthData.listenToChanges().listen(
         (data) {
-          if (data is User) add(AuthLoggedIn(data));
-          if (data == null) add(AuthLoggedOut());
+          if (data is User) add(_AuthLoggedIn(data));
+          if (data == null) add(_AuthLoggedOut());
         },
         cancelOnError: true,
         onDone: () => Log.info("$AuthBloc AuthServiceListener is DONE"),
-        onError: (e) => add(AuthFailed(e)),
+        onError: (e) => add(_AuthException(e)),
       );
     } catch (e) {
-      add(AuthFailed(e as FirebaseAuthException));
+      add(_AuthException(e as FirebaseAuthException));
     }
   }
 
-  _onAuthLoggedIn(AuthLoggedIn event, Emitter<AuthState> emit) {
-    Log.info("$AuthBloc $AuthLoggedIn \n $event");
+  _onAuthLoggedIn(_AuthLoggedIn event, Emitter<AuthState> emit) {
+    Log.info("$AuthBloc $_AuthLoggedIn \n $event");
     emit(AuthAuthenticated(event.user));
   }
 
-  _onAuthLoggedOut(AuthLoggedOut event, Emitter<AuthState> emit) {
-    Log.trace("$AuthBloc $AuthLoggedOut \n $event");
+  _onAuthLoggedOut(_AuthLoggedOut event, Emitter<AuthState> emit) {
+    Log.trace("$AuthBloc $_AuthLoggedOut \n $event");
     emit(AuthUnauthenticated());
   }
 
@@ -57,15 +59,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     CreateUserWithEmailAndPassword event,
     Emitter<AuthState> emit,
   ) async {
+    Log.trace("$AuthBloc $CreateUserWithEmailAndPassword \n $event");
     emit(AuthLoading());
     try {
-      await AuthService.createUserWithEmailAndPassword(
+      await AuthData.createUserWithEmailAndPassword(
         event.email,
         event.password,
       );
-      await AuthService.singInWithEmailAndPassword(event.email, event.password);
+      await AuthData.singInWithEmailAndPassword(event.email, event.password);
     } catch (e) {
-      add(AuthFailed(e as FirebaseAuthException));
+      add(_AuthException(e as FirebaseAuthException));
     }
   }
 
@@ -73,23 +76,52 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     SignInWithEmailAndPassword event,
     Emitter<AuthState> emit,
   ) async {
+    Log.trace("$AuthBloc $SignInWithEmailAndPassword \n $event");
     emit(AuthLoading());
     try {
-      await AuthService.singInWithEmailAndPassword(event.email, event.password);
+      await AuthData.singInWithEmailAndPassword(event.email, event.password);
     } catch (e) {
-      add(AuthFailed(e as FirebaseAuthException));
+      add(_AuthException(e as FirebaseAuthException));
     }
   }
 
-  _onAuthFailed(AuthFailed event, Emitter<AuthState> emit) {
-    Log.warning("$AuthBloc $AuthFailed \n $event");
+  _onSignInWithGoogle(
+    SignInWithGoogle event,
+    Emitter<AuthState> emit,
+  ) async {
+    Log.trace("$AuthBloc $SignInWithGoogle");
+    emit(AuthLoading());
+    try {
+      final credential = await AuthData.getCredentialFromGoogleAuthProvider();
+      add(_SignInWithCredential(credential));
+    } catch (e) {
+      add(_AuthException(e));
+    }
+  }
+
+  _onSignInWithCredential(
+    _SignInWithCredential event,
+    Emitter<AuthState> emit,
+  ) async {
+    Log.trace("$AuthBloc $_SignInWithCredential \n $event");
+    emit(AuthLoading());
+
+    try {
+      await AuthData.signInWithCredential(event.credential);
+    } catch (e) {
+      add(_AuthException(e));
+    }
+  }
+
+  _onAuthException(_AuthException event, Emitter<AuthState> emit) {
+    Log.warning("$AuthBloc $_AuthException \n $event");
     emit(AuthError(event.error));
   }
 
   _onSignOut(_, Emitter<AuthState> emit) async {
     Log.trace('$AuthBloc $SignOut');
     emit(AuthLoading());
-    await AuthService.signout();
+    await AuthData.signout();
   }
 
   @override

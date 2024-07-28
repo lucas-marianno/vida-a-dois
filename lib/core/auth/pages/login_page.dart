@@ -79,10 +79,9 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  void signInWithGoogle() {
+  void signInWithGoogle() async {
     unfocusFields();
-    print('Sign in with google');
-    //TODO: implement sign in with google
+    authBloc.add(SignInWithGoogle());
   }
 
   void toggleLoginSignup() {
@@ -197,6 +196,7 @@ class _AuthPageState extends State<AuthPage> {
                   createAccount ? l10n.createAccount : l10n.signIn,
                 ),
               ),
+              // sign in with google
               ElevatedButton.icon(
                 onPressed: signInWithGoogle,
                 style: ElevatedButton.styleFrom(
@@ -221,6 +221,7 @@ class _AuthPageState extends State<AuthPage> {
                   scale: 1.5,
                 ),
               ),
+              // already have an account?
               const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,

@@ -32,7 +32,7 @@
     }
   },
   "somethingBadHappened": "Something bad happened!",
-  "unexpectedError": "An unexpected error happened:\n{error}\n\n",
+  "unexpectedError": "An unexpected error happened:\n\n{error}\n\n",
   "@unexpectedError": {
     "description": "Unexpected error.",
     "placeholders": {

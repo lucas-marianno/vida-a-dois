@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/core/auth/bloc/auth_bloc.dart';
@@ -46,10 +47,14 @@ class Root extends StatelessWidget {
               popUntilRoot(context);
               if (state is AuthLoading) {
                 Loading.show(context, l10n.authenticating);
-              } else if (state is AuthError &&
-                  state.authError.code == 'invalid-credential') {
-                await InfoDialog.show(context, l10n.authError);
-                auth.add(AuthStarted());
+              } else if (state is AuthError) {
+                if (state.error is FirebaseAuthException &&
+                    state.error.code == 'invalid-credential') {
+                  await InfoDialog.show(context, l10n.authError);
+                  auth.add(AuthStarted());
+                } else {
+                  await ErrorDialog.show(context, state.error);
+                }
               } else {
                 popUntilRoot(context);
               }

@@ -9,20 +9,20 @@ sealed class AuthEvent extends Equatable {
 
 final class AuthStarted extends AuthEvent {}
 
-final class AuthLoggedIn extends AuthEvent {
+final class _AuthLoggedIn extends AuthEvent {
   final User user;
 
-  const AuthLoggedIn(this.user);
+  const _AuthLoggedIn(this.user);
   @override
   List<Object> get props => [user];
 }
 
-final class AuthLoggedOut extends AuthEvent {}
+final class _AuthLoggedOut extends AuthEvent {}
 
-final class AuthFailed extends AuthEvent {
-  final FirebaseAuthException error;
+final class _AuthException extends AuthEvent {
+  final dynamic error;
 
-  const AuthFailed(this.error);
+  const _AuthException(this.error);
 
   @override
   List<Object> get props => [error];
@@ -46,6 +46,16 @@ final class SignInWithEmailAndPassword extends AuthEvent {
 
   @override
   List<Object> get props => [email, password];
+}
+
+final class SignInWithGoogle extends AuthEvent {}
+
+final class _SignInWithCredential extends AuthEvent {
+  final AuthCredential credential;
+
+  const _SignInWithCredential(this.credential);
+  @override
+  List<Object> get props => [credential];
 }
 
 final class SignOut extends AuthEvent {}
