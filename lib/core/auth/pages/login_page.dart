@@ -43,6 +43,10 @@ class _AuthPageState extends State<AuthPage> {
     return l10n.passwordsDontMatch;
   }
 
+  void forgotPassword() {
+    //TODO: implement forgot password
+  }
+
   void createUser() {
     if ((emailCtrl.text.isEmpty || passwordCtrl.text.isEmpty) &&
         passwordCtrl.text != confirmPasswordCtrl.text) {
@@ -118,6 +122,7 @@ class _AuthPageState extends State<AuthPage> {
                   ],
                 ),
               ),
+              // email
               const SizedBox(height: 10),
               TextFormField(
                 controller: emailCtrl,
@@ -128,6 +133,7 @@ class _AuthPageState extends State<AuthPage> {
                 ),
                 validator: emailValidator,
               ),
+              // password
               TextFormField(
                   controller: passwordCtrl,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -144,6 +150,7 @@ class _AuthPageState extends State<AuthPage> {
                     ),
                   ),
                   validator: passwordValidator),
+              // confirm password | forgot password?
               createAccount
                   ? TextFormField(
                       controller: confirmPasswordCtrl,
@@ -156,7 +163,13 @@ class _AuthPageState extends State<AuthPage> {
                       ),
                       validator: passwordValidator,
                     )
-                  : const SizedBox(),
+                  : Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: forgotPassword,
+                        child: Text(l10n.forgotPassword),
+                      ),
+                    ),
               const SizedBox(height: 10),
               FilledButton(
                 onPressed: createAccount ? createUser : signIn,

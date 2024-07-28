@@ -103,6 +103,7 @@
   "password": "Password",
   "passwordCannotBeBlank": "Password cannot be blank",
   "confirmPassword": "Confirm password",
+  "forgotPassword": "Forgot password?",
   "passwordsDontMatch": "Passwords don't match",
   "createAccount": "Create account",
   "signIn": "Sign in",

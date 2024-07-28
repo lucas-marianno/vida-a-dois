@@ -53,6 +53,7 @@
     "password": "Senha",
     "passwordCannotBeBlank": "A Senha não pode estar em branco",
     "confirmPassword": "Confirme a senha",
+    "forgotPassword": "Esqueceu a senha?",
     "passwordsDontMatch": "As senhas devem ser idênticas",
     "createAccount": "Criar conta",
     "signIn": "Fazer login",
