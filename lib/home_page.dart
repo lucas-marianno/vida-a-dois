@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/core/auth/bloc/auth_bloc.dart';
 import 'package:kanban/core/auth/pages/login_page.dart';
 import 'package:kanban/core/connectivity/bloc/connectivity_bloc.dart';
+import 'package:kanban/core/constants/routes.dart';
 import 'package:kanban/core/i18n/l10n.dart';
-import 'package:kanban/core/util/dialogs/alert_dialog.dart';
-import 'package:kanban/core/widgets/loading/loading.dart';
-import 'features/kanban/presentation/pages/kanban_page.dart';
+import 'package:kanban/core/util/dialogs/error_dialog.dart';
+import 'package:kanban/core/util/dialogs/info_dialog.dart';
+import 'package:kanban/core/util/dialogs/loading_dialog.dart';
+import 'package:kanban/home.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  void show(BuildContext context, ConfirmationDialog dialog) {
-    showDialog(context: context, builder: (context) => dialog);
+  void popUntilHome(BuildContext context) {
+    Navigator.popUntil(
+      context,
+      ModalRoute.withName(Routes.homePage),
+    );
   }
 
   @override
@@ -25,92 +29,44 @@ class HomePage extends StatelessWidget {
       child: MultiBlocListener(
         listeners: [
           BlocListener<ConnectivityBloc, ConnectivityState>(
-            listener: (context, state) {
+            listener: (context, state) async {
+              popUntilHome(context);
               if (state is ConnectivityLoading) {
-                showDialog(
-                  context: context,
-                  builder: (context) =>
-                      Loading(l10n.checkingInternetConnection),
-                );
+                Loading.show(context, l10n.checkingInternetConnection);
               } else if (state is NoInternetConnection) {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return Center(
-                      child: ConfirmationDialog(
-                        context: context,
-                        content: l10n.warningNoInternet,
-                        onAccept: () {
-                          connection.add(CheckConnectivityEvent());
-                          Navigator.pop(context);
-                        },
-                      ),
-                    );
-                  },
-                );
+                await InfoDialog.show(context, l10n.warningNoInternet);
+                connection.add(CheckConnectivityEvent());
               } else if (state is ConnectivityErrorState) {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return Center(
-                      child: ConfirmationDialog(
-                        context: context,
-                        title: l10n.somethingBadHappened,
-                        content: l10n.unexpectedInternetError(state.toString()),
-                        onAccept: () =>
-                            connection.add(CheckConnectivityEvent()),
-                      ),
-                    );
-                  },
-                );
+                await ErrorDialog.show(context, state.error);
+                connection.add(CheckConnectivityEvent());
               } else {
-                Navigator.pop(context);
+                popUntilHome(context);
               }
             },
           ),
           BlocListener<AuthBloc, AuthState>(
             listener: (context, state) async {
+              popUntilHome(context);
               if (state is AuthLoading) {
-                //TODO: finish implementing popups
-                Navigator.of(context).push(DialogRoute(
-                  context: context,
-                  builder: (context) {
-                    return Loading(l10n.authenticating);
-                  },
-                ));
-
-                // showDialog(
-                //   context: context,
-                //   builder: (context) => Loading(l10n.authenticating),
-                // );
-              } else if (state is AuthError) {
-                if (state.authError.code == 'invalid-credential') {
-                  showDialog(
-                    context: context,
-                    builder: (context) => ConfirmationDialog(
-                      context: context,
-                      content: l10n.authError,
-                      onAccept: () {
-                        auth.add(AuthStarted());
-                        Navigator.pop(context);
-                      },
-                    ),
-                  );
-                }
+                Loading.show(context, l10n.authenticating);
+              } else if (state is AuthError &&
+                  state.authError.code == 'invalid-credential') {
+                await InfoDialog.show(context, l10n.authError);
+                auth.add(AuthStarted());
+              } else if (state is AuthAuthenticated) {
+                Navigator.pushReplacementNamed(context, Routes.home);
               } else {
-                Navigator.pop(context);
+                popUntilHome(context);
               }
             },
           ),
         ],
         child: BlocBuilder<ConnectivityBloc, ConnectivityState>(
           builder: (context, state) {
-            print('Connectivity state: $state');
             if (state is HasInternetConnection) {
               return BlocBuilder<AuthBloc, AuthState>(
                 builder: (context, state) {
-                  print('Auth state: $state');
-                  if (state is AuthAuthenticated) return const KanbanPage();
+                  if (state is AuthAuthenticated) return const Home();
                   return const AuthPage();
                 },
               );
