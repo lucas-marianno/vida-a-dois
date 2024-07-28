@@ -27,8 +27,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   _onAuthStarted(AuthStarted event, Emitter<AuthState> emit) async {
     Log.trace('$AuthBloc $AuthStarted');
     emit(AuthLoading());
-    //TODO: remove delay
-    await Future.delayed(const Duration(seconds: 2));
 
     try {
       authServiceListener = AuthService.listenToChanges().listen(
@@ -76,8 +74,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(AuthLoading());
-    //TODO: remove delay
-    await Future.delayed(Duration(seconds: 2));
     try {
       await AuthService.singInWithEmailAndPassword(event.email, event.password);
     } catch (e) {

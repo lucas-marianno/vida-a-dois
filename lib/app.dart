@@ -22,7 +22,7 @@ class VidaADoidApp extends StatelessWidget {
           localizationsDelegates: L10n.delegates,
           locale: locale,
           theme: AppTheme.light,
-          initialRoute: Routes.homePage,
+          initialRoute: Routes.root,
           routes: Routes.routes,
         );
       },
