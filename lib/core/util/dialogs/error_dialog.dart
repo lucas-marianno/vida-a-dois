@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kanban/core/i18n/l10n.dart';
-import 'package:kanban/core/util/dialogs/alert_dialog.dart';
+import 'package:kanban/core/util/dialogs/info_dialog.dart';
 
 class ErrorDialog extends StatelessWidget {
   final Object error;
@@ -15,12 +15,42 @@ class ErrorDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ConfirmationDialog(
+    return InfoDialog(
       context: context,
       title: L10n.of(context).somethingBadHappened,
       content: L10n.of(context).unexpectedError('$error'),
       onAccept: onAccept,
       onCancel: onCancel,
+    );
+  }
+
+  /// Shows an [ErrorDialog] widget above the current route.
+  ///
+  /// It will pop itself with user interaction and
+  /// return `true`, `false` or `void`.
+  ///
+  /// Example:
+  /// ```dart
+  /// try {
+  ///   doStuff();
+  /// } catch (e) {
+  ///   final userResponse = await ErrorDialog.show(context, e);
+  ///   if (userResponse == true) {
+  ///     doThis();
+  ///   } else {
+  ///     doThat():
+  ///   }
+  /// }
+  /// ```
+  static Future<bool?> show(BuildContext context, Object error) async {
+    return await showDialog(
+      context: context,
+      builder: (context) => InfoDialog(
+        context: context,
+        title: L10n.of(context).somethingBadHappened,
+        content: L10n.of(context).unexpectedError('$error'),
+        onAccept: () => Navigator.pop(context, true),
+      ),
     );
   }
 }

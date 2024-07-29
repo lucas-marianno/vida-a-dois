@@ -7,11 +7,11 @@ sealed class ConnectivityState extends Equatable {
   List<Object> get props => [];
 }
 
-final class ConnectivityLoadingState extends ConnectivityState {}
+final class ConnectivityLoading extends ConnectivityState {}
 
-final class HasInternetConnectionState extends ConnectivityState {}
+final class HasInternetConnection extends ConnectivityState {}
 
-final class NoInternetConnectionState extends ConnectivityState {}
+final class NoInternetConnection extends ConnectivityState {}
 
 final class ConnectivityErrorState extends ConnectivityState {
   final Object error;

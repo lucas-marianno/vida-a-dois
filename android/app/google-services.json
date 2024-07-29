@@ -12,7 +12,20 @@
           "package_name": "com.lucasmarianno.VidaADois"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "870868222481-b41c4ikgpkgd63v5bi6l97q8ieh3p53d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lucasmarianno.VidaADois",
+            "certificate_hash": "bb6398c4d3a5bcfb2eaa8b81e77deba6e331709c"
+          }
+        },
+        {
+          "client_id": "870868222481-knu88kic31kh6kkpbhbif3mm2onlbd49.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBFFSHxoDqvVryhUcndd8ls0Ex4fqtfm-8"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "870868222481-knu88kic31kh6kkpbhbif3mm2onlbd49.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

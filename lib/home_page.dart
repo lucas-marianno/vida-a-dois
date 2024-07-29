@@ -1,34 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kanban/core/connectivity/bloc/connectivity_bloc.dart';
-import 'package:kanban/core/i18n/l10n.dart';
-import 'features/kanban/presentation/pages/kanban_page.dart';
+import 'package:kanban/core/auth/bloc/auth_bloc.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
   Widget build(BuildContext context) {
-    return Material(
-      child: BlocBuilder<ConnectivityBloc, ConnectivityState>(
-        builder: (context, state) {
-          if (state is ConnectivityLoadingState) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is HasInternetConnectionState) {
-            return const KanbanPage();
-          } else if (state is NoInternetConnectionState) {
-            return Center(
-              child: Text(L10n.of(context).warningNoInternet),
-            );
-          } else {
-            return Center(
-              child: Text(
-                L10n.of(context).unexpectedInternetError(state.toString()),
-              ),
-            );
-          }
-        },
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(Icons.clear)),
+        title: const Text('placeholder'),
+        actions: [
+          TextButton.icon(
+            onPressed: () => context.read<AuthBloc>().add(SignOut()),
+            label: const Text('logout'),
+            icon: const Icon(Icons.close),
+          )
+        ],
       ),
+      body: const Placeholder(),
     );
   }
 }
