@@ -6,6 +6,7 @@ import 'package:kanban/core/auth/bloc/auth_bloc.dart';
 import 'package:kanban/core/connectivity/bloc/connectivity_bloc.dart';
 import 'package:kanban/core/i18n/bloc/locale_bloc.dart';
 import 'package:kanban/core/util/logger/logger.dart';
+import 'package:kanban/features/auth/bloc/auth_bloc.dart';
 import 'package:kanban/features/kanban/bloc/board/board_bloc.dart';
 import 'package:kanban/features/kanban/bloc/task/task_bloc.dart';
 import 'firebase_options.dart';
@@ -23,6 +24,7 @@ void main() async {
         BlocProvider<AuthBloc>(create: (_) => AuthBloc()),
         BlocProvider<BoardBloc>(create: (_) => BoardBloc()),
         BlocProvider<TaskBloc>(create: (_) => TaskBloc()),
+        BlocProvider<AuthBloc>(create: (_) => AuthBloc()),
       ],
       child: const VidaADoidApp(),
     ),
