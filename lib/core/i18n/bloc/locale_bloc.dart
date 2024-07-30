@@ -1,6 +1,7 @@
+import 'dart:ui';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:kanban/core/i18n/l10n.dart';
 import 'package:kanban/core/util/logger/logger.dart';
 

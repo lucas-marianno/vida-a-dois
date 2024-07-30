@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:kanban/core/auth/data/auth_data.dart';
+import 'package:kanban/features/auth/data/auth_data.dart';
 import 'package:kanban/core/util/logger/logger.dart';
 
 part 'auth_event.dart';

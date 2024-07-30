@@ -4,7 +4,7 @@ import 'package:kanban/core/constants/enum.dart';
 import 'package:kanban/core/i18n/l10n.dart';
 import 'package:kanban/core/widgets/form/modal_form.dart';
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
-import 'package:kanban/features/kanban/bloc/board/board_bloc.dart';
+import 'package:kanban/features/kanban/presentation/bloc/board/board_bloc.dart';
 
 class BoardForm {
   static Future<Board?> readBoard(

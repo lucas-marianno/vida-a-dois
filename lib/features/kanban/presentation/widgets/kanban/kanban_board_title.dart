@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/core/i18n/l10n.dart';
 import 'package:kanban/core/util/dialogs/info_dialog.dart';
-import 'package:kanban/features/kanban/bloc/board/board_bloc.dart';
+import 'package:kanban/features/kanban/presentation/bloc/board/board_bloc.dart';
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 import 'package:kanban/features/kanban/presentation/widgets/form/board_form.dart';
 

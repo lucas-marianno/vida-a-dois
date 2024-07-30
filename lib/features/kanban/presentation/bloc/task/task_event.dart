@@ -16,14 +16,7 @@ final class HandleTaskError extends TaskEvent {
   List<Object> get props => [error];
 }
 
-final class TaskInitialEvent extends TaskEvent {
-  final BuildContext context;
-
-  const TaskInitialEvent(this.context);
-
-  @override
-  List<Object> get props => [context];
-}
+final class TaskInitialEvent extends TaskEvent {}
 
 final class LoadTasksEvent extends TaskEvent {
   final List<Board> boardList;

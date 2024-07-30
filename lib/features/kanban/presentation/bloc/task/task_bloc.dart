@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:kanban/core/util/logger/logger.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_assignee.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
@@ -17,8 +16,8 @@ part 'task_state.dart';
 
 final class TaskBloc extends Bloc<TaskEvent, TaskState> {
   StreamSubscription? _streamSubscription;
-  // late TaskRepository _taskRepo;
   Map<String, List<Task>> _taskList = {};
+  List<Board> _boardList = [];
 
   TaskBloc() : super(TasksLoadingState()) {
     on<TaskInitialEvent>(_onTaskInitialEvent);
@@ -34,12 +33,12 @@ final class TaskBloc extends Bloc<TaskEvent, TaskState> {
     on<HandleTaskError>(_onHandleTaskError);
 
     Log.initializing(TaskBloc);
+    add(TaskInitialEvent());
   }
 
   _onTaskInitialEvent(TaskInitialEvent event, Emitter<TaskState> emit) {
     emit(TasksLoadingState());
     Log.trace('$TaskBloc $TaskInitialEvent \n $event');
-    // _taskRepo = TaskRepository(event.context);
   }
 
   _onCreateTaskEvent(CreateTaskEvent event, Emitter<TaskState> emit) async {
@@ -108,12 +107,14 @@ final class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   _onLoadTaskEvent(LoadTasksEvent event, Emitter<TaskState> emit) {
+    if (event.boardList == _boardList) return;
+    _boardList = event.boardList;
     Log.trace('$TaskBloc $LoadTasksEvent \n $event');
     try {
       final taskStream = TaskRepository.readTasks;
 
       _streamSubscription = taskStream.listen(
-        (data) => add(TaskStreamDataUpdate(data, event.boardList)),
+        (data) => add(TaskStreamDataUpdate(data, _boardList)),
         onError: (e) => HandleTaskError(e),
         onDone: () => Log.debug('$TaskBloc streamSubscription is Done!'),
         cancelOnError: true,

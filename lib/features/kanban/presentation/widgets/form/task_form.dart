@@ -5,10 +5,10 @@ import 'package:kanban/core/constants/enum.dart';
 import 'package:kanban/core/i18n/l10n.dart';
 import 'package:kanban/core/util/dialogs/info_dialog.dart';
 import 'package:kanban/core/widgets/form/modal_form.dart';
-import 'package:kanban/features/kanban/bloc/task/task_bloc.dart';
+import 'package:kanban/features/kanban/presentation/bloc/task/task_bloc.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_assignee.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
-import 'package:kanban/features/kanban/bloc/board/board_bloc.dart';
+import 'package:kanban/features/kanban/presentation/bloc/board/board_bloc.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 
 class TaskForm {

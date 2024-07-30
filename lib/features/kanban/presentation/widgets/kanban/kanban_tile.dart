@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kanban/features/kanban/bloc/task/task_bloc.dart';
+import 'package:kanban/features/kanban/presentation/bloc/task/task_bloc.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_assignee.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
 import 'package:kanban/core/util/color_util.dart';
@@ -50,7 +50,7 @@ class _KanbanTileState extends State<KanbanTile> {
   }
 
   void checkEdgeAreaEnter(Offset draggableGlobalPosition) {
-    const double edgeArea = 10;
+    final double edgeArea = MediaQuery.of(context).size.width * 0.1;
     final double pos = draggableGlobalPosition.dx;
     final double width = MediaQuery.of(context).size.width;
 

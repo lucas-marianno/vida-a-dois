@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kanban/core/auth/bloc/auth_bloc.dart';
 import 'package:kanban/core/i18n/bloc/locale_bloc.dart';
 import 'package:kanban/core/i18n/l10n.dart';
 import 'package:kanban/core/util/dialogs/error_dialog.dart';
-import 'package:kanban/features/kanban/bloc/board/board_bloc.dart';
-import 'package:kanban/features/kanban/bloc/task/task_bloc.dart';
+import 'package:kanban/features/kanban/presentation/bloc/board/board_bloc.dart';
+import 'package:kanban/features/kanban/presentation/bloc/task/task_bloc.dart';
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 import 'package:kanban/features/kanban/presentation/widgets/form/board_form.dart';
 import '../widgets/kanban/kanban_board.dart';
@@ -40,47 +39,13 @@ class _KanbanPageState extends State<KanbanPage> {
     super.initState();
 
     boardBloc = context.read<BoardBloc>();
-    taskBloc = context.read<TaskBloc>()..add(TaskInitialEvent(context));
-    localeBloc = context.read<LocaleBloc>();
+    taskBloc = context.read<TaskBloc>();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        centerTitle: true,
-        title: Text(
-          L10n.of(context).appTitle.toUpperCase() + L10n.getflag(context),
-          style: const TextStyle(letterSpacing: 4),
-        ),
-        actions: [
-          PopupMenuButton(
-            itemBuilder: (context) {
-              return [
-                PopupMenuItem(
-                  child: const Text('pt 🇧🇷'),
-                  onTap: () => localeBloc.add(
-                    const ChangeLocaleEvent(Locale('pt')),
-                  ),
-                ),
-                PopupMenuItem(
-                  child: const Text('en 🇺🇸'),
-                  onTap: () => localeBloc.add(
-                    const ChangeLocaleEvent(Locale('en')),
-                  ),
-                ),
-                PopupMenuItem(
-                  child: const Text('sign out'),
-                  onTap: () => context.read<AuthBloc>().add(SignOut()),
-                ),
-              ];
-            },
-          ),
-        ],
-      ),
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: BlocBuilder<BoardBloc, BoardsState>(
