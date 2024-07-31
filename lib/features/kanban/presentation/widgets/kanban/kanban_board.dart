@@ -37,14 +37,10 @@ class KanbanBoard extends StatelessWidget {
           BlocBuilder<TaskBloc, TaskState>(
             builder: (context, state) {
               if (state is TasksLoadingState) {
-                return Expanded(
-                  child: Container(
-                    width: width,
-                    margin: const EdgeInsets.symmetric(horizontal: 3),
-                    padding: const EdgeInsets.all(5),
-                    child: LinearProgressIndicator(
-                      color: Theme.of(context).colorScheme.surfaceContainerLow,
-                    ),
+                return const Expanded(
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: LinearProgressIndicator(),
                   ),
                 );
               } else if (state is TasksLoadedState) {
