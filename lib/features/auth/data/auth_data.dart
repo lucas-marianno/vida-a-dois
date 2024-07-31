@@ -1,18 +1,22 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+part 'auth_data_exception.dart';
+
 class AuthData {
   static final _auth = FirebaseAuth.instance;
 
   static Stream<User?> listenToChanges() => _auth.authStateChanges();
 
-  static Future<OAuthCredential> getCredentialFromGoogleAuthProvider() async {
+  static Future<OAuthCredential?> getCredentialFromGoogleAuthProvider() async {
     final gUser = await GoogleSignIn().signIn();
-    final gAuth = await gUser?.authentication;
+    if (gUser == null) return null;
+
+    final gAuth = await gUser.authentication;
 
     return GoogleAuthProvider.credential(
-      accessToken: gAuth?.accessToken,
-      idToken: gAuth?.idToken,
+      accessToken: gAuth.accessToken,
+      idToken: gAuth.idToken,
     );
   }
 

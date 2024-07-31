@@ -93,8 +93,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       final credential = await AuthData.getCredentialFromGoogleAuthProvider();
+      if (credential == null) {
+        add(_AuthLoggedOut());
+        return;
+      }
+
       add(_SignInWithCredential(credential));
     } catch (e) {
+      print(e.runtimeType);
       add(_AuthException(e));
     }
   }
@@ -115,6 +121,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   _onAuthException(_AuthException event, Emitter<AuthState> emit) {
     Log.warning("$AuthBloc $_AuthException \n $event");
+    if (event.error is FirebaseAuthException) {
+      print((event.error as FirebaseAuthException).code);
+    }
     emit(AuthError(event.error));
   }
 
