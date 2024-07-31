@@ -14,6 +14,8 @@ class BottomPageNavigator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('primary color: ${Theme.of(context).colorScheme.primary}');
+    print('onprimary color: ${Theme.of(context).colorScheme.onPrimary}');
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primary,

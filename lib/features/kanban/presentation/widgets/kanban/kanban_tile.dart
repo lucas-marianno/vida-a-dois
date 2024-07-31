@@ -106,7 +106,6 @@ class _KanbanTileState extends State<KanbanTile> {
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(20),
         elevation: 6,
-        shadowColor: Theme.of(context).colorScheme.shadow,
         child: tile,
       ),
       childWhenDragging: Container(
