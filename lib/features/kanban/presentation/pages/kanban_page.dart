@@ -44,56 +44,53 @@ class _KanbanPageState extends State<KanbanPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-      body: Padding(
-        padding: const EdgeInsets.all(10),
-        child: BlocBuilder<BoardBloc, BoardsState>(
-          builder: (context, state) {
-            if (state is BoardLoadingState) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (state is BoardLoadedState) {
-              final boards = state.boards;
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: BlocBuilder<BoardBloc, BoardsState>(
+        builder: (context, state) {
+          if (state is BoardLoadingState) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is BoardLoadedState) {
+            final boards = state.boards;
 
-              taskBloc.add(LoadTasksEvent(boards));
+            taskBloc.add(LoadTasksEvent(boards));
 
-              return ListView.builder(
-                controller: scrlCtrl,
-                scrollDirection: Axis.horizontal,
-                itemCount: boards.length + 1,
-                itemBuilder: (context, index) {
-                  if (index < boards.length) {
-                    return KanbanBoard(
-                      board: boards[index],
-                      horizontalController: scrlCtrl,
-                    );
-                  } else {
-                    return Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: ElevatedButton(
-                          onPressed: () => createBoard(boards.last),
-                          child: const Icon(Icons.add),
-                        ),
+            return ListView.builder(
+              controller: scrlCtrl,
+              scrollDirection: Axis.horizontal,
+              itemCount: boards.length + 1,
+              itemBuilder: (context, index) {
+                if (index < boards.length) {
+                  return KanbanBoard(
+                    board: boards[index],
+                    horizontalController: scrlCtrl,
+                  );
+                } else {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: ElevatedButton(
+                        onPressed: () => createBoard(boards.last),
+                        child: const Icon(Icons.add),
                       ),
-                    );
-                  }
-                },
-              );
-            } else if (state is BoardErrorState) {
-              return Center(
-                child: ErrorDialog(
-                  state.error,
-                  onAccept: () => boardBloc.add(ReloadBoards()),
-                ),
-              );
-            } else {
-              throw UnimplementedError(
-                '$state implementation wasn\'t found in $BoardsState!',
-              );
-            }
-          },
-        ),
+                    ),
+                  );
+                }
+              },
+            );
+          } else if (state is BoardErrorState) {
+            return Center(
+              child: ErrorDialog(
+                state.error,
+                onAccept: () => boardBloc.add(ReloadBoards()),
+              ),
+            );
+          } else {
+            throw UnimplementedError(
+              '$state implementation wasn\'t found in $BoardsState!',
+            );
+          }
+        },
       ),
     );
   }

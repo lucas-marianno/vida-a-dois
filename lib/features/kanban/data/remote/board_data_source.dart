@@ -15,7 +15,7 @@ abstract class BoardDataSource {
     final List<Board> boards = await _getBoards;
 
     if (boards.map((e) => e.title).contains(board.title)) {
-      throw _BoardUniqueNameException();
+      throw _NameNotUniqueException();
     }
     board.index = board.index.clamp(0, boards.length);
 

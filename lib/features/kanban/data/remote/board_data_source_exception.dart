@@ -1,3 +1,5 @@
 part of 'board_data_source.dart';
 
-class _BoardUniqueNameException implements Exception {}
+abstract class _BoardDataException implements Exception {}
+
+class _NameNotUniqueException extends _BoardDataException {}

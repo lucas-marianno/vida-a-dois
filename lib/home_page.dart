@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/core/i18n/bloc/locale_bloc.dart';
 import 'package:kanban/core/i18n/l10n.dart';
+import 'package:kanban/core/widgets/bottom_page_navigator.dart';
 import 'package:kanban/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:kanban/features/calendar/presentation/pages/calendar_page.dart';
+import 'package:kanban/features/enternainment/presentation/pages/entertainment_page.dart';
+import 'package:kanban/features/finance/presentation/pages/finance_page.dart';
 import 'package:kanban/features/kanban/presentation/pages/kanban_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,15 +18,34 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late final LocaleBloc localeBloc;
+  int selectedIndex = 0;
 
-  List pages = [
-    Placeholder(),
-    KanbanPage(),
-    Placeholder(),
-    Placeholder(),
+  final List<BottomPageNavigatorItem> pages = [
+    BottomPageNavigatorItem(
+      title: 'Kanban',
+      icon: Icons.task,
+      page: const KanbanPage(),
+    ),
+    BottomPageNavigatorItem(
+      title: 'Finances',
+      icon: Icons.savings,
+      page: const FinancePage(),
+    ),
+    BottomPageNavigatorItem(
+      title: 'Entertainment',
+      icon: Icons.travel_explore,
+      page: const EntertainmentPage(),
+    ),
+    BottomPageNavigatorItem(
+      title: 'Calendar',
+      icon: Icons.calendar_month,
+      page: const CalendarPage(),
+    ),
   ];
 
-  int selectedIndex = 1;
+  void pageChanged(index) {
+    setState(() => selectedIndex = index);
+  }
 
   @override
   void initState() {
@@ -33,15 +56,27 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        forceMaterialTransparency: true,
         centerTitle: true,
         title: Text(
           L10n.of(context).appTitle.toUpperCase() + L10n.getflag(context),
           style: const TextStyle(letterSpacing: 4),
         ),
         actions: [
+          IconButton(
+            onPressed: () {
+              //TODO: implement notifications
+            },
+            icon: const Icon(Icons.notifications),
+          ),
+          IconButton(
+            onPressed: () {
+              //TODO: implement profile page
+            },
+            icon: const Icon(Icons.person),
+          ),
           PopupMenuButton(
             itemBuilder: (context) {
               return [
@@ -66,30 +101,10 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: pages[selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        unselectedItemColor: Theme.of(context).colorScheme.onSurface,
-        selectedItemColor: Theme.of(context).colorScheme.primary,
-        currentIndex: selectedIndex,
-        onTap: (value) => setState(() => selectedIndex = value),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.close),
-            label: 'placeholder 1',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.task),
-            label: 'kanban',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month),
-            label: 'placeholder 2',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.music_note),
-            label: 'placeholder 3',
-          ),
-        ],
+      body: pages[selectedIndex].page,
+      bottomNavigationBar: BottomPageNavigator(
+        pages: pages,
+        onPageChange: pageChanged,
       ),
     );
   }
