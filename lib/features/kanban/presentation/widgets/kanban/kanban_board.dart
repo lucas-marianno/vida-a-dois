@@ -64,6 +64,9 @@ class KanbanBoard extends StatelessWidget {
               }
             },
           ),
+          // TODO: show a hovering 'arrow down' to indicate that there are hidden items
+          // bellow '+ new task' button.
+          // Possibly, only show '+ new task' when the last item is being shown
           KanbanAddTaskButton(board),
         ],
       ),
