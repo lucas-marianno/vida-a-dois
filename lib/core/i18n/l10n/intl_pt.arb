@@ -57,6 +57,7 @@
     "passwordsDontMatch": "As senhas devem ser idênticas",
     "createAccount": "Criar conta",
     "signIn": "Fazer login",
+    "or": "ou",
     "signUpWithGoogle": "Cadastrar-se com o Google",
     "signInWithGoogle": "Fazer login com o Google",
     "alreadyHaveAnAccount": "Já possui uma conta?",

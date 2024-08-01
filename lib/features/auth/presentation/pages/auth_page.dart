@@ -1,6 +1,7 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kanban/core/widgets/app_logo.dart';
+import 'package:kanban/core/widgets/app_slogan.dart';
 import 'package:kanban/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:kanban/core/i18n/l10n.dart';
 
@@ -21,7 +22,6 @@ class _AuthPageState extends State<AuthPage> {
   final emailCtrl = TextEditingController();
   final passwordCtrl = TextEditingController();
   final confirmPasswordCtrl = TextEditingController();
-  final speed = const Duration(milliseconds: 1000);
   final emailFocusNode = FocusNode();
   final passwordFocusNode = FocusNode();
   final confirmPasswordFocusNode = FocusNode();
@@ -114,30 +114,10 @@ class _AuthPageState extends State<AuthPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              //TODO: replace wih app logo
-              const Stack(
-                alignment: Alignment.center,
-                clipBehavior: Clip.none,
-                children: [
-                  Positioned(child: Icon(Icons.favorite_outline)),
-                  Positioned(top: 5, child: Icon(Icons.favorite)),
-                ],
-              ),
-              const SizedBox(height: 10),
-              // slogan
-              SizedBox(
-                height: 25,
-                child: AnimatedTextKit(
-                  pause: Duration.zero,
-                  repeatForever: true,
-                  animatedTexts: [
-                    for (String sentence in l10n.appSlogan.split('|'))
-                      RotateAnimatedText(sentence, duration: speed),
-                  ],
-                ),
-              ),
+              // app logo + slogan
+              const Center(child: AppLogo()),
+              const AppSlogan(),
               // email
-              const SizedBox(height: 10),
               TextFormField(
                 autofocus: false,
                 focusNode: emailFocusNode,
@@ -191,11 +171,26 @@ class _AuthPageState extends State<AuthPage> {
                         child: Text(l10n.forgotPassword),
                       ),
                     ),
-              const SizedBox(height: 10),
               FilledButton(
                 onPressed: createAccount ? createUser : signIn,
                 child: Text(
                   createAccount ? l10n.createAccount : l10n.signIn,
+                ),
+              ),
+              // or
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    const Expanded(child: Divider()),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(l10n.or.toUpperCase()),
+                    ),
+                    const Expanded(child: Divider()),
+                  ],
                 ),
               ),
               // sign in with google
@@ -224,7 +219,6 @@ class _AuthPageState extends State<AuthPage> {
                 ),
               ),
               // already have an account?
-              const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

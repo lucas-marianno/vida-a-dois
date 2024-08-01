@@ -107,6 +107,7 @@
   "passwordsDontMatch": "Passwords don't match",
   "createAccount": "Create account",
   "signIn": "Sign in",
+  "or": "or",
   "signUpWithGoogle": "Sign up with Google",
   "signInWithGoogle": "Sign in with Google",
   "alreadyHaveAnAccount": "Already have an account?",
