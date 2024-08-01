@@ -28,9 +28,9 @@ class BottomPageNavigator extends StatelessWidget {
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
         child: GNav(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
           activeColor: Theme.of(context).colorScheme.primary,
           tabBackgroundColor: Theme.of(context).colorScheme.onPrimary,
           color: ColorUtil.makeTransparencyFrom(

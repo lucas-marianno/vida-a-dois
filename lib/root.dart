@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:kanban/features/auth/presentation/pages/login_page.dart';
+import 'package:kanban/features/auth/presentation/pages/auth_page.dart';
 import 'package:kanban/core/connectivity/bloc/connectivity_bloc.dart';
 import 'package:kanban/core/constants/routes.dart';
 import 'package:kanban/core/i18n/l10n.dart';
