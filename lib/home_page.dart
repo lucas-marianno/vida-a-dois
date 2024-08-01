@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/core/i18n/bloc/locale_bloc.dart';
-import 'package:kanban/core/i18n/l10n.dart';
+import 'package:kanban/core/widgets/app_title.dart';
 import 'package:kanban/core/widgets/bottom_page_navigator.dart';
 import 'package:kanban/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:kanban/features/calendar/presentation/pages/calendar_page.dart';
@@ -59,10 +59,11 @@ class _HomePageState extends State<HomePage> {
       // backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
       appBar: AppBar(
         forceMaterialTransparency: true,
-        centerTitle: true,
-        title: Text(
-          L10n.of(context).appTitle.toUpperCase() + L10n.getflag(context),
-          style: const TextStyle(letterSpacing: 4),
+        title: Padding(
+          padding: EdgeInsets.only(left: 15),
+          child: AppTitle(
+            fontSize: Theme.of(context).textTheme.displayMedium?.fontSize,
+          ),
         ),
         actions: [
           IconButton(

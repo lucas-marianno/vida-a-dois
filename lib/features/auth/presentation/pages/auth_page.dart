@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kanban/core/widgets/app_logo.dart';
+import 'package:kanban/core/widgets/app_title.dart';
 import 'package:kanban/core/widgets/app_slogan.dart';
 import 'package:kanban/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:kanban/core/i18n/l10n.dart';
@@ -115,7 +115,7 @@ class _AuthPageState extends State<AuthPage> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               // app logo + slogan
-              const Center(child: AppLogo()),
+              const Center(child: AppTitle()),
               const AppSlogan(),
               // email
               TextFormField(
