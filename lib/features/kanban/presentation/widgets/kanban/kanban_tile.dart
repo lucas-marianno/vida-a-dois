@@ -102,28 +102,32 @@ class _KanbanTileState extends State<KanbanTile> {
     return LongPressDraggable(
       onDragUpdate: (details) => checkEdgeAreaEnter(details.globalPosition),
       data: widget.task,
-      feedback: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(20),
-        elevation: 6,
-        child: tile,
-      ),
-      childWhenDragging: Container(
-        foregroundDecoration: BoxDecoration(
-          color: ColorUtil.makeTransparencyFrom(
-            Theme.of(context).colorScheme.surface,
-          ),
+      feedback: SizedBox(
+        width: widget.tileWidth,
+        child: Material(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+          elevation: 6,
+          child: tile,
         ),
-        child: tile,
       ),
+      childWhenDragging: _createTile(context, true),
       child: tile,
     );
   }
 
-  Widget _createTile(BuildContext context) {
+  Widget _createTile(BuildContext context, [bool disabled = false]) {
     return Container(
       width: widget.tileWidth,
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      foregroundDecoration: !disabled
+          ? null
+          : BoxDecoration(
+              color: ColorUtil.makeTransparencyFrom(
+                Theme.of(context).colorScheme.surface,
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(10),
