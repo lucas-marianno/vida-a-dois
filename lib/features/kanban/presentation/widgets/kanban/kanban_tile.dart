@@ -30,23 +30,26 @@ class _KanbanTileState extends State<KanbanTile> {
   bool isOnEdge = false;
 
   /// `[direction] ? scrollRight : scrollLeft`
-  void startScrollingPage(bool direction) {
+  void startScrollingPage(bool direction) async {
     const Duration interval = Duration(milliseconds: 100);
     const double speedMultiplier = 1.5;
     final ScrollController horzCtrl = widget.horizontalScrollController;
+    final double maxScroll = horzCtrl.position.maxScrollExtent;
 
     double scrollAmount = 30 * (direction ? 1 : -1);
 
-    Timer.periodic(interval, (timer) {
-      if (!isOnEdge) timer.cancel();
-
-      horzCtrl.animateTo(
-        horzCtrl.offset + scrollAmount,
-        duration: interval,
-        curve: Curves.linear,
-      );
+    while (isOnEdge) {
+      await Future.wait([
+        horzCtrl.animateTo(
+          (horzCtrl.offset + scrollAmount).clamp(0, maxScroll),
+          duration: interval,
+          curve: Curves.linear,
+        ),
+        Future.delayed(interval),
+      ]);
+      if (horzCtrl.position.atEdge) break;
       scrollAmount *= speedMultiplier;
-    });
+    }
   }
 
   void checkEdgeAreaEnter(Offset draggableGlobalPosition) {
