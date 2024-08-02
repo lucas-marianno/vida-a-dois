@@ -67,7 +67,10 @@ class _KanbanBoardTitleState extends State<KanbanBoardTitle> {
     if (editMode) {
       controller.text = widget.board.title;
       return ListTile(
+        contentPadding: EdgeInsets.zero,
+        horizontalTitleGap: 0,
         leading: IconButton(
+          padding: EdgeInsets.zero,
           onPressed: toggleEditMode,
           icon: const Icon(Icons.close),
         ),
@@ -77,8 +80,10 @@ class _KanbanBoardTitleState extends State<KanbanBoardTitle> {
           style: Theme.of(context).textTheme.titleMedium,
           autofocus: true,
           onSubmitted: (_) => renameBoard(),
+          onTapOutside: (_) => toggleEditMode(),
         ),
         trailing: IconButton(
+          padding: EdgeInsets.zero,
           onPressed: renameBoard,
           icon: const Icon(Icons.check),
         ),
@@ -88,6 +93,8 @@ class _KanbanBoardTitleState extends State<KanbanBoardTitle> {
     final l10n = L10n.of(context);
 
     return ListTile(
+      contentPadding: EdgeInsets.zero,
+      horizontalTitleGap: 0,
       leading: const SizedBox(width: 0),
       titleAlignment: ListTileTitleAlignment.center,
       title: Text(
@@ -96,6 +103,7 @@ class _KanbanBoardTitleState extends State<KanbanBoardTitle> {
         textAlign: TextAlign.center,
       ),
       trailing: PopupMenuButton(
+        padding: EdgeInsets.zero,
         tooltip: l10n.options,
         itemBuilder: (context) {
           return [
