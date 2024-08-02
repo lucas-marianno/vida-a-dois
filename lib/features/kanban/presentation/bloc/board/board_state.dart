@@ -1,15 +1,15 @@
 part of 'board_bloc.dart';
 
-sealed class BoardsState extends Equatable {
-  const BoardsState();
+sealed class BoardState extends Equatable {
+  const BoardState();
 
   @override
   List<Object> get props => [];
 }
 
-final class BoardLoadingState extends BoardsState {}
+final class BoardLoadingState extends BoardState {}
 
-final class BoardLoadedState extends BoardsState {
+final class BoardLoadedState extends BoardState {
   final List<Board> boards;
 
   const BoardLoadedState(this.boards);
@@ -18,7 +18,7 @@ final class BoardLoadedState extends BoardsState {
   List<Object> get props => [boards];
 }
 
-final class BoardErrorState extends BoardsState {
+final class BoardErrorState extends BoardState {
   final Object error;
   final String errorTitle;
   final String errorMessage;

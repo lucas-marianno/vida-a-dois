@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/core/i18n/bloc/locale_bloc.dart';
 import 'package:kanban/core/i18n/l10n.dart';
 import 'package:kanban/core/util/dialogs/error_dialog.dart';
+import 'package:kanban/core/util/dialogs/info_dialog.dart';
+import 'package:kanban/features/kanban/data/remote/board_data_source.dart';
 import 'package:kanban/features/kanban/presentation/bloc/board/board_bloc.dart';
 import 'package:kanban/features/kanban/presentation/bloc/task/task_bloc.dart';
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
@@ -45,52 +47,63 @@ class _KanbanPageState extends State<KanbanPage> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10),
-      child: BlocBuilder<BoardBloc, BoardsState>(
-        builder: (context, state) {
-          if (state is BoardLoadingState) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is BoardLoadedState) {
-            final boards = state.boards;
-
-            taskBloc.add(LoadTasksEvent(boards));
-
-            return ListView.builder(
-              controller: scrlCtrl,
-              scrollDirection: Axis.horizontal,
-              itemCount: boards.length + 1,
-              itemBuilder: (context, index) {
-                if (index < boards.length) {
-                  return KanbanBoard(
-                    board: boards[index],
-                    horizontalController: scrlCtrl,
-                  );
-                } else {
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: ElevatedButton(
-                        onPressed: () => createBoard(boards.last),
-                        child: const Icon(Icons.add),
-                      ),
-                    ),
-                  );
-                }
-              },
-            );
-          } else if (state is BoardErrorState) {
-            return Center(
-              child: ErrorDialog(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: BlocListener<BoardBloc, BoardState>(
+        listener: (context, state) async {
+          if (state is BoardErrorState) {
+            boardBloc.add(ReloadBoards());
+            if (state.error is NameNotUniqueException) {
+              await InfoDialog.show(
+                context,
+                L10n.of(context).boardUniqueNameException,
+                title: L10n.of(context).youCannotDoThat,
+              );
+            } else {
+              await ErrorDialog.show(
+                context,
                 state.error,
-                onAccept: () => boardBloc.add(ReloadBoards()),
-              ),
-            );
-          } else {
-            throw UnimplementedError(
-              '$state implementation wasn\'t found in $BoardsState!',
-            );
+              );
+            }
           }
         },
+        child: BlocBuilder<BoardBloc, BoardState>(
+          builder: (context, state) {
+            if (state is BoardLoadingState) {
+              return const LinearProgressIndicator();
+            } else if (state is BoardLoadedState) {
+              final boards = state.boards;
+
+              taskBloc.add(LoadTasksEvent(boards));
+
+              return ListView.builder(
+                controller: scrlCtrl,
+                scrollDirection: Axis.horizontal,
+                itemCount: boards.length + 2,
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return const SizedBox(width: 10);
+                  } else if (index < boards.length + 1) {
+                    return KanbanBoard(
+                      board: boards[index - 1],
+                      horizontalController: scrlCtrl,
+                    );
+                  } else {
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 10, right: 20),
+                        child: ElevatedButton(
+                          onPressed: () => createBoard(boards.last),
+                          child: const Icon(Icons.add),
+                        ),
+                      ),
+                    );
+                  }
+                },
+              );
+            }
+            return const SizedBox();
+          },
+        ),
       ),
     );
   }

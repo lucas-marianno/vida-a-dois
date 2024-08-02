@@ -6,6 +6,7 @@ class AppTheme {
   static ThemeData get light => ThemeData(
         useMaterial3: true,
         scaffoldBackgroundColor: Colors.grey[200],
+        dialogBackgroundColor: Colors.white,
         colorScheme: ColorScheme.light(
           primary: Colors.blue,
           onPrimary: Colors.white,
@@ -18,6 +19,8 @@ class AppTheme {
       );
   static ThemeData get dark => ThemeData(
         useMaterial3: true,
+        scaffoldBackgroundColor: Colors.grey[950],
+        dialogBackgroundColor: Colors.grey[850],
         colorScheme: ColorScheme.dark(
           primary: Colors.blue,
           onPrimary: Colors.white,

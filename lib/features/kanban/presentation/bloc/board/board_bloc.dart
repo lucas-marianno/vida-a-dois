@@ -9,7 +9,7 @@ import 'package:kanban/features/kanban/domain/repository/board_repository.dart';
 part 'board_event.dart';
 part 'board_state.dart';
 
-final class BoardBloc extends Bloc<BoardEvent, BoardsState> {
+final class BoardBloc extends Bloc<BoardEvent, BoardState> {
   BoardBloc() : super(BoardLoadingState()) {
     on<BoardInitialEvent>(_onBoardInitialEvent);
     on<BoardsListUpdate>(_onBoardStreamDataUpdate);
@@ -32,7 +32,7 @@ final class BoardBloc extends Bloc<BoardEvent, BoardsState> {
 
   _onBoardInitialEvent(
     BoardInitialEvent event,
-    Emitter<BoardsState> emit,
+    Emitter<BoardState> emit,
   ) {
     Log.trace('$BoardBloc $BoardInitialEvent \n $event');
     emit(BoardLoadingState());
@@ -58,13 +58,13 @@ final class BoardBloc extends Bloc<BoardEvent, BoardsState> {
   ///
   /// This event should only be called after an error has been properly
   /// handled by [HandleBoardException] event.
-  _onReloadBoards(_, Emitter<BoardsState> emit) {
+  _onReloadBoards(_, Emitter<BoardState> emit) {
     Log.info("$BoardBloc $ReloadBoards");
     emit(BoardLoadedState(_statusList));
   }
 
   _onBoardStreamDataUpdate(
-      BoardsListUpdate event, Emitter<BoardsState> emit) async {
+      BoardsListUpdate event, Emitter<BoardState> emit) async {
     if (event.boardsList == _statusList) return;
 
     _statusList = event.boardsList;
@@ -75,7 +75,7 @@ final class BoardBloc extends Bloc<BoardEvent, BoardsState> {
 
   _onCreateBoardEvent(
     CreateBoardEvent event,
-    Emitter<BoardsState> emit,
+    Emitter<BoardState> emit,
   ) async {
     Log.trace('$BoardBloc $CreateBoardEvent \n $event');
     try {
@@ -87,7 +87,7 @@ final class BoardBloc extends Bloc<BoardEvent, BoardsState> {
 
   _onRenameBoardEvent(
     RenameBoardEvent event,
-    Emitter<BoardsState> emit,
+    Emitter<BoardState> emit,
   ) async {
     Log.info('$BoardBloc $RenameBoardEvent \n $event');
     try {
@@ -102,7 +102,7 @@ final class BoardBloc extends Bloc<BoardEvent, BoardsState> {
 
   _onEditBoardEvent(
     EditBoardEvent event,
-    Emitter<BoardsState> emit,
+    Emitter<BoardState> emit,
   ) async {
     Log.trace('$BoardBloc $EditBoardEvent \n $event');
     try {
@@ -114,7 +114,7 @@ final class BoardBloc extends Bloc<BoardEvent, BoardsState> {
 
   _onDeleteBoardEvent(
     DeleteBoardEvent event,
-    Emitter<BoardsState> emit,
+    Emitter<BoardState> emit,
   ) async {
     Log.trace('$BoardBloc $DeleteBoardEvent \n $event');
     try {
@@ -126,7 +126,7 @@ final class BoardBloc extends Bloc<BoardEvent, BoardsState> {
 
   _onHandleBoardException(
     HandleBoardException event,
-    Emitter<BoardsState> emit,
+    Emitter<BoardState> emit,
   ) async {
     final error = event.error;
     Log.error(error.runtimeType, error: error);

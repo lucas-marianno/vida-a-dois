@@ -8,6 +8,8 @@
   "@appTitle": {
     "description": "Title for the Home Page"
   },
+  "youCannotDoThat": "You cannot do that!",
+  "warning": "Warning!",
   "warningNoInternet": "There is no internet connection!\n\nAt the moment, Vida A Dois requires an internet connection to work. \n\n Please check if your device has an internet connection, or if this app has internet access authorized in the device settings.\n\nPlease try again later.",
   "@warningNoInternet": {
     "description": "Warning! No Internet Connection."

@@ -41,6 +41,7 @@ class _KanbanBoardTitleState extends State<KanbanBoardTitle> {
       context,
       l10n.deleteBoardPromptDescription(widget.board.title),
       title: '${l10n.delete} ${l10n.board.toLowerCase()}?',
+      showCancel: true,
     );
 
     if (response != true) return;

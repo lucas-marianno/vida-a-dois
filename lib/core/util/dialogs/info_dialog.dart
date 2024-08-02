@@ -7,16 +7,14 @@ import 'package:kanban/core/i18n/l10n.dart';
 /// You can use it by itself, or you can call [show] to display it
 /// above the current route.
 class InfoDialog extends StatelessWidget {
-  final BuildContext context;
   final String? title;
   final String content;
   final void Function() onAccept;
   final void Function()? onCancel;
 
-  const InfoDialog({
-    required this.context,
+  const InfoDialog(
+    this.content, {
     this.title,
-    required this.content,
     required this.onAccept,
     this.onCancel,
     super.key,
@@ -67,8 +65,7 @@ class InfoDialog extends StatelessWidget {
       await showDialog(
         context: context,
         builder: (context) => InfoDialog(
-          context: context,
-          content: content,
+          content,
           title: title,
           onAccept: () => Navigator.pop(context, true),
           onCancel: showCancel ? () => Navigator.pop(context, false) : null,

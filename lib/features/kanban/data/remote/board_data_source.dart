@@ -15,7 +15,7 @@ abstract class BoardDataSource {
     final List<Board> boards = await _getBoards;
 
     if (boards.map((e) => e.title).contains(board.title)) {
-      throw _NameNotUniqueException();
+      throw NameNotUniqueException();
     }
     board.index = board.index.clamp(0, boards.length);
 
@@ -44,6 +44,11 @@ abstract class BoardDataSource {
     if (board.title == newTitle) return;
 
     final boards = await _getBoards;
+
+    if (boards.map((e) => e.title).contains(board.title)) {
+      throw NameNotUniqueException();
+    }
+
     boards[board.index] = (board.copy()..title = newTitle);
 
     await Future.wait([

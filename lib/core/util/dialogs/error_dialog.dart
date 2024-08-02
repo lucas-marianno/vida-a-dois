@@ -16,9 +16,8 @@ class ErrorDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InfoDialog(
-      context: context,
+      L10n.of(context).unexpectedError('$error'),
       title: L10n.of(context).somethingBadHappened,
-      content: L10n.of(context).unexpectedError('$error'),
       onAccept: onAccept,
       onCancel: onCancel,
     );
@@ -46,9 +45,8 @@ class ErrorDialog extends StatelessWidget {
     return await showDialog(
       context: context,
       builder: (context) => InfoDialog(
-        context: context,
+        L10n.of(context).unexpectedError('$error'),
         title: L10n.of(context).somethingBadHappened,
-        content: L10n.of(context).unexpectedError('$error'),
         onAccept: () => Navigator.pop(context, true),
       ),
     );
