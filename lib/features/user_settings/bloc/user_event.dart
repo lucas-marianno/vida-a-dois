@@ -1,13 +1,13 @@
 part of 'user_bloc.dart';
 
-sealed class UserEvent extends Equatable {
-  const UserEvent();
+sealed class UserSettingsEvent extends Equatable {
+  const UserSettingsEvent();
 
   @override
   List<Object> get props => [];
 }
 
-final class LoadUserSettings extends UserEvent {
+final class LoadUserSettings extends UserSettingsEvent {
   final String uid;
 
   const LoadUserSettings(this.uid);
@@ -16,16 +16,16 @@ final class LoadUserSettings extends UserEvent {
   List<Object> get props => [uid];
 }
 
-final class UserSettingsLoaded extends UserEvent {
+final class _UserSettingsUpdated extends UserSettingsEvent {
   final UserSettings userSettings;
 
-  const UserSettingsLoaded(this.userSettings);
+  const _UserSettingsUpdated(this.userSettings);
 
   @override
   List<Object> get props => [userSettings];
 }
 
-final class CreateUserSettings extends UserEvent {
+final class CreateUserSettings extends UserSettingsEvent {
   final User user;
 
   const CreateUserSettings(this.user);
@@ -34,10 +34,19 @@ final class CreateUserSettings extends UserEvent {
   List<Object> get props => [user];
 }
 
-final class HandleUserSettingsError extends UserEvent {
+final class ChangeLocale extends UserSettingsEvent {
+  final Locale locale;
+
+  const ChangeLocale(this.locale);
+
+  @override
+  List<Object> get props => [locale];
+}
+
+final class _HandleUserSettingsError extends UserSettingsEvent {
   final Object error;
 
-  const HandleUserSettingsError(this.error);
+  const _HandleUserSettingsError(this.error);
 
   @override
   List<Object> get props => [error];

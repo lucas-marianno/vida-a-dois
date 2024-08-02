@@ -7,21 +7,21 @@ sealed class UserState extends Equatable {
   List<Object> get props => [];
 }
 
-final class UserLoading extends UserState {}
+final class UserSettingsLoading extends UserState {}
 
-final class UserLoaded extends UserState {
+final class UserSettingsLoaded extends UserState {
   final UserSettings userSettings;
 
-  const UserLoaded(this.userSettings);
+  const UserSettingsLoaded(this.userSettings);
 
   @override
   List<Object> get props => [userSettings];
 }
 
-final class UserError extends UserState {
+final class UserSettingsError extends UserState {
   final Object error;
 
-  const UserError(this.error);
+  const UserSettingsError(this.error);
 
   @override
   List<Object> get props => [error];

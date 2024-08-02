@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  static bool darkmode = true;
-
   static ThemeData get light => ThemeData(
         useMaterial3: true,
         scaffoldBackgroundColor: Colors.grey[200],
@@ -31,16 +29,4 @@ class AppTheme {
           shadow: const Color.fromARGB(255, 0, 0, 0),
         ),
       );
-
-  static ThemeData get theme => darkmode ? dark : light;
-
-  /// [userPreference] is not implemented yet!
-  ///
-  /// THROWS: UninplementedError()
-  ///
-  /// TODO: save user preference to firebase, retrieve it
-  /// and return .light or dark accordingly
-  static ThemeData userPreference() {
-    throw UnimplementedError();
-  }
 }

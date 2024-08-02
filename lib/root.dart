@@ -23,6 +23,7 @@ class Root extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
     final auth = context.read<AuthBloc>();
+    final userSettings = context.read<UserSettingsBloc>();
     final connection = context.read<ConnectivityBloc>();
     return Material(
       child: MultiBlocListener(
@@ -64,9 +65,7 @@ class Root extends StatelessWidget {
                   }
                   break;
                 case AuthAuthenticated():
-                  context
-                      .read<UserBloc>()
-                      .add(LoadUserSettings(state.user.uid));
+                  userSettings.add(LoadUserSettings(state.user.uid));
                 default:
                   popUntilRoot(context);
               }

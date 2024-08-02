@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/core/constants/routes.dart';
-import 'package:kanban/core/i18n/bloc/locale_bloc.dart';
 import 'package:kanban/core/theme/app_theme.dart';
 import 'package:kanban/core/i18n/l10n.dart';
 import 'package:kanban/features/user_settings/bloc/user_bloc.dart';
@@ -11,18 +10,20 @@ class VidaADoidApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserBloc, UserState>(
+    return BlocBuilder<UserSettingsBloc, UserState>(
       builder: (context, state) {
         Locale? locale;
-        if (state is UserLoaded) {
+        ThemeMode themeMode = ThemeMode.system;
+        if (state is UserSettingsLoaded) {
           locale = state.userSettings.locale;
+          themeMode = state.userSettings.themeMode;
         }
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           supportedLocales: L10n.all,
           localizationsDelegates: L10n.delegates,
           locale: locale,
-          themeMode: Theme,
+          themeMode: themeMode,
           theme: AppTheme.light,
           darkTheme: AppTheme.dark,
           initialRoute: Routes.root,
@@ -30,22 +31,5 @@ class VidaADoidApp extends StatelessWidget {
         );
       },
     );
-    // return BlocBuilder<LocaleBloc, LocaleState>(
-    //   builder: (context, state) {
-    //     Locale? locale;
-    //     if (state is LocaleLoaded) {
-    //       locale = state.locale;
-    //     }
-    //     return MaterialApp(
-    //       debugShowCheckedModeBanner: false,
-    //       supportedLocales: L10n.all,
-    //       localizationsDelegates: L10n.delegates,
-    //       locale: locale,
-    //       theme: AppTheme.theme,
-    //       initialRoute: Routes.root,
-    //       routes: Routes.routes,
-    //     );
-    //   },
-    // );
   }
 }

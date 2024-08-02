@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kanban/core/i18n/bloc/locale_bloc.dart';
 import 'package:kanban/core/widgets/app_title.dart';
 import 'package:kanban/core/widgets/bottom_page_navigator.dart';
 import 'package:kanban/features/auth/presentation/bloc/auth_bloc.dart';
@@ -8,6 +7,7 @@ import 'package:kanban/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:kanban/features/enternainment/presentation/pages/entertainment_page.dart';
 import 'package:kanban/features/finance/presentation/pages/finance_page.dart';
 import 'package:kanban/features/kanban/presentation/pages/kanban_page.dart';
+import 'package:kanban/features/user_settings/bloc/user_bloc.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,7 +17,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late final LocaleBloc localeBloc;
+  late final UserSettingsBloc userSettings;
   int selectedIndex = 0;
 
   final List<BottomPageNavigatorItem> pages = [
@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    localeBloc = context.read<LocaleBloc>();
+    userSettings = context.read<UserSettingsBloc>();
   }
 
   @override
@@ -83,14 +83,14 @@ class _HomePageState extends State<HomePage> {
               return [
                 PopupMenuItem(
                   child: const Text('pt 🇧🇷'),
-                  onTap: () => localeBloc.add(
-                    const ChangeLocaleEvent(Locale('pt')),
+                  onTap: () => userSettings.add(
+                    const ChangeLocale(Locale('pt')),
                   ),
                 ),
                 PopupMenuItem(
                   child: const Text('en 🇺🇸'),
-                  onTap: () => localeBloc.add(
-                    const ChangeLocaleEvent(Locale('en')),
+                  onTap: () => userSettings.add(
+                    const ChangeLocale(Locale('en')),
                   ),
                 ),
                 PopupMenuItem(
