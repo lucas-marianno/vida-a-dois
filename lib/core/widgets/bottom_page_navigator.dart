@@ -14,11 +14,9 @@ class BottomPageNavigator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('primary color: ${Theme.of(context).colorScheme.primary}');
-    print('onprimary color: ${Theme.of(context).colorScheme.onPrimary}');
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary,
+        color: Theme.of(context).colorScheme.secondary,
         border: BorderDirectional(
           top: BorderSide(color: Theme.of(context).colorScheme.shadow),
         ),
@@ -31,10 +29,10 @@ class BottomPageNavigator extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
         child: GNav(
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-          activeColor: Theme.of(context).colorScheme.primary,
-          tabBackgroundColor: Theme.of(context).colorScheme.onPrimary,
+          activeColor: Theme.of(context).colorScheme.secondary,
+          tabBackgroundColor: Theme.of(context).colorScheme.onSecondary,
           color: ColorUtil.makeTransparencyFrom(
-            Theme.of(context).colorScheme.onPrimary,
+            Theme.of(context).colorScheme.onSecondary,
           ),
           tabs: [
             for (int i = 0; i < pages.length; i++)

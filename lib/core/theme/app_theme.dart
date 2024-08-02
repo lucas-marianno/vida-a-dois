@@ -7,9 +7,10 @@ class AppTheme {
         useMaterial3: true,
         scaffoldBackgroundColor: Colors.grey[200],
         colorScheme: ColorScheme.light(
-          primary: const Color.fromARGB(255, 54, 97, 142),
+          primary: Colors.blue,
           onPrimary: Colors.white,
-          secondary: const Color.fromARGB(255, 104, 147, 192),
+          secondary: const Color.fromARGB(255, 54, 97, 142),
+          onSecondary: Colors.white,
           surface: Colors.white,
           surfaceContainerLow: Colors.grey[100],
           shadow: const Color.fromARGB(158, 158, 158, 158),
@@ -18,9 +19,10 @@ class AppTheme {
   static ThemeData get dark => ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.dark(
-          primary: const Color.fromARGB(255, 54, 97, 142),
+          primary: Colors.blue,
           onPrimary: Colors.white,
-          secondary: const Color.fromARGB(255, 104, 147, 192),
+          secondary: const Color.fromARGB(255, 54, 97, 142),
+          onSecondary: Colors.white,
           surface: Colors.grey[850]!,
           surfaceContainerLow: Colors.grey[900],
           shadow: const Color.fromARGB(255, 0, 0, 0),
