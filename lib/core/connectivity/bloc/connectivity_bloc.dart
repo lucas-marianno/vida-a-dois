@@ -11,6 +11,7 @@ part 'connectivity_state.dart';
 final class ConnectivityBloc
     extends Bloc<ConnectivityEvent, ConnectivityState> {
   late StreamSubscription _connection;
+  ConnectivityResult _connectionStatus = ConnectivityResult.none;
   ConnectivityBloc() : super(ConnectivityLoading()) {
     on<CheckConnectivityEvent>(_onCheckConnectivityEvent);
     on<GotResponseEvent>(_onGotResponseEvent);
@@ -21,10 +22,10 @@ final class ConnectivityBloc
   }
 
   _onCheckConnectivityEvent(
-    CheckConnectivityEvent event,
+    _,
     Emitter<ConnectivityState> emit,
   ) async {
-    Log.trace("$ConnectivityBloc $CheckConnectivityEvent \n $event");
+    Log.trace("$ConnectivityBloc $CheckConnectivityEvent");
     emit(ConnectivityLoading());
 
     try {
@@ -50,19 +51,21 @@ final class ConnectivityBloc
   ) async {
     Log.trace("$ConnectivityBloc $GotResponseEvent \n $event");
 
-    final result = event.result;
+    if (event.result[0] == _connectionStatus) return;
+    _connectionStatus = event.result[0];
 
-    if (result[0] == ConnectivityResult.mobile ||
-        result[0] == ConnectivityResult.wifi ||
-        result[0] == ConnectivityResult.ethernet) {
+    if (_connectionStatus == ConnectivityResult.mobile ||
+        _connectionStatus == ConnectivityResult.wifi ||
+        _connectionStatus == ConnectivityResult.ethernet) {
       Log.info("$ConnectivityBloc $HasInternetConnection");
       emit(HasInternetConnection());
-    } else if (result[0] == ConnectivityResult.none) {
+    } else if (_connectionStatus == ConnectivityResult.none) {
       Log.warning("$ConnectivityBloc $NoInternetConnection");
       emit(NoInternetConnection());
     } else {
-      Log.error("$ConnectivityBloc $ConnectivityErrorState \n $result");
-      emit(ConnectivityErrorState(result));
+      Log.error("$ConnectivityBloc $ConnectivityErrorState \n "
+          "$_connectionStatus");
+      emit(ConnectivityErrorState(_connectionStatus));
     }
     add(ListenToConnectivityChanges());
   }

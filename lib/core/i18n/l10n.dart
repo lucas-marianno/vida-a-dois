@@ -19,25 +19,9 @@ class L10n {
   static AppLocalizations of(BuildContext context) =>
       AppLocalizations.of(context)!;
 
-  /// TODO: refactor [locale] getter!
-  ///
-  /// This is a temporary solution.
-  ///
-  /// Later on, after user auth is implemented,
-  /// this will be a config retrieved from db.
-  static Locale get locale {
+  static Locale get currentDeviceLocale {
     final locale = PlatformDispatcher.instance.locale;
     return Locale(locale.languageCode);
-
-    // if (!kIsWeb) return Locale(Platform.localeName.split('_')[0]);
-
-    // Log.warning(
-    //   "Unimplemented \n\n"
-    //   "'Platform.localeName' is not supported to run on web.\n\n"
-    //   "default locale will be used instead:\n"
-    //   "$Locale('en')",
-    // );
-    // return const Locale('en');
   }
 
   static String getflag(BuildContext context) {
