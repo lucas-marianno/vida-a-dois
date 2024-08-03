@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:kanban/core/i18n/l10n.dart';
 import 'package:kanban/core/util/logger/logger.dart';
 import 'package:kanban/features/auth/data/auth_data.dart';
@@ -17,9 +18,10 @@ class UserSettingsBloc extends Bloc<UserSettingsEvent, UserSettingsState> {
   UserSettings? currentUserSettings;
   UserSettingsBloc() : super(UserSettingsLoading()) {
     on<LoadUserSettings>(_onLoadUserSettings);
+    on<ChangeLocale>(_onChangeLocaleEvent);
+    on<ChangeThemeMode>(_onChangeThemeMode);
     on<_UserSettingsUpdated>(_onUserSettingsLoaded);
     on<_CreateSettingsForCurrentUser>(_onCreateUserSettings);
-    on<ChangeLocale>(_onChangeLocaleEvent);
     on<_HandleUserSettingsError>(_onHandleUserSettingsError);
   }
 
@@ -51,6 +53,37 @@ class UserSettingsBloc extends Bloc<UserSettingsEvent, UserSettingsState> {
     }
   }
 
+  _onChangeLocaleEvent(
+      ChangeLocale event, Emitter<UserSettingsState> emit) async {
+    Log.trace("$UserSettingsBloc $ChangeLocale \n $event");
+
+    if (!L10n.all.contains(event.locale)) {
+      add(_HandleUserSettingsError(
+        UnimplementedError(
+          "$UserSettingsBloc:\n Unimplemented locale: ${event.locale}",
+        ),
+      ));
+      return;
+    }
+
+    if (currentUserSettings!.locale == event.locale) return;
+
+    currentUserSettings!.locale = event.locale;
+    await UserSettingsDataSource.update(currentUserSettings!);
+  }
+
+  _onChangeThemeMode(
+    ChangeThemeMode event,
+    Emitter<UserSettingsState> emit,
+  ) async {
+    Log.trace('$UserSettingsBloc $ChangeThemeMode \n $event');
+
+    if (currentUserSettings!.themeMode == event.themeMode) return;
+
+    currentUserSettings!.themeMode = event.themeMode;
+    await UserSettingsDataSource.update(currentUserSettings!);
+  }
+
   _onUserSettingsLoaded(
     _UserSettingsUpdated event,
     Emitter<UserSettingsState> emit,
@@ -71,6 +104,7 @@ class UserSettingsBloc extends Bloc<UserSettingsEvent, UserSettingsState> {
     Emitter<UserSettingsState> emit,
   ) async {
     Log.trace('$UserSettingsBloc $_CreateSettingsForCurrentUser');
+
     final user = AuthData.currentUser!;
     final initials = user.displayName
         ?.split(' ')
@@ -79,32 +113,14 @@ class UserSettingsBloc extends Bloc<UserSettingsEvent, UserSettingsState> {
         .sublist(0, 2)
         .join();
 
-    await UserSettingsDataSource.create(UserSettings.fromJson({
-      "uid": user.uid,
-      "themeMode": "system",
-      "locale": L10n.currentDeviceLocale.languageCode,
-      "initials": initials ?? user.email!.substring(0, 2),
-    }));
+    await UserSettingsDataSource.create(UserSettings(
+      uid: user.uid,
+      themeMode: ThemeMode.system,
+      locale: L10n.currentDeviceLocale,
+      initials: initials ?? user.email!.substring(0, 2),
+    ));
+
     add(LoadUserSettings(user.uid));
-  }
-
-  _onChangeLocaleEvent(
-      ChangeLocale event, Emitter<UserSettingsState> emit) async {
-    Log.trace("$UserSettingsBloc $ChangeLocale \n $event");
-    emit(UserSettingsLoading());
-
-    if (!L10n.all.contains(event.locale)) {
-      add(_HandleUserSettingsError(
-        UnimplementedError(
-          "$UserSettingsBloc:\n Unimplemented locale: ${event.locale}",
-        ),
-      ));
-      return;
-    }
-
-    currentUserSettings!.locale = event.locale;
-
-    await UserSettingsDataSource.update(currentUserSettings!);
   }
 
   _onHandleUserSettingsError(

@@ -1,6 +1,7 @@
 {
     "@@locale": "pt",
-    "language": "Português",
+    "currentLanguage": "Português",
+    "currentLaguageFlag": "🇧🇷",
     "appTitle": "Vida a dois",
     "youCannotDoThat": "Você não pode fazer isso!",
     "warning": "Atenção!",
@@ -66,5 +67,15 @@
     "alreadyHaveAnAccount": "Já possui uma conta?",
     "notAMember": "Ainda não possui uma conta?",
     "signInNow": "Faça login agora",
-    "signUpNow": "Cadastre-se agora"
+    "signOut": "Sair",
+    "leaveTheApp": "Sair do aplicativo?",
+    "areYouSureYouWantToLeave": "Tem certeza que deseja sair do aplicativo?",
+    "settings": "Configurações",
+    "signUpNow": "Cadastre-se agora",
+    "username": "Nome de usuário",
+    "userInitials": "Iniciais do usuário",
+    "userSettings": "Configurações de usuário",
+    "appSettings": "Configurações de aplicativo",
+    "appLanguage": "Idioma do aplicativo",
+    "appTheme": "Tema do aplicativo"
 }

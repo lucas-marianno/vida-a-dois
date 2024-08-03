@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class AppTheme {
   static ThemeData get light => ThemeData(
         useMaterial3: true,
+        appBarTheme: AppBarTheme(color: Colors.transparent),
         scaffoldBackgroundColor: Colors.grey[200],
         dialogBackgroundColor: Colors.white,
         colorScheme: ColorScheme.light(

@@ -7,6 +7,7 @@ sealed class UserSettingsEvent extends Equatable {
   List<Object> get props => [];
 }
 
+// public
 final class LoadUserSettings extends UserSettingsEvent {
   final String uid;
 
@@ -16,6 +17,25 @@ final class LoadUserSettings extends UserSettingsEvent {
   List<Object> get props => [uid];
 }
 
+final class ChangeLocale extends UserSettingsEvent {
+  final Locale locale;
+
+  const ChangeLocale(this.locale);
+
+  @override
+  List<Object> get props => [locale];
+}
+
+final class ChangeThemeMode extends UserSettingsEvent {
+  final ThemeMode themeMode;
+
+  const ChangeThemeMode(this.themeMode);
+
+  @override
+  List<Object> get props => [themeMode];
+}
+
+//private
 final class _UserSettingsUpdated extends UserSettingsEvent {
   final UserSettings userSettings;
 
@@ -26,15 +46,6 @@ final class _UserSettingsUpdated extends UserSettingsEvent {
 }
 
 final class _CreateSettingsForCurrentUser extends UserSettingsEvent {}
-
-final class ChangeLocale extends UserSettingsEvent {
-  final Locale locale;
-
-  const ChangeLocale(this.locale);
-
-  @override
-  List<Object> get props => [locale];
-}
 
 final class _HandleUserSettingsError extends UserSettingsEvent {
   final Object error;

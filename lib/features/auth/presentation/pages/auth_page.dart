@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/core/widgets/app_title.dart';
 import 'package:kanban/core/widgets/app_slogan.dart';
+import 'package:kanban/core/widgets/divider_with_label.dart';
 import 'package:kanban/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:kanban/core/i18n/l10n.dart';
 
@@ -186,18 +187,7 @@ class _AuthPageState extends State<AuthPage> {
               // or
               Padding(
                 padding: const EdgeInsets.all(20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    const Expanded(child: Divider()),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Text(l10n.or.toUpperCase()),
-                    ),
-                    const Expanded(child: Divider()),
-                  ],
-                ),
+                child: DividerWithLabel(label: l10n.or.toUpperCase()),
               ),
               // sign in with google
               ElevatedButton.icon(

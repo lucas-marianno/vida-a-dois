@@ -23,16 +23,4 @@ class L10n {
     final locale = PlatformDispatcher.instance.locale;
     return Locale(locale.languageCode);
   }
-
-  static String getflag(BuildContext context) {
-    final code = Localizations.localeOf(context).languageCode;
-    switch (code) {
-      case 'en':
-        return '🇺🇸';
-      case 'pt':
-        return '🇧🇷';
-      default:
-        throw UnimplementedError('Uninplemented locale: $code');
-    }
-  }
 }

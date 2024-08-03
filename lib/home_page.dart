@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kanban/core/constants/routes.dart';
 import 'package:kanban/core/widgets/app_title.dart';
 import 'package:kanban/core/widgets/bottom_page_navigator.dart';
-import 'package:kanban/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:kanban/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:kanban/features/enternainment/presentation/pages/entertainment_page.dart';
 import 'package:kanban/features/finance/presentation/pages/finance_page.dart';
@@ -70,7 +70,6 @@ class _HomePageState extends State<HomePage> {
 
         return Scaffold(
           appBar: AppBar(
-            forceMaterialTransparency: true,
             title: Padding(
               padding: const EdgeInsets.only(left: 15),
               child: AppTitle(
@@ -86,31 +85,9 @@ class _HomePageState extends State<HomePage> {
               ),
               IconButton(
                 onPressed: () {
-                  //TODO: implement profile page
+                  Navigator.pushNamed(context, Routes.settingsPage);
                 },
                 icon: userIcon,
-              ),
-              PopupMenuButton(
-                itemBuilder: (context) {
-                  return [
-                    PopupMenuItem(
-                      child: const Text('pt 🇧🇷'),
-                      onTap: () => userSettings.add(
-                        const ChangeLocale(Locale('pt')),
-                      ),
-                    ),
-                    PopupMenuItem(
-                      child: const Text('en 🇺🇸'),
-                      onTap: () => userSettings.add(
-                        const ChangeLocale(Locale('en')),
-                      ),
-                    ),
-                    PopupMenuItem(
-                      child: const Text('sign out'),
-                      onTap: () => context.read<AuthBloc>().add(SignOut()),
-                    ),
-                  ];
-                },
               ),
             ],
           ),

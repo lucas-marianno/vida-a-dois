@@ -1,9 +1,10 @@
 {
   "@@locale": "en",
-  "language": "English",
-  "@language": {
+  "currentLanguage": "English",
+  "@currentLanguage": {
     "description": "The current Language"
   },
+  "currentLaguageFlag": "🇺🇸",
   "appTitle": "A Couple's Life",
   "@appTitle": {
     "description": "Title for the Home Page"
@@ -116,5 +117,15 @@
   "alreadyHaveAnAccount": "Already have an account?",
   "notAMember": "Not a member?",
   "signInNow": "Sign in now",
-  "signUpNow": "Sign up now"
+  "signUpNow": "Sign up now",
+  "signOut": "Sign out",
+  "leaveTheApp": "Leave the app?",
+  "areYouSureYouWantToLeave": "Are you sure you want to leave the app?",
+  "settings": "Settings",
+  "username": "Username",
+  "userInitials": "User initials",
+  "userSettings": "User settings",
+  "appSettings": "App settings",
+  "appLanguage": "App language",
+  "appTheme": "App theme"
 }
