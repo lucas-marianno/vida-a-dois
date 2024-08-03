@@ -156,11 +156,17 @@ class _AuthPageState extends State<AuthPage> {
                       focusNode: confirmPasswordFocusNode,
                       controller: confirmPasswordCtrl,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
-                      obscureText: true,
+                      obscureText: obscurePassword,
                       autocorrect: false,
                       decoration: InputDecoration(
                         hintText: l10n.confirmPassword,
                         border: const OutlineInputBorder(),
+                        suffixIcon: IconButton(
+                          onPressed: toggleObscurePassword,
+                          icon: obscurePassword
+                              ? const Icon(Icons.visibility)
+                              : const Icon(Icons.visibility_off),
+                        ),
                       ),
                       validator: passwordValidator,
                     )

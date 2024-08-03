@@ -1,15 +1,15 @@
-part of 'user_bloc.dart';
+part of 'user_settings_bloc.dart';
 
-sealed class UserState extends Equatable {
-  const UserState();
+sealed class UserSettingsState extends Equatable {
+  const UserSettingsState();
 
   @override
   List<Object> get props => [];
 }
 
-final class UserSettingsLoading extends UserState {}
+final class UserSettingsLoading extends UserSettingsState {}
 
-final class UserSettingsLoaded extends UserState {
+final class UserSettingsLoaded extends UserSettingsState {
   final UserSettings userSettings;
 
   const UserSettingsLoaded(this.userSettings);
@@ -18,7 +18,7 @@ final class UserSettingsLoaded extends UserState {
   List<Object> get props => [userSettings];
 }
 
-final class UserSettingsError extends UserState {
+final class UserSettingsError extends UserSettingsState {
   final Object error;
 
   const UserSettingsError(this.error);

@@ -6,7 +6,9 @@ part 'auth_data_exception.dart';
 class AuthData {
   static final _auth = FirebaseAuth.instance;
 
-  static Stream<User?> listenToChanges() => _auth.authStateChanges();
+  static User? get currentUser => _auth.currentUser;
+
+  static Stream<User?> get stream => _auth.authStateChanges();
 
   static Future<OAuthCredential?> getCredentialFromGoogleAuthProvider() async {
     final gUser = await GoogleSignIn().signIn();
@@ -26,10 +28,14 @@ class AuthData {
   ) async {
     if (email.isEmpty || password.isEmpty) return null;
 
-    return await _auth.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
+    final credential = await _auth.createUserWithEmailAndPassword(
+        email: email, password: password);
+
+    await _auth.currentUser!.updateDisplayName(
+      email.split('@')[0].replaceAll(RegExp(r'\W+'), ' '),
     );
+
+    return credential;
   }
 
   static Future<UserCredential?> singInWithEmailAndPassword(

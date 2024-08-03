@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kanban/core/extentions/string_extension.dart';
 
 class UserSettings {
   String? uid;
@@ -7,7 +8,7 @@ class UserSettings {
   Locale locale;
 
   UserSettings({
-    this.uid,
+    required this.uid,
     required this.themeMode,
     required this.locale,
     required this.initials,
@@ -16,7 +17,7 @@ class UserSettings {
   factory UserSettings.fromJson(Map<String, dynamic> json) {
     return UserSettings(
       uid: json['uid'],
-      themeMode: _fromString(json['theme']),
+      themeMode: json['theme'].toString().toThemeMode(),
       initials: json['initials'],
       locale: Locale(json['locale']),
     );
@@ -25,24 +26,10 @@ class UserSettings {
   Map<String, dynamic> get toJson {
     return {
       "uid": uid,
-      "theme": themeMode,
+      "theme": themeMode.name,
       "initials": initials,
       "locale": locale.languageCode,
     };
-  }
-
-  static ThemeMode _fromString(String? themeMode) {
-    if (themeMode == null) return ThemeMode.system;
-    switch (themeMode) {
-      case 'light':
-        return ThemeMode.light;
-      case 'dark':
-        return ThemeMode.dark;
-      case 'system':
-        return ThemeMode.system;
-      default:
-        throw UnimplementedError('themeMode $themeMode is not implemented');
-    }
   }
 
   /// Returns a new [UserSettings] with the same values as the original.

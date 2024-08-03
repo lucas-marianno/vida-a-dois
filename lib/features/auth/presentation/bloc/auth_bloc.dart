@@ -31,13 +31,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
 
     try {
-      authServiceListener = AuthData.listenToChanges().listen(
+      authServiceListener = AuthData.stream.listen(
         (data) {
-          if (data is User) add(_AuthLoggedIn(data));
+          if (data is User) add(_AuthLoggedIn());
           if (data == null) add(_AuthLoggedOut());
         },
         cancelOnError: true,
-        onDone: () => Log.info("$AuthBloc AuthServiceListener is DONE"),
+        onDone: () => Log.info("$AuthBloc AuthListener is DONE"),
         onError: (e) => add(_AuthException(e)),
       );
     } catch (e) {
@@ -45,9 +45,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  _onAuthLoggedIn(_AuthLoggedIn event, Emitter<AuthState> emit) {
-    Log.info("$AuthBloc $_AuthLoggedIn \n $event");
-    emit(AuthAuthenticated(event.user));
+  _onAuthLoggedIn(_, Emitter<AuthState> emit) {
+    final currentUser = AuthData.currentUser!;
+    Log.info("$AuthBloc $_AuthLoggedIn \n $currentUser");
+    emit(AuthAuthenticated(currentUser));
   }
 
   _onAuthLoggedOut(_AuthLoggedOut event, Emitter<AuthState> emit) {
@@ -100,7 +101,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       add(_SignInWithCredential(credential));
     } catch (e) {
-      print(e.runtimeType);
       add(_AuthException(e));
     }
   }
@@ -122,9 +122,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   _onAuthException(_AuthException event, Emitter<AuthState> emit) {
     Log.warning("$AuthBloc $_AuthException \n $event");
     if (event.error is FirebaseAuthException) {
-      print((event.error as FirebaseAuthException).code);
+      emit(AuthError(event.error as FirebaseAuthException));
+    } else {
+      emit(AuthError(event.error));
     }
-    emit(AuthError(event.error));
   }
 
   _onSignOut(_, Emitter<AuthState> emit) async {

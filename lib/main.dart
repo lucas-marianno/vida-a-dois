@@ -7,7 +7,7 @@ import 'package:kanban/core/connectivity/bloc/connectivity_bloc.dart';
 import 'package:kanban/core/util/logger/logger.dart';
 import 'package:kanban/features/kanban/presentation/bloc/board/board_bloc.dart';
 import 'package:kanban/features/kanban/presentation/bloc/task/task_bloc.dart';
-import 'package:kanban/features/user_settings/bloc/user_bloc.dart';
+import 'package:kanban/features/user_settings/bloc/user_settings_bloc.dart';
 import 'firebase_options.dart';
 
 void main() async {

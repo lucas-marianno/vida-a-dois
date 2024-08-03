@@ -7,7 +7,7 @@ import 'package:kanban/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:kanban/features/enternainment/presentation/pages/entertainment_page.dart';
 import 'package:kanban/features/finance/presentation/pages/finance_page.dart';
 import 'package:kanban/features/kanban/presentation/pages/kanban_page.dart';
-import 'package:kanban/features/user_settings/bloc/user_bloc.dart';
+import 'package:kanban/features/user_settings/bloc/user_settings_bloc.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -55,58 +55,72 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-      appBar: AppBar(
-        forceMaterialTransparency: true,
-        title: Padding(
-          padding: EdgeInsets.only(left: 15),
-          child: AppTitle(
-            fontSize: Theme.of(context).textTheme.displayMedium?.fontSize,
+    return BlocBuilder<UserSettingsBloc, UserSettingsState>(
+      builder: (context, state) {
+        Widget userIcon = const Icon(Icons.person);
+        if (state is UserSettingsLoaded) {
+          userIcon = CircleAvatar(
+            backgroundColor: Theme.of(context).colorScheme.secondary,
+            child: Text(
+              state.userSettings.initials.toUpperCase(),
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          );
+        }
+
+        return Scaffold(
+          appBar: AppBar(
+            forceMaterialTransparency: true,
+            title: Padding(
+              padding: const EdgeInsets.only(left: 15),
+              child: AppTitle(
+                fontSize: Theme.of(context).textTheme.displayMedium?.fontSize,
+              ),
+            ),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  //TODO: implement notifications
+                },
+                icon: const Icon(Icons.notifications),
+              ),
+              IconButton(
+                onPressed: () {
+                  //TODO: implement profile page
+                },
+                icon: userIcon,
+              ),
+              PopupMenuButton(
+                itemBuilder: (context) {
+                  return [
+                    PopupMenuItem(
+                      child: const Text('pt 🇧🇷'),
+                      onTap: () => userSettings.add(
+                        const ChangeLocale(Locale('pt')),
+                      ),
+                    ),
+                    PopupMenuItem(
+                      child: const Text('en 🇺🇸'),
+                      onTap: () => userSettings.add(
+                        const ChangeLocale(Locale('en')),
+                      ),
+                    ),
+                    PopupMenuItem(
+                      child: const Text('sign out'),
+                      onTap: () => context.read<AuthBloc>().add(SignOut()),
+                    ),
+                  ];
+                },
+              ),
+            ],
           ),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              //TODO: implement notifications
-            },
-            icon: const Icon(Icons.notifications),
+          body: pages[selectedIndex].page,
+          bottomNavigationBar: BottomPageNavigator(
+            pages: pages,
+            onPageChange: pageChanged,
           ),
-          IconButton(
-            onPressed: () {
-              //TODO: implement profile page
-            },
-            icon: const Icon(Icons.person),
-          ),
-          PopupMenuButton(
-            itemBuilder: (context) {
-              return [
-                PopupMenuItem(
-                  child: const Text('pt 🇧🇷'),
-                  onTap: () => userSettings.add(
-                    const ChangeLocale(Locale('pt')),
-                  ),
-                ),
-                PopupMenuItem(
-                  child: const Text('en 🇺🇸'),
-                  onTap: () => userSettings.add(
-                    const ChangeLocale(Locale('en')),
-                  ),
-                ),
-                PopupMenuItem(
-                  child: const Text('sign out'),
-                  onTap: () => context.read<AuthBloc>().add(SignOut()),
-                ),
-              ];
-            },
-          ),
-        ],
-      ),
-      body: pages[selectedIndex].page,
-      bottomNavigationBar: BottomPageNavigator(
-        pages: pages,
-        onPageChange: pageChanged,
-      ),
+        );
+      },
     );
   }
 }

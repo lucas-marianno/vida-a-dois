@@ -9,7 +9,7 @@ import 'package:kanban/core/i18n/l10n.dart';
 import 'package:kanban/core/util/dialogs/error_dialog.dart';
 import 'package:kanban/core/util/dialogs/info_dialog.dart';
 import 'package:kanban/core/util/dialogs/loading_dialog.dart';
-import 'package:kanban/features/user_settings/bloc/user_bloc.dart';
+import 'package:kanban/features/user_settings/bloc/user_settings_bloc.dart';
 import 'package:kanban/home_page.dart';
 
 class Root extends StatelessWidget {

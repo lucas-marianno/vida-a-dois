@@ -1,4 +1,4 @@
-part of 'user_bloc.dart';
+part of 'user_settings_bloc.dart';
 
 sealed class UserSettingsEvent extends Equatable {
   const UserSettingsEvent();
@@ -25,14 +25,7 @@ final class _UserSettingsUpdated extends UserSettingsEvent {
   List<Object> get props => [userSettings];
 }
 
-final class CreateUserSettings extends UserSettingsEvent {
-  final User user;
-
-  const CreateUserSettings(this.user);
-
-  @override
-  List<Object> get props => [user];
-}
+final class _CreateSettingsForCurrentUser extends UserSettingsEvent {}
 
 final class ChangeLocale extends UserSettingsEvent {
   final Locale locale;
