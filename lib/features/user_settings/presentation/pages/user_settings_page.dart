@@ -5,6 +5,7 @@ import 'package:kanban/core/extentions/theme_mode_extension.dart';
 import 'package:kanban/core/i18n/l10n.dart';
 import 'package:kanban/core/util/dialogs/info_dialog.dart';
 import 'package:kanban/core/widgets/divider_with_label.dart';
+import 'package:kanban/core/widgets/editable_list_tile.dart';
 import 'package:kanban/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:kanban/features/user_settings/bloc/user_settings_bloc.dart';
 
@@ -34,19 +35,20 @@ class SettingsPage extends StatelessWidget {
                     child: ListView(
                       children: [
                         DividerWithLabel(label: l10n.userSettings),
-                        ListTile(
-                          title: Text(l10n.username),
-                          trailing: IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.edit),
-                          ),
+                        EditableListTile(
+                          state.userSettings.userName ?? '',
+                          floatingLabel: l10n.username,
+                          onSubmitted: (value) {
+                            userSettingsBloc.add(ChangeUserName(value));
+                          },
                         ),
-                        ListTile(
-                          title: Text(l10n.userInitials),
-                          trailing: IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.edit),
-                          ),
+                        EditableListTile(
+                          state.userSettings.initials.toUpperCase(),
+                          floatingLabel: l10n.userInitials,
+                          onSubmitted: (value) {
+                            userSettingsBloc.add(ChangeUserInitials(value));
+                          },
+                          maxLength: 2,
                         ),
                         DividerWithLabel(label: l10n.appSettings),
                         ListTile(
@@ -86,19 +88,19 @@ class SettingsPage extends StatelessWidget {
                             itemBuilder: (context) {
                               return [
                                 PopupMenuItem(
-                                  child: const Text('☀️  light'),
+                                  child: Text('☀️  ${l10n.light}'),
                                   onTap: () => userSettingsBloc.add(
                                     const ChangeThemeMode(ThemeMode.light),
                                   ),
                                 ),
                                 PopupMenuItem(
-                                  child: const Text('🌙  dark'),
+                                  child: Text('🌙  ${l10n.dark}'),
                                   onTap: () => userSettingsBloc.add(
                                     const ChangeThemeMode(ThemeMode.dark),
                                   ),
                                 ),
                                 PopupMenuItem(
-                                  child: const Text('📱  system'),
+                                  child: Text('📱  ${l10n.system}'),
                                   onTap: () => userSettingsBloc.add(
                                     const ChangeThemeMode(ThemeMode.system),
                                   ),

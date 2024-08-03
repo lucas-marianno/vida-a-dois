@@ -127,5 +127,8 @@
   "userSettings": "User settings",
   "appSettings": "App settings",
   "appLanguage": "App language",
-  "appTheme": "App theme"
+  "appTheme": "App theme",
+  "light": "Light",
+  "dark": "Dark",
+  "system": "System default"
 }

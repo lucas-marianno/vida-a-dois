@@ -77,5 +77,8 @@
     "userSettings": "Configurações de usuário",
     "appSettings": "Configurações de aplicativo",
     "appLanguage": "Idioma do aplicativo",
-    "appTheme": "Tema do aplicativo"
+    "appTheme": "Tema do aplicativo",
+    "light": "Claro",
+    "dark": "Escuro",
+    "system": "Padrão do sistema"
 }

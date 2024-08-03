@@ -3,12 +3,14 @@ import 'package:kanban/core/extentions/string_extension.dart';
 
 class UserSettings {
   String? uid;
+  String? userName;
   ThemeMode themeMode;
   String initials;
   Locale locale;
 
   UserSettings({
     required this.uid,
+    required this.userName,
     required this.themeMode,
     required this.locale,
     required this.initials,
@@ -17,6 +19,7 @@ class UserSettings {
   factory UserSettings.fromJson(Map<String, dynamic> json) {
     return UserSettings(
       uid: json['uid'],
+      userName: json['userName'],
       themeMode: json['theme'].toString().toThemeMode(),
       initials: json['initials'],
       locale: Locale(json['locale']),
@@ -26,6 +29,7 @@ class UserSettings {
   Map<String, dynamic> get toJson {
     return {
       "uid": uid,
+      "userName": userName,
       "theme": themeMode.name,
       "initials": initials,
       "locale": locale.languageCode,

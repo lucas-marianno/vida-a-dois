@@ -35,7 +35,34 @@ final class ChangeThemeMode extends UserSettingsEvent {
   List<Object> get props => [themeMode];
 }
 
+final class ChangeUserName extends UserSettingsEvent {
+  final String userName;
+
+  const ChangeUserName(this.userName);
+
+  @override
+  List<Object> get props => [userName];
+}
+
+final class ChangeUserInitials extends UserSettingsEvent {
+  final String initials;
+
+  const ChangeUserInitials(this.initials);
+
+  @override
+  List<Object> get props => [initials];
+}
+
 //private
+final class _ListenToSettingsChanges extends UserSettingsEvent {
+  final String uid;
+
+  const _ListenToSettingsChanges(this.uid);
+
+  @override
+  List<Object> get props => [uid];
+}
+
 final class _UserSettingsUpdated extends UserSettingsEvent {
   final UserSettings userSettings;
 
