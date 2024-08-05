@@ -48,6 +48,8 @@
   "@boardUniqueNameException": {
     "description": "Exception when boards don't have unique names"
   },
+  "noBoardsYet": "You haven't created any boards yet!",
+  "createYourFirstBoard": "Create your first board:",
   "newBoard": "New board",
   "creatingABoard": "Creating a new board",
   "editingABoard": "Editing a board",

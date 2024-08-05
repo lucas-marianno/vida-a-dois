@@ -22,7 +22,7 @@ class _KanbanPageState extends State<KanbanPage> {
   late final TaskBloc taskBloc;
   ScrollController scrlCtrl = ScrollController();
 
-  void createBoard(Board board) async {
+  void createBoard() async {
     final newBoard = await BoardForm.readBoard(
       Board(title: L10n.of(context).newBoard, index: 500),
       context,
@@ -44,6 +44,7 @@ class _KanbanPageState extends State<KanbanPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = L10n.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: BlocListener<BoardBloc, BoardState>(
@@ -71,6 +72,16 @@ class _KanbanPageState extends State<KanbanPage> {
             } else if (state is BoardLoadedState) {
               final boards = state.boards;
 
+              if (state.boards.isEmpty) {
+                return Center(
+                  child: InfoDialog(
+                    l10n.createYourFirstBoard,
+                    title: l10n.noBoardsYet,
+                    onAccept: createBoard,
+                  ),
+                );
+              }
+
               taskBloc.add(LoadTasksEvent(boards));
 
               return ListView.builder(
@@ -90,7 +101,7 @@ class _KanbanPageState extends State<KanbanPage> {
                       child: Padding(
                         padding: const EdgeInsets.only(left: 10, right: 20),
                         child: ElevatedButton(
-                          onPressed: () => createBoard(boards.last),
+                          onPressed: () => createBoard(),
                           child: const Icon(Icons.add),
                         ),
                       ),

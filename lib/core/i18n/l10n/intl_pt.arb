@@ -13,6 +13,8 @@
     "unexpectedError": "Um erro  inesperado aconteceu:\n\n{error}\n\n",
     "uninplementedException": "Algo ruim aconteceu!\n\nUm erro  inesperado aconteceu:\n\n{errorType}\n{error}\n",
     "boardUniqueNameException": "Os quadros não podem ter nomes repetidos!",
+    "noBoardsYet": "Você ainda não criou nenhum quadro!",
+    "createYourFirstBoard": "Crie o seu primeiro quadro:",
     "newBoard": "Novo quadro",
     "creatingABoard": "Criando um novo quadro",
     "editingABoard": "Editando um quadro",
