@@ -10,6 +10,7 @@ class KanbanAddTaskButton extends StatelessWidget {
   final Board currentBoard;
   const KanbanAddTaskButton(this.currentBoard, {super.key});
 
+  // TODO: This function should be removed from here, ui should not have to worry about error handling
   void addTask(BuildContext context) async {
     TaskBloc taskBloc = context.read<TaskBloc>();
 

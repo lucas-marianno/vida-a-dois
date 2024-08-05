@@ -1,26 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../core/constants/enum/task_assignee.dart';
 import '../../core/constants/enum/task_importance.dart';
 
 class Task {
-  // TODO: add createdBy attribute after firebase auth is implemented
   String? id;
   String title;
   String? description;
-  TaskAssignee assingnee;
+  String? assingneeUID;
   TaskImportance taskImportance;
   String status;
   Timestamp? dueDate;
+  String? createdBy;
   Timestamp? createdDate;
 
   Task({
     this.id,
     required this.title,
     this.description,
-    this.assingnee = TaskAssignee.anyone,
+    this.assingneeUID,
     this.taskImportance = TaskImportance.normal,
     required this.status,
     this.dueDate,
+    this.createdBy,
     this.createdDate,
   });
 
@@ -35,10 +35,12 @@ class Task {
       id: json['id'],
       title: json['title'],
       description: json['description'],
-      assingnee: TaskAssignee.fromString(json['assingnedTo']),
+      // assingneeUID: json['assingnedTo'],
+      assingneeUID: json['assingneeUID'],
       taskImportance: TaskImportance.fromString(json['taskImportance']),
       status: json['status'],
       dueDate: json['dueDate'],
+      createdBy: json['createdBy'],
       createdDate: json['createdDate'],
     );
   }
@@ -48,10 +50,11 @@ class Task {
       'id': id,
       'title': title,
       'description': description,
-      'assingnedTo': assingnee.name,
+      'assingneeUID': assingneeUID,
       'taskImportance': taskImportance.name,
       'status': status,
       'dueDate': dueDate,
+      'createdBy': createdBy,
       'createdDate': createdDate,
     };
   }

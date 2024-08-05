@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/core/constants/routes.dart';
 import 'package:kanban/core/widgets/app_title.dart';
 import 'package:kanban/core/widgets/bottom_page_navigator.dart';
+import 'package:kanban/core/widgets/user_initials.dart';
 import 'package:kanban/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:kanban/features/enternainment/presentation/pages/entertainment_page.dart';
 import 'package:kanban/features/finance/presentation/pages/finance_page.dart';
@@ -59,12 +60,8 @@ class _HomePageState extends State<HomePage> {
       builder: (context, state) {
         Widget userIcon = const Icon(Icons.person);
         if (state is UserSettingsLoaded) {
-          userIcon = CircleAvatar(
-            backgroundColor: Theme.of(context).colorScheme.secondary,
-            child: Text(
-              state.userSettings.initials.toUpperCase(),
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
+          userIcon = UserInitials(
+            userInitials: state.userSettings.initials.toUpperCase(),
           );
         }
 
@@ -78,16 +75,16 @@ class _HomePageState extends State<HomePage> {
             ),
             actions: [
               IconButton(
+                icon: const Icon(Icons.notifications),
                 onPressed: () {
                   //TODO: implement notifications
                 },
-                icon: const Icon(Icons.notifications),
               ),
               IconButton(
+                icon: userIcon,
                 onPressed: () {
                   Navigator.pushNamed(context, Routes.settingsPage);
                 },
-                icon: userIcon,
               ),
             ],
           ),

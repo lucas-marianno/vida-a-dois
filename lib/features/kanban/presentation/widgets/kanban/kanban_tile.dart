@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kanban/core/widgets/user_initials.dart';
 import 'package:kanban/features/kanban/presentation/bloc/task/task_bloc.dart';
-import 'package:kanban/features/kanban/core/constants/enum/task_assignee.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
 import 'package:kanban/core/util/color_util.dart';
 import 'package:kanban/core/util/datetime_util.dart';
@@ -85,8 +85,8 @@ class _KanbanTileState extends State<KanbanTile> {
     taskBloc.add(UpdateTaskEvent(newTask));
   }
 
-  void updateTaskAssignee(TaskAssignee assignee) {
-    taskBloc.add(UpdateTaskAssigneeEvent(widget.task, assignee));
+  void updateTaskAssignee(String assigneeUID) {
+    taskBloc.add(UpdateTaskAssigneeEvent(widget.task, assigneeUID));
   }
 
   void updateTaskImportance(TaskImportance importance) {
@@ -217,26 +217,31 @@ class _KanbanTileState extends State<KanbanTile> {
                 children: [
                   // Exibir a foto da pessoa que foi atribuida a tarefa
                   PopupMenuButton(
-                    icon: Icon(
-                      widget.task.assingnee.icon,
-                    ),
-                    tooltip: widget.task.assingnee.name,
+                    icon: UserInitials(userUID: widget.task.assingneeUID ?? ''),
                     itemBuilder: (context) {
+                      // TODO: implement assignee selector
                       return [
-                        for (TaskAssignee assignee in TaskAssignee.values)
+                        for (int i = 0; i < 3; i++)
                           PopupMenuItem(
-                            child: Row(
-                              children: [
-                                Icon(
-                                  assignee.icon,
-                                ),
-                                const SizedBox(width: 10),
-                                Text(assignee.name),
-                              ],
-                            ),
-                            onTap: () => updateTaskAssignee(assignee),
+                            child: const Text('Uninplemented'),
+                            onTap: () => updateTaskAssignee(''),
                           ),
                       ];
+                      // return [
+                      //   for (TaskAssignee assignee in TaskAssignee.values)
+                      //     PopupMenuItem(
+                      //       child: Row(
+                      //         children: [
+                      //           Icon(
+                      //             assignee.icon,
+                      //           ),
+                      //           const SizedBox(width: 10),
+                      //           Text(assignee.name),
+                      //         ],
+                      //       ),
+                      //       onTap: () => updateTaskAssignee(assignee),
+                      //     ),
+                      // ];
                     },
                   ),
                 ],

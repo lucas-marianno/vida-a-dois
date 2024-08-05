@@ -1,4 +1,4 @@
-import 'package:kanban/features/kanban/core/constants/enum/task_assignee.dart';
+import 'package:kanban/features/auth/data/auth_data.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
 import 'package:kanban/features/kanban/data/remote/task_data_source.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
@@ -6,7 +6,8 @@ import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 // CRUD
 class TaskRepository {
   static Future<void> createTask(Task newTask) async {
-    await TaskDataSource.createTask(newTask);
+    final currentUserUID = AuthData.currentUser!.uid;
+    await TaskDataSource.createTask(newTask..createdBy = currentUserUID);
   }
 
   static Stream<List<Task>> get readTasks => TaskDataSource.readTasks;
@@ -26,11 +27,10 @@ class TaskRepository {
     await TaskDataSource.updateTask(newTask);
   }
 
-  static Future<void> updateTaskAssignee(
-      Task task, TaskAssignee assignee) async {
-    if (task.assingnee == assignee) return;
+  static Future<void> updateTaskAssignee(Task task, String assigneeUID) async {
+    if (task.assingneeUID == assigneeUID) return;
 
-    final newTask = task.copy()..assingnee = assignee;
+    final newTask = task.copy()..assingneeUID = assigneeUID;
 
     await TaskDataSource.updateTask(newTask);
   }

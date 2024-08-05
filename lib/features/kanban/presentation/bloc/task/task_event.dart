@@ -69,12 +69,12 @@ final class UpdateTaskImportanceEvent extends TaskEvent {
 
 final class UpdateTaskAssigneeEvent extends TaskEvent {
   final Task task;
-  final TaskAssignee assignee;
+  final String assigneeUID;
 
-  const UpdateTaskAssigneeEvent(this.task, this.assignee);
+  const UpdateTaskAssigneeEvent(this.task, this.assigneeUID);
 
   @override
-  List<Object> get props => [task, assignee];
+  List<Object> get props => [task, assigneeUID];
 }
 
 final class UpdateTaskStatusEvent extends TaskEvent {

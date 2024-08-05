@@ -6,7 +6,6 @@ import 'package:kanban/core/i18n/l10n.dart';
 import 'package:kanban/core/util/dialogs/info_dialog.dart';
 import 'package:kanban/core/widgets/form/modal_form.dart';
 import 'package:kanban/features/kanban/presentation/bloc/task/task_bloc.dart';
-import 'package:kanban/features/kanban/core/constants/enum/task_assignee.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
 import 'package:kanban/features/kanban/presentation/bloc/board/board_bloc.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
@@ -31,7 +30,7 @@ class TaskForm {
 }
 
 class _EditTaskForm extends StatefulWidget {
-  final Task? task;
+  final Task task;
   final FormType formType;
   const _EditTaskForm(this.task, {required this.formType});
 
@@ -60,19 +59,17 @@ class _EditTaskFormState extends State<_EditTaskForm> {
   void deleteTaskAndClose() async {
     Navigator.pop(context);
 
-    if (widget.task == null) return;
-
     final l10n = L10n.of(context);
 
     final response = await InfoDialog.show(
       context,
-      l10n.deleteTaskPromptDescription(widget.task!.title),
+      l10n.deleteTaskPromptDescription(widget.task.title),
       title: '${l10n.delete} ${l10n.task.toLowerCase()}?',
     );
 
     if (response != true) return;
 
-    taskBloc.add(DeleteTaskEvent(widget.task!));
+    taskBloc.add(DeleteTaskEvent(widget.task));
   }
 
   void toggleEditMode() {
@@ -95,11 +92,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
   @override
   void initState() {
     super.initState();
-    newTask = widget.task?.copy() ??
-        Task(
-          title: L10n.of(context).newTask,
-          status: boardBloc.statusList[0].title,
-        );
+    newTask = widget.task.copy();
     formType = widget.formType;
     taskBloc = context.read<TaskBloc>();
     boardBloc = context.read<BoardBloc>();
@@ -145,15 +138,17 @@ class _EditTaskFormState extends State<_EditTaskForm> {
             newTask.description = newString;
           },
         ),
-        FormDropDownMenuButton(
-          label: l10n.taskAssignee,
-          enabled: !readOnly,
-          initialValue: newTask.assingnee.name,
-          items: TaskAssignee.values.map((e) => e.name).toList(),
-          onChanged: (newValue) {
-            newTask.assingnee = TaskAssignee.fromString(newValue);
-          },
-        ),
+        //TODO: allow user to determine an assignee
+        const ListTile(title: Text('assignee placeholder')),
+        // FormDropDownMenuButton(
+        //   label: l10n.taskAssignee,
+        //   enabled: !readOnly,
+        //   initialValue: newTask.assingneeUID.name,
+        //   items: TaskAssignee.values.map((e) => e.name).toList(),
+        //   onChanged: (newValue) {
+        //     newTask.assingneeUID = TaskAssignee.fromString(newValue);
+        //   },
+        // ),
         FormDropDownMenuButton(
           label: l10n.taskImportance,
           enabled: !readOnly,
@@ -188,6 +183,22 @@ class _EditTaskFormState extends State<_EditTaskForm> {
               },
             ),
           ],
+        ),
+        //TODO: implement createdBy UI
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: Text(
+            'createdBy: ${widget.task.createdBy}',
+            textAlign: TextAlign.end,
+          ),
+        ),
+        //TODO: implement created date UI
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: Text(
+            'created date: ${widget.task.createdDate?.toDate()}',
+            textAlign: TextAlign.end,
+          ),
         ),
         const SizedBox(height: 20),
         Row(

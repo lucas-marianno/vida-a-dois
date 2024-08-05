@@ -36,7 +36,7 @@ class SettingsPage extends StatelessWidget {
                       children: [
                         DividerWithLabel(label: l10n.userSettings),
                         EditableListTile(
-                          state.userSettings.userName ?? '',
+                          state.userSettings.userName ?? l10n.username,
                           floatingLabel: l10n.username,
                           onSubmitted: (value) {
                             userSettingsBloc.add(ChangeUserName(value));

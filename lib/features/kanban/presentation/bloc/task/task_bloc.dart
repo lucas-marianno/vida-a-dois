@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:kanban/core/util/logger/logger.dart';
-import 'package:kanban/features/kanban/core/constants/enum/task_assignee.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
@@ -80,7 +79,7 @@ final class TaskBloc extends Bloc<TaskEvent, TaskState> {
   ) async {
     Log.trace('$TaskBloc $UpdateTaskAssigneeEvent \n $event');
     try {
-      await TaskRepository.updateTaskAssignee(event.task, event.assignee);
+      await TaskRepository.updateTaskAssignee(event.task, event.assigneeUID);
     } catch (e) {
       add(HandleTaskError(e));
     }
