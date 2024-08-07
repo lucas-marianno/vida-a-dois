@@ -37,12 +37,11 @@ class UserSettingsBloc extends Bloc<UserSettingsEvent, UserSettingsState> {
     emit(UserSettingsLoading());
 
     //check if user has settings configured
-    final hasSettings = await UserSettingsDataSource.hasSettings(event.uid);
-    if (!hasSettings) {
+    final userSettings = await UserSettingsDataSource.getSettings(event.uid);
+    if (userSettings == null) {
       add(_CreateSettingsForCurrentUser());
       return;
     }
-
     add(_ListenToSettingsChanges(event.uid));
   }
 

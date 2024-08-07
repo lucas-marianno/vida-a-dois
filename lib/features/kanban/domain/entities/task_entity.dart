@@ -6,6 +6,7 @@ class Task {
   String title;
   String? description;
   String? assingneeUID;
+  String? assingneeInitials;
   TaskImportance taskImportance;
   String status;
   Timestamp? dueDate;
@@ -17,6 +18,7 @@ class Task {
     required this.title,
     this.description,
     this.assingneeUID,
+    this.assingneeInitials,
     this.taskImportance = TaskImportance.normal,
     required this.status,
     this.dueDate,
@@ -35,8 +37,8 @@ class Task {
       id: json['id'],
       title: json['title'],
       description: json['description'],
-      // assingneeUID: json['assingnedTo'],
       assingneeUID: json['assingneeUID'],
+      assingneeInitials: json['assingneeInitials'],
       taskImportance: TaskImportance.fromString(json['taskImportance']),
       status: json['status'],
       dueDate: json['dueDate'],
@@ -51,6 +53,7 @@ class Task {
       'title': title,
       'description': description,
       'assingneeUID': assingneeUID,
+      'assingneeInitials': assingneeInitials,
       'taskImportance': taskImportance.name,
       'status': status,
       'dueDate': dueDate,

@@ -7,7 +7,6 @@ import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart'
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 import 'package:kanban/features/kanban/domain/repository/task_repository.dart';
-import 'package:kanban/features/kanban/util/flatten_task_map.dart';
 import 'package:kanban/features/kanban/util/parse_tasklist_into_taskmap.dart';
 
 part 'task_event.dart';
@@ -16,6 +15,7 @@ part 'task_state.dart';
 final class TaskBloc extends Bloc<TaskEvent, TaskState> {
   StreamSubscription? _streamSubscription;
   Map<String, List<Task>> _taskList = {};
+
   List<Board> _boardList = [];
 
   TaskBloc() : super(TasksLoadingState()) {
@@ -106,9 +106,9 @@ final class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   _onLoadTaskEvent(LoadTasksEvent event, Emitter<TaskState> emit) {
+    Log.trace('$TaskBloc $LoadTasksEvent \n $event');
     if (event.boardList == _boardList) return;
     _boardList = event.boardList;
-    Log.trace('$TaskBloc $LoadTasksEvent \n $event');
     try {
       final taskStream = TaskRepository.readTasks;
 
@@ -132,16 +132,10 @@ final class TaskBloc extends Bloc<TaskEvent, TaskState> {
     TaskStreamDataUpdate event,
     Emitter<TaskState> emit,
   ) async {
-    final organized = parseListIntoMap(event.updatedTasks, event.boardList);
-
-    bool noTaskChanged = flattenTaskMap(_taskList) == flattenTaskMap(organized);
-
-    if (noTaskChanged) return;
-
     Log.trace('$TaskBloc $TaskStreamDataUpdate\n');
-
+    final organized = parseListIntoMap(event.updatedTasks, event.boardList);
     _taskList = organized;
-    emit(TasksLoadedState(_taskList));
+    emit(TasksLoadedState(organized));
   }
 
   _onHandleTaskError(HandleTaskError event, Emitter<TaskState> emit) {

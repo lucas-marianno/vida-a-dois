@@ -60,9 +60,7 @@ class _HomePageState extends State<HomePage> {
       builder: (context, state) {
         Widget userIcon = const Icon(Icons.person);
         if (state is UserSettingsLoaded) {
-          userIcon = UserInitials(
-            userInitials: state.userSettings.initials.toUpperCase(),
-          );
+          userIcon = UserInitials(state.userSettings.initials);
         }
 
         return Scaffold(

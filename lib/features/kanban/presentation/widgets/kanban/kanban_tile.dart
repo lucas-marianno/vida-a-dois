@@ -217,7 +217,7 @@ class _KanbanTileState extends State<KanbanTile> {
                 children: [
                   // Exibir a foto da pessoa que foi atribuida a tarefa
                   PopupMenuButton(
-                    icon: UserInitials(userUID: widget.task.assingneeUID ?? ''),
+                    icon: UserInitials(widget.task.assingneeInitials ?? ''),
                     itemBuilder: (context) {
                       // TODO: implement assignee selector
                       return [

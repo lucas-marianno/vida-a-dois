@@ -5,9 +5,11 @@ import 'package:kanban/features/user_settings/domain/entities/user_settings.dart
 class UserSettingsDataSource {
   static final _firebase = FirebaseConstants.userSettingsCollection;
 
-  static Future<bool> hasSettings(String uid) async {
+  static Future<UserSettings?> getSettings(String uid) async {
     final a = await _firebase.doc(uid).get();
-    return a.data() != null;
+    if (a.data() == null) return null;
+
+    return UserSettings.fromJson(a.data() as Map<String, dynamic>);
   }
 
   static Future<void> create(UserSettings userSettings) async {
