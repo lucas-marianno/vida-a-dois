@@ -10,7 +10,12 @@ part 'board_event.dart';
 part 'board_state.dart';
 
 final class BoardBloc extends Bloc<BoardEvent, BoardState> {
-  BoardBloc() : super(BoardLoadingState()) {
+  final BoardRepository boardRepository;
+
+  List<BoardEntity> _statusList = [];
+  late StreamSubscription _boardSubscription;
+
+  BoardBloc(this.boardRepository) : super(BoardLoadingState()) {
     on<BoardInitialEvent>(_onBoardInitialEvent);
     on<BoardsListUpdate>(_onBoardStreamDataUpdate);
     on<CreateBoardEvent>(_onCreateBoardEvent);
@@ -24,12 +29,6 @@ final class BoardBloc extends Bloc<BoardEvent, BoardState> {
     add(BoardInitialEvent());
   }
 
-  List<Board> _statusList = [];
-  late StreamSubscription _boardSubscription;
-  final _boardsStream = BoardRepository.readBoards;
-
-  List<Board> get statusList => _statusList;
-
   _onBoardInitialEvent(
     BoardInitialEvent event,
     Emitter<BoardState> emit,
@@ -38,7 +37,7 @@ final class BoardBloc extends Bloc<BoardEvent, BoardState> {
     emit(BoardLoadingState());
 
     try {
-      _boardSubscription = _boardsStream.listen(
+      _boardSubscription = boardRepository.readBoards.listen(
         (snapshot) => add(BoardsListUpdate(snapshot)),
         onError: (e) => add(HandleBoardException(error: e)),
         onDone: () => Log.debug('_boardSubscription is `done`!'),
@@ -79,7 +78,7 @@ final class BoardBloc extends Bloc<BoardEvent, BoardState> {
   ) async {
     Log.trace('$BoardBloc $CreateBoardEvent \n $event');
     try {
-      await BoardRepository.createBoard(event.newBoard);
+      await boardRepository.createBoard(event.newBoard);
     } catch (e) {
       add(HandleBoardException(error: e));
     }
@@ -91,7 +90,7 @@ final class BoardBloc extends Bloc<BoardEvent, BoardState> {
   ) async {
     Log.info('$BoardBloc $RenameBoardEvent \n $event');
     try {
-      await BoardRepository.updateBoardTitle(
+      await boardRepository.updateBoardTitle(
         event.board,
         event.newBoardTitle,
       );
@@ -104,9 +103,10 @@ final class BoardBloc extends Bloc<BoardEvent, BoardState> {
     EditBoardEvent event,
     Emitter<BoardState> emit,
   ) async {
+    emit(BoardLoadingState());
     Log.trace('$BoardBloc $EditBoardEvent \n $event');
     try {
-      await BoardRepository.updateBoard(event.oldBoard, event.newBoard);
+      await boardRepository.updateBoard(event.oldBoard, event.newBoard);
     } catch (e) {
       add(HandleBoardException(error: e));
     }
@@ -118,7 +118,7 @@ final class BoardBloc extends Bloc<BoardEvent, BoardState> {
   ) async {
     Log.trace('$BoardBloc $DeleteBoardEvent \n $event');
     try {
-      await BoardRepository.deleteBoard(event.board);
+      await boardRepository.deleteBoard(event.board);
     } catch (e) {
       add(HandleBoardException(error: e));
     }

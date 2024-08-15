@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/core/constants/enum.dart';
@@ -11,8 +10,8 @@ import 'package:kanban/features/kanban/presentation/bloc/board/board_bloc.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 
 class TaskForm {
-  static Future<Task?> readTask(
-    Task task,
+  static Future<TaskEntity?> readTask(
+    TaskEntity task,
     BuildContext context, {
     bool initAsReadOnly = true,
   }) async {
@@ -30,7 +29,7 @@ class TaskForm {
 }
 
 class _EditTaskForm extends StatefulWidget {
-  final Task task;
+  final TaskEntity task;
   final FormType formType;
   const _EditTaskForm(this.task, {required this.formType});
 
@@ -41,7 +40,7 @@ class _EditTaskForm extends StatefulWidget {
 class _EditTaskFormState extends State<_EditTaskForm> {
   late TaskBloc taskBloc;
   late BoardBloc boardBloc;
-  late Task newTask;
+  late TaskEntity newTask;
   late bool readOnly;
   late FormType formType;
 
@@ -52,7 +51,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
   void sendForm() {
     if (newTask.title == '') return;
 
-    newTask.createdDate ??= Timestamp.now();
+    newTask.createdDate ??= DateTime.now();
     Navigator.pop(context, newTask);
   }
 
@@ -92,7 +91,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
   @override
   void initState() {
     super.initState();
-    newTask = widget.task.copy();
+    newTask = widget.task;
     formType = widget.formType;
     taskBloc = context.read<TaskBloc>();
     boardBloc = context.read<BoardBloc>();
@@ -161,14 +160,22 @@ class _EditTaskFormState extends State<_EditTaskForm> {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            FormDropDownMenuButton(
-              label: l10n.taskStatus,
-              flex: 1,
-              enabled: !readOnly,
-              initialValue: newTask.status,
-              items: boardBloc.statusList.map((e) => e.title).toList(),
-              onChanged: (newValue) {
-                newTask.status = newValue ??= newTask.status;
+            BlocBuilder<BoardBloc, BoardState>(
+              builder: (context, state) {
+                if (state is BoardLoadedState) {
+                  return FormDropDownMenuButton(
+                    label: l10n.taskStatus,
+                    flex: 1,
+                    enabled: !readOnly,
+                    initialValue: newTask.status,
+                    items: state.boards.map((e) => e.title).toList(),
+                    onChanged: (newValue) {
+                      newTask.status = newValue ??= newTask.status;
+                    },
+                  );
+                }
+                return const Expanded(
+                    child: Center(child: LinearProgressIndicator()));
               },
             ),
             const SizedBox(width: 6),
@@ -176,10 +183,9 @@ class _EditTaskFormState extends State<_EditTaskForm> {
               label: l10n.taskDeadline,
               flex: 1,
               enabled: !readOnly,
-              initialDate: newTask.dueDate?.toDate(),
+              initialDate: newTask.dueDate,
               onChanged: (newDate) {
-                newTask.dueDate =
-                    newDate == null ? null : Timestamp.fromDate(newDate);
+                newTask.dueDate = newDate;
               },
             ),
           ],
@@ -196,7 +202,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Text(
-            'created date: ${widget.task.createdDate?.toDate()}',
+            'created date: ${widget.task.createdDate}',
             textAlign: TextAlign.end,
           ),
         ),

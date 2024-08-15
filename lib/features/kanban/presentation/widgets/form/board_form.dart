@@ -7,8 +7,8 @@ import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 import 'package:kanban/features/kanban/presentation/bloc/board/board_bloc.dart';
 
 class BoardForm {
-  static Future<Board?> readBoard(
-    Board board,
+  static Future<BoardEntity?> readBoard(
+    BoardEntity board,
     BuildContext context, {
     bool initAsReadOnly = true,
   }) async {
@@ -26,7 +26,7 @@ class BoardForm {
 }
 
 class _EditBoardForm extends StatefulWidget {
-  final Board board;
+  final BoardEntity board;
   final FormType formType;
   const _EditBoardForm(this.board, {required this.formType});
 
@@ -36,7 +36,7 @@ class _EditBoardForm extends StatefulWidget {
 
 class _EditBoardFormState extends State<_EditBoardForm> {
   late BoardBloc boardBloc;
-  late Board newBoard;
+  late BoardEntity newBoard;
   late bool readOnly;
   late FormType formType;
 
@@ -77,11 +77,11 @@ class _EditBoardFormState extends State<_EditBoardForm> {
     super.initState();
     formType = widget.formType;
     boardBloc = context.read<BoardBloc>();
-    newBoard = widget.board.copy()
-      ..index = widget.board.index.clamp(
-        0,
-        boardBloc.statusList.length,
-      );
+
+    newBoard = BoardEntity(
+      title: widget.board.title,
+      index: widget.board.index,
+    );
   }
 
   @override
@@ -115,22 +115,32 @@ class _EditBoardFormState extends State<_EditBoardForm> {
           },
           mandatory: true,
         ),
-        () {
-          final items = boardBloc.statusList.map((e) {
-                return '${e.index} - ${l10n.before} "${e.title}"';
-              }).toList() +
-              ['${boardBloc.statusList.length} - ${l10n.addToEnd}'];
-          return FormDropDownMenuButton(
-            enabled: !readOnly,
-            label: l10n.position,
-            initialValue: items[newBoard.index],
-            items: items,
-            onChanged: (e) {
-              newBoard.index =
-                  int.tryParse(e?.substring(0, 1) ?? '') ?? newBoard.index;
-            },
-          );
-        }(),
+        BlocBuilder<BoardBloc, BoardState>(
+          builder: (context, state) {
+            if (state is BoardLoadedState) {
+              final items = state.boards
+                      .map((e) => '${e.index} - ${l10n.before} "${e.title}"')
+                      .toList() +
+                  ['${state.boards.length} - ${l10n.addToEnd}'];
+
+              newBoard.index = newBoard.index.clamp(0, items.length - 1);
+
+              return FormDropDownMenuButton(
+                enabled: !readOnly,
+                label: l10n.position,
+                initialValue: formType == FormType.create
+                    ? items.last
+                    : items[newBoard.index],
+                items: items,
+                onChanged: (e) {
+                  newBoard.index =
+                      int.tryParse(e?.substring(0, 1) ?? '') ?? newBoard.index;
+                },
+              );
+            }
+            return const Center(child: LinearProgressIndicator());
+          },
+        ),
         const SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,

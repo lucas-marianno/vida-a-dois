@@ -13,12 +13,13 @@ part 'task_event.dart';
 part 'task_state.dart';
 
 final class TaskBloc extends Bloc<TaskEvent, TaskState> {
+  final TaskRepository taskRepository;
   StreamSubscription? _streamSubscription;
-  Map<String, List<Task>> _taskList = {};
+  Map<String, List<TaskEntity>> _taskList = {};
 
-  List<Board> _boardList = [];
+  List<BoardEntity> _boardList = [];
 
-  TaskBloc() : super(TasksLoadingState()) {
+  TaskBloc(this.taskRepository) : super(TasksLoadingState()) {
     on<TaskInitialEvent>(_onTaskInitialEvent);
     on<LoadTasksEvent>(_onLoadTaskEvent);
     on<ReloadTasks>(_onReloadTask);
@@ -44,7 +45,7 @@ final class TaskBloc extends Bloc<TaskEvent, TaskState> {
     Log.trace('$TaskBloc $CreateTaskEvent \n $event');
 
     try {
-      await TaskRepository.createTask(event.newTask);
+      await taskRepository.createTask(event.newTask);
     } catch (e) {
       add(HandleTaskError(e));
     }
@@ -54,7 +55,7 @@ final class TaskBloc extends Bloc<TaskEvent, TaskState> {
     Log.trace('$TaskBloc $UpdateTaskEvent \n $event');
 
     try {
-      await TaskRepository.updateTask(event.task);
+      await taskRepository.updateTask(event.task);
     } catch (e) {
       add(HandleTaskError(e));
     }
@@ -67,7 +68,7 @@ final class TaskBloc extends Bloc<TaskEvent, TaskState> {
     Log.trace('$TaskBloc $UpdateTaskImportanceEvent \n $event');
 
     try {
-      await TaskRepository.updateTaskImportance(event.task, event.importance);
+      await taskRepository.updateTaskImportance(event.task, event.importance);
     } catch (e) {
       add(HandleTaskError(e));
     }
@@ -79,7 +80,7 @@ final class TaskBloc extends Bloc<TaskEvent, TaskState> {
   ) async {
     Log.trace('$TaskBloc $UpdateTaskAssigneeEvent \n $event');
     try {
-      await TaskRepository.updateTaskAssignee(event.task, event.assigneeUID);
+      await taskRepository.updateTaskAssignee(event.task, event.assigneeUID);
     } catch (e) {
       add(HandleTaskError(e));
     }
@@ -91,7 +92,7 @@ final class TaskBloc extends Bloc<TaskEvent, TaskState> {
   ) async {
     Log.trace('$TaskBloc $UpdateTaskStatusEvent \n $event');
     try {
-      await TaskRepository.updateTaskStatus(event.task, event.newStatus);
+      await taskRepository.updateTaskStatus(event.task, event.newStatus);
     } catch (e) {
       add(HandleTaskError(e));
     }
@@ -99,7 +100,7 @@ final class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   _onDeleteTaskEvent(DeleteTaskEvent event, Emitter<TaskState> emit) async {
     try {
-      await TaskRepository.deleteTask(event.task);
+      await taskRepository.deleteTask(event.task);
     } catch (e) {
       add(HandleTaskError(e));
     }
@@ -110,7 +111,7 @@ final class TaskBloc extends Bloc<TaskEvent, TaskState> {
     if (event.boardList == _boardList) return;
     _boardList = event.boardList;
     try {
-      final taskStream = TaskRepository.readTasks;
+      final taskStream = taskRepository.readTasks;
 
       _streamSubscription = taskStream.listen(
         (data) => add(TaskStreamDataUpdate(data, _boardList)),

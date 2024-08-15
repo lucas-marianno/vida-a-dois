@@ -3,12 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/core/i18n/l10n.dart';
 import 'package:kanban/core/util/dialogs/error_dialog.dart';
 import 'package:kanban/core/util/dialogs/info_dialog.dart';
-import 'package:kanban/features/kanban/data/remote/board_data_source.dart';
+import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
+import 'package:kanban/features/kanban/domain/exceptions/board_exception.dart';
 import 'package:kanban/features/kanban/presentation/bloc/board/board_bloc.dart';
 import 'package:kanban/features/kanban/presentation/bloc/task/task_bloc.dart';
-import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 import 'package:kanban/features/kanban/presentation/widgets/form/board_form.dart';
-import '../widgets/kanban/kanban_board.dart';
+import 'package:kanban/features/kanban/presentation/widgets/kanban/kanban_board.dart';
 
 class KanbanPage extends StatefulWidget {
   const KanbanPage({super.key});
@@ -24,7 +24,7 @@ class _KanbanPageState extends State<KanbanPage> {
 
   void createBoard() async {
     final newBoard = await BoardForm.readBoard(
-      Board(title: L10n.of(context).newBoard, index: 500),
+      BoardEntity(title: L10n.of(context).newBoard, index: 0),
       context,
       initAsReadOnly: false,
     );
@@ -101,7 +101,7 @@ class _KanbanPageState extends State<KanbanPage> {
                       child: Padding(
                         padding: const EdgeInsets.only(left: 10, right: 20),
                         child: ElevatedButton(
-                          onPressed: () => createBoard(),
+                          onPressed: createBoard,
                           child: const Icon(Icons.add),
                         ),
                       ),

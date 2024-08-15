@@ -1,35 +1,14 @@
-import 'package:kanban/features/kanban/data/remote/board_data_source.dart';
-import 'package:kanban/features/kanban/data/remote/task_data_source.dart';
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 
 //CRUD
-class BoardRepository {
-  static Future<void> createBoard(Board newBoard) async {
-    if (newBoard.title.isEmpty) return;
+abstract class BoardRepository {
+  Future<void> createBoard(BoardEntity newBoard);
 
-    await BoardDataSource.createBoard(newBoard);
-  }
+  Stream<List<BoardEntity>> get readBoards;
 
-  static Stream<List<Board>> get readBoards => BoardDataSource.readBoards;
+  Future<void> updateBoard(BoardEntity oldBoard, BoardEntity newBoard);
 
-  static Future<void> updateBoard(
-    Board oldBoard,
-    Board newBoard,
-  ) async {
-    await BoardDataSource.updateBoard(oldBoard, newBoard);
-  }
+  Future<void> updateBoardTitle(BoardEntity board, String newTitle);
 
-  static Future<void> updateBoardTitle(
-    Board board,
-    String newTitle,
-  ) async {
-    await BoardDataSource.updateBoardTitle(board, newTitle);
-  }
-
-  static Future<void> deleteBoard(Board board) async {
-    await Future.wait([
-      BoardDataSource.deleteBoard(board),
-      TaskDataSource.deleteAllTasksWithStatus(board.title),
-    ]);
-  }
+  Future<void> deleteBoard(BoardEntity board);
 }

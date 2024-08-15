@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:kanban/core/i18n/l10n.dart';
 import 'package:kanban/core/util/dialogs/info_dialog.dart';
-import 'package:kanban/features/kanban/presentation/bloc/board/board_bloc.dart';
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
+import 'package:kanban/features/kanban/presentation/bloc/board/board_bloc.dart';
 import 'package:kanban/features/kanban/presentation/widgets/form/board_form.dart';
 
 class KanbanBoardTitle extends StatefulWidget {
-  final Board board;
+  final BoardEntity board;
 
-  const KanbanBoardTitle({
-    super.key,
-    required this.board,
-  });
+  const KanbanBoardTitle({required this.board, super.key});
 
   @override
   State<KanbanBoardTitle> createState() => _KanbanBoardTitleState();
@@ -50,9 +48,12 @@ class _KanbanBoardTitleState extends State<KanbanBoardTitle> {
   }
 
   void editBoard() async {
-    final newBoard = await BoardForm.readBoard(widget.board, context);
+    final newBoard = await BoardForm.readBoard(
+      widget.board,
+      context,
+    );
 
-    if (newBoard == null || newBoard.equalsTo(widget.board)) return;
+    if (newBoard == null) return;
 
     boardBloc.add(EditBoardEvent(widget.board, newBoard));
   }

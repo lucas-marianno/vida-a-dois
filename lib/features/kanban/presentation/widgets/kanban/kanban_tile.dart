@@ -2,15 +2,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/core/widgets/user_initials.dart';
-import 'package:kanban/features/kanban/presentation/bloc/task/task_bloc.dart';
-import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
 import 'package:kanban/core/util/color_util.dart';
 import 'package:kanban/core/util/datetime_util.dart';
+import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
+import 'package:kanban/features/kanban/presentation/bloc/task/task_bloc.dart';
 import 'package:kanban/features/kanban/presentation/widgets/form/task_form.dart';
-import '../../../domain/entities/task_entity.dart';
+import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
 
 class KanbanTile extends StatefulWidget {
-  final Task task;
+  final TaskEntity task;
   final double tileWidth;
   final ScrollController horizontalScrollController;
 
@@ -80,7 +80,7 @@ class _KanbanTileState extends State<KanbanTile> {
   void readTask() async {
     final newTask = await TaskForm.readTask(widget.task, context);
 
-    if (newTask == null || newTask.equalsTo(widget.task)) return;
+    if (newTask == null) return;
 
     taskBloc.add(UpdateTaskEvent(newTask));
   }
@@ -206,7 +206,7 @@ class _KanbanTileState extends State<KanbanTile> {
                         const SizedBox(width: 10),
                         Text(
                           DateTimeUtil.dateTimeToStringShort(
-                            widget.task.dueDate!.toDate(),
+                            widget.task.dueDate,
                           ).toUpperCase(),
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),

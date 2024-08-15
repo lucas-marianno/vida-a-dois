@@ -8,7 +8,7 @@ import 'package:kanban/features/kanban/presentation/widgets/kanban/kanban_board_
 import 'kanban_add_task_button.dart';
 
 class KanbanBoard extends StatelessWidget {
-  final Board board;
+  final BoardEntity board;
   final ScrollController horizontalController;
   const KanbanBoard({
     required this.board,
