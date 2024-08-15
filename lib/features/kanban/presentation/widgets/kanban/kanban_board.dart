@@ -21,6 +21,8 @@ class KanbanBoard extends StatelessWidget {
     double widthMultiplier = 0.6;
     double width = MediaQuery.of(context).size.width * widthMultiplier;
 
+    final taskBloc = context.read<TaskBloc>();
+
     return Container(
       width: width,
       margin: const EdgeInsets.symmetric(horizontal: 3),
@@ -55,9 +57,7 @@ class KanbanBoard extends StatelessWidget {
                   child: Center(
                     child: ErrorDialog(
                       UnimplementedError('\n\n$state\n'),
-                      onAccept: () {
-                        context.read<TaskBloc>().add(ReloadTasks());
-                      },
+                      onAccept: () => taskBloc.add(ReloadTasks()),
                     ),
                   ),
                 );
@@ -67,7 +67,9 @@ class KanbanBoard extends StatelessWidget {
           // TODO: show a hovering 'arrow down' to indicate that there are hidden items
           // bellow '+ new task' button.
           // Possibly, only show '+ new task' when the last item is being shown
-          KanbanAddTaskButton(board),
+          KanbanAddTaskButton(
+            () => taskBloc.add(CreateTaskEvent(context, board.title)),
+          ),
         ],
       ),
     );

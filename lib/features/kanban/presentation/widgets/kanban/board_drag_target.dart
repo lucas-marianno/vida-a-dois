@@ -28,9 +28,8 @@ class KanbanBoardDragTarget extends StatelessWidget {
       child: DragTarget(
         onAcceptWithDetails: (data) {
           if (data.data is Task) {
-            context.read<TaskBloc>().add(
-                  UpdateTaskStatusEvent(data.data as Task, board.title),
-                );
+            final task = data.data as Task;
+            context.read<TaskBloc>().add(UpdateTaskStatus(task, board.title));
           }
         },
         builder: (context, _, __) {

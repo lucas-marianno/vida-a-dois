@@ -6,7 +6,6 @@ import 'package:kanban/core/util/color_util.dart';
 import 'package:kanban/core/util/datetime_util.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 import 'package:kanban/features/kanban/presentation/bloc/task/task_bloc.dart';
-import 'package:kanban/features/kanban/presentation/widgets/form/task_form.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
 
 class KanbanTile extends StatefulWidget {
@@ -78,19 +77,15 @@ class _KanbanTileState extends State<KanbanTile> {
   }
 
   void readTask() async {
-    final newTask = await TaskForm.readTask(widget.task, context);
-
-    if (newTask == null) return;
-
-    taskBloc.add(UpdateTaskEvent(newTask));
+    taskBloc.add(ReadTaskEvent(context, widget.task));
   }
 
   void updateTaskAssignee(String assigneeUID) {
-    taskBloc.add(UpdateTaskAssigneeEvent(widget.task, assigneeUID));
+    taskBloc.add(UpdateTaskAssigneeUID(widget.task, assigneeUID));
   }
 
   void updateTaskImportance(TaskImportance importance) {
-    taskBloc.add(UpdateTaskImportanceEvent(widget.task, importance));
+    taskBloc.add(UpdateTaskImportance(widget.task, importance));
   }
 
   @override

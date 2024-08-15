@@ -7,16 +7,26 @@ sealed class TaskEvent extends Equatable {
   List<Object> get props => [];
 }
 
-final class HandleTaskError extends TaskEvent {
+final class _TaskInitial extends TaskEvent {}
+
+final class _TaskStreamDataUpdate extends TaskEvent {
+  final List<Task> updatedTasks;
+  final List<Board> boardList;
+
+  const _TaskStreamDataUpdate(this.updatedTasks, this.boardList);
+
+  @override
+  List<Object> get props => [updatedTasks];
+}
+
+final class _HandleTaskError extends TaskEvent {
   final Object error;
 
-  const HandleTaskError(this.error);
+  const _HandleTaskError(this.error);
 
   @override
   List<Object> get props => [error];
 }
-
-final class TaskInitialEvent extends TaskEvent {}
 
 final class LoadTasksEvent extends TaskEvent {
   final List<Board> boardList;
@@ -29,59 +39,60 @@ final class LoadTasksEvent extends TaskEvent {
 
 final class ReloadTasks extends TaskEvent {}
 
-final class TaskStreamDataUpdate extends TaskEvent {
-  final List<Task> updatedTasks;
-  final List<Board> boardList;
-
-  const TaskStreamDataUpdate(this.updatedTasks, this.boardList);
-
-  @override
-  List<Object> get props => [updatedTasks];
-}
-
 final class CreateTaskEvent extends TaskEvent {
-  final Task newTask;
+  final BuildContext context;
+  final String initialStatus;
 
-  const CreateTaskEvent(this.newTask);
+  const CreateTaskEvent(this.context, this.initialStatus);
 
   @override
-  List<Object> get props => [newTask];
+  List<Object> get props => [context, initialStatus];
 }
 
-final class UpdateTaskEvent extends TaskEvent {
+final class ReadTaskEvent extends TaskEvent {
+  final BuildContext context;
   final Task task;
 
-  const UpdateTaskEvent(this.task);
+  const ReadTaskEvent(this.context, this.task);
+
+  @override
+  List<Object> get props => [context, task];
+}
+
+final class _UpdateTask extends TaskEvent {
+  final Task task;
+
+  const _UpdateTask(this.task);
 
   @override
   List<Object> get props => [task];
 }
 
-final class UpdateTaskImportanceEvent extends TaskEvent {
+final class UpdateTaskAssigneeUID extends TaskEvent {
   final Task task;
-  final TaskImportance importance;
+  final String newAssigneeUID;
 
-  const UpdateTaskImportanceEvent(this.task, this.importance);
+  const UpdateTaskAssigneeUID(this.task, this.newAssigneeUID);
 
   @override
-  List<Object> get props => [task, importance];
+  List<Object> get props => [task, newAssigneeUID];
 }
 
-final class UpdateTaskAssigneeEvent extends TaskEvent {
+final class UpdateTaskImportance extends TaskEvent {
   final Task task;
-  final String assigneeUID;
+  final TaskImportance newImportance;
 
-  const UpdateTaskAssigneeEvent(this.task, this.assigneeUID);
+  const UpdateTaskImportance(this.task, this.newImportance);
 
   @override
-  List<Object> get props => [task, assigneeUID];
+  List<Object> get props => [task, newImportance];
 }
 
-final class UpdateTaskStatusEvent extends TaskEvent {
+final class UpdateTaskStatus extends TaskEvent {
   final Task task;
   final String newStatus;
 
-  const UpdateTaskStatusEvent(this.task, this.newStatus);
+  const UpdateTaskStatus(this.task, this.newStatus);
 
   @override
   List<Object> get props => [task, newStatus];
