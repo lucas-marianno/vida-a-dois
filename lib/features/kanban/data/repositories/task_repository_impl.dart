@@ -11,23 +11,23 @@ class TaskRepositoryImpl extends TaskRepository {
   final TaskDataSource taskDataSource;
 
   @override
-  Future<void> createTask(TaskEntity newTask) async {
+  Future<void> createTask(Task newTask) async {
     final currentUserUID = AuthData.currentUser!.uid;
     await taskDataSource
         .createTask(TaskModel.fromEntity(newTask)..createdBy = currentUserUID);
   }
 
   @override
-  Stream<List<TaskEntity>> get readTasks => taskDataSource.readTasks;
+  Stream<List<Task>> get readTasks => taskDataSource.readTasks;
 
   @override
-  Future<void> updateTask(TaskEntity task) async {
+  Future<void> updateTask(Task task) async {
     await taskDataSource.updateTask(TaskModel.fromEntity(task));
   }
 
   @override
   Future<void> updateTaskImportance(
-    TaskEntity task,
+    Task task,
     TaskImportance taskImportance,
   ) async {
     if (task.taskImportance == taskImportance) return;
@@ -39,7 +39,7 @@ class TaskRepositoryImpl extends TaskRepository {
   }
 
   @override
-  Future<void> updateTaskAssignee(TaskEntity task, String assigneeUID) async {
+  Future<void> updateTaskAssignee(Task task, String assigneeUID) async {
     if (task.assingneeUID == assigneeUID) return;
 
     final newTask = TaskModel.fromEntity(task).copy()
@@ -49,7 +49,7 @@ class TaskRepositoryImpl extends TaskRepository {
   }
 
   @override
-  Future<void> updateTaskStatus(TaskEntity task, String newStatus) async {
+  Future<void> updateTaskStatus(Task task, String newStatus) async {
     if (task.status == newStatus) return;
 
     await taskDataSource
@@ -57,7 +57,7 @@ class TaskRepositoryImpl extends TaskRepository {
   }
 
   @override
-  Future<void> deleteTask(TaskEntity task) async {
+  Future<void> deleteTask(Task task) async {
     await taskDataSource.deleteTask(TaskModel.fromEntity(task));
   }
 }

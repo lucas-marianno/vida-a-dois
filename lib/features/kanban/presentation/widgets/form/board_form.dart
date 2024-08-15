@@ -7,8 +7,8 @@ import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 import 'package:kanban/features/kanban/presentation/bloc/board/board_bloc.dart';
 
 class BoardForm {
-  static Future<BoardEntity?> readBoard(
-    BoardEntity board,
+  static Future<Board?> readBoard(
+    Board board,
     BuildContext context, {
     bool initAsReadOnly = true,
   }) async {
@@ -26,7 +26,7 @@ class BoardForm {
 }
 
 class _EditBoardForm extends StatefulWidget {
-  final BoardEntity board;
+  final Board board;
   final FormType formType;
   const _EditBoardForm(this.board, {required this.formType});
 
@@ -36,7 +36,7 @@ class _EditBoardForm extends StatefulWidget {
 
 class _EditBoardFormState extends State<_EditBoardForm> {
   late BoardBloc boardBloc;
-  late BoardEntity newBoard;
+  late Board newBoard;
   late bool readOnly;
   late FormType formType;
 
@@ -78,7 +78,7 @@ class _EditBoardFormState extends State<_EditBoardForm> {
     formType = widget.formType;
     boardBloc = context.read<BoardBloc>();
 
-    newBoard = BoardEntity(
+    newBoard = Board(
       title: widget.board.title,
       index: widget.board.index,
     );

@@ -7,7 +7,7 @@ import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 import 'package:kanban/features/kanban/presentation/widgets/form/task_form.dart';
 
 class KanbanAddTaskButton extends StatelessWidget {
-  final BoardEntity currentBoard;
+  final Board currentBoard;
   const KanbanAddTaskButton(this.currentBoard, {super.key});
 
   // TODO: This function should be removed from here, ui should not have to worry about error handling
@@ -15,7 +15,7 @@ class KanbanAddTaskButton extends StatelessWidget {
     TaskBloc taskBloc = context.read<TaskBloc>();
 
     final newTask = await TaskForm.readTask(
-      TaskEntity(title: L10n.of(context).newTask, status: currentBoard.title),
+      Task(title: L10n.of(context).newTask, status: currentBoard.title),
       context,
       initAsReadOnly: false,
     );

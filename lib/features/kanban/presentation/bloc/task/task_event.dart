@@ -19,7 +19,7 @@ final class HandleTaskError extends TaskEvent {
 final class TaskInitialEvent extends TaskEvent {}
 
 final class LoadTasksEvent extends TaskEvent {
-  final List<BoardEntity> boardList;
+  final List<Board> boardList;
 
   const LoadTasksEvent(this.boardList);
 
@@ -30,8 +30,8 @@ final class LoadTasksEvent extends TaskEvent {
 final class ReloadTasks extends TaskEvent {}
 
 final class TaskStreamDataUpdate extends TaskEvent {
-  final List<TaskEntity> updatedTasks;
-  final List<BoardEntity> boardList;
+  final List<Task> updatedTasks;
+  final List<Board> boardList;
 
   const TaskStreamDataUpdate(this.updatedTasks, this.boardList);
 
@@ -40,7 +40,7 @@ final class TaskStreamDataUpdate extends TaskEvent {
 }
 
 final class CreateTaskEvent extends TaskEvent {
-  final TaskEntity newTask;
+  final Task newTask;
 
   const CreateTaskEvent(this.newTask);
 
@@ -49,7 +49,7 @@ final class CreateTaskEvent extends TaskEvent {
 }
 
 final class UpdateTaskEvent extends TaskEvent {
-  final TaskEntity task;
+  final Task task;
 
   const UpdateTaskEvent(this.task);
 
@@ -58,7 +58,7 @@ final class UpdateTaskEvent extends TaskEvent {
 }
 
 final class UpdateTaskImportanceEvent extends TaskEvent {
-  final TaskEntity task;
+  final Task task;
   final TaskImportance importance;
 
   const UpdateTaskImportanceEvent(this.task, this.importance);
@@ -68,7 +68,7 @@ final class UpdateTaskImportanceEvent extends TaskEvent {
 }
 
 final class UpdateTaskAssigneeEvent extends TaskEvent {
-  final TaskEntity task;
+  final Task task;
   final String assigneeUID;
 
   const UpdateTaskAssigneeEvent(this.task, this.assigneeUID);
@@ -78,7 +78,7 @@ final class UpdateTaskAssigneeEvent extends TaskEvent {
 }
 
 final class UpdateTaskStatusEvent extends TaskEvent {
-  final TaskEntity task;
+  final Task task;
   final String newStatus;
 
   const UpdateTaskStatusEvent(this.task, this.newStatus);
@@ -88,7 +88,7 @@ final class UpdateTaskStatusEvent extends TaskEvent {
 }
 
 final class DeleteTaskEvent extends TaskEvent {
-  final TaskEntity task;
+  final Task task;
 
   const DeleteTaskEvent(this.task);
 

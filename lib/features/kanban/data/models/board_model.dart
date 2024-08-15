@@ -1,6 +1,6 @@
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 
-class BoardModel extends BoardEntity {
+class BoardModel extends Board {
   BoardModel({required super.title, required super.index});
 
   factory BoardModel.fromJson(Map<String, dynamic> json) {
@@ -17,11 +17,11 @@ class BoardModel extends BoardEntity {
     };
   }
 
-  factory BoardModel.fromEntity(BoardEntity boardEntity) {
+  factory BoardModel.fromEntity(Board boardEntity) {
     return BoardModel(title: boardEntity.title, index: boardEntity.index);
   }
 
-  BoardEntity toEntity() => this;
+  Board toEntity() => this;
 
   /// Returns a new [BoardModel] with the same values as the original.
   BoardModel copy() => BoardModel.fromJson(toJson);

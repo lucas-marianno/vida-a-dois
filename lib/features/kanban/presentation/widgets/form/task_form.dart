@@ -10,8 +10,8 @@ import 'package:kanban/features/kanban/presentation/bloc/board/board_bloc.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 
 class TaskForm {
-  static Future<TaskEntity?> readTask(
-    TaskEntity task,
+  static Future<Task?> readTask(
+    Task task,
     BuildContext context, {
     bool initAsReadOnly = true,
   }) async {
@@ -29,7 +29,7 @@ class TaskForm {
 }
 
 class _EditTaskForm extends StatefulWidget {
-  final TaskEntity task;
+  final Task task;
   final FormType formType;
   const _EditTaskForm(this.task, {required this.formType});
 
@@ -40,7 +40,7 @@ class _EditTaskForm extends StatefulWidget {
 class _EditTaskFormState extends State<_EditTaskForm> {
   late TaskBloc taskBloc;
   late BoardBloc boardBloc;
-  late TaskEntity newTask;
+  late Task newTask;
   late bool readOnly;
   late FormType formType;
 

@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 
-class TaskModel extends TaskEntity {
+class TaskModel extends Task {
   TaskModel({
     super.id,
     required super.title,
@@ -53,7 +53,7 @@ class TaskModel extends TaskEntity {
     };
   }
 
-  factory TaskModel.fromEntity(TaskEntity task) {
+  factory TaskModel.fromEntity(Task task) {
     return TaskModel(
       id: task.id,
       title: task.title,
@@ -68,9 +68,9 @@ class TaskModel extends TaskEntity {
     );
   }
 
-  TaskEntity toEntity() => this;
+  Task toEntity() => this;
 
-  /// [equalsTo] makes a deep comparison between two [TaskEntity] objects
+  /// [equalsTo] makes a deep comparison between two [Task] objects
   /// and returns `true` if all parameters match.
   bool equalsTo(TaskModel task) => '$toJson' == '${task.toJson}';
 

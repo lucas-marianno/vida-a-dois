@@ -12,7 +12,7 @@ part 'board_state.dart';
 final class BoardBloc extends Bloc<BoardEvent, BoardState> {
   final BoardRepository boardRepository;
 
-  List<BoardEntity> _statusList = [];
+  List<Board> _statusList = [];
   late StreamSubscription _boardSubscription;
 
   BoardBloc(this.boardRepository) : super(BoardLoadingState()) {

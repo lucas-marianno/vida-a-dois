@@ -7,10 +7,10 @@ import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 import 'kanban_tile.dart';
 
 class KanbanBoardDragTarget extends StatelessWidget {
-  final BoardEntity board;
+  final Board board;
   final double width;
   final ScrollController horizontalController;
-  final Map<String, List<TaskEntity>> mappedTasks;
+  final Map<String, List<Task>> mappedTasks;
 
   const KanbanBoardDragTarget({
     required this.board,
@@ -22,14 +22,14 @@ class KanbanBoardDragTarget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<TaskEntity> taskList = mappedTasks[board.title] ?? [];
+    List<Task> taskList = mappedTasks[board.title] ?? [];
     ScrollController verticalController = ScrollController();
     return Expanded(
       child: DragTarget(
         onAcceptWithDetails: (data) {
-          if (data.data is TaskEntity) {
+          if (data.data is Task) {
             context.read<TaskBloc>().add(
-                  UpdateTaskStatusEvent(data.data as TaskEntity, board.title),
+                  UpdateTaskStatusEvent(data.data as Task, board.title),
                 );
           }
         },

@@ -10,7 +10,7 @@ sealed class TaskState extends Equatable {
 final class TasksLoadingState extends TaskState {}
 
 final class TasksLoadedState extends TaskState {
-  final Map<String, List<TaskEntity>> mappedTasks;
+  final Map<String, List<Task>> mappedTasks;
 
   const TasksLoadedState(this.mappedTasks);
 

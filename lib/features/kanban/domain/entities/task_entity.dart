@@ -1,6 +1,6 @@
 import '../../core/constants/enum/task_importance.dart';
 
-class TaskEntity {
+class Task {
   String? id;
   String title;
   String? description;
@@ -12,7 +12,7 @@ class TaskEntity {
   String? createdBy;
   DateTime? createdDate;
 
-  TaskEntity({
+  Task({
     this.id,
     required this.title,
     this.description,

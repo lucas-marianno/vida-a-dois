@@ -14,17 +14,17 @@ class BoardRepositoryImpl extends BoardRepository {
   });
 
   @override
-  Future<void> createBoard(BoardEntity newBoard) async {
+  Future<void> createBoard(Board newBoard) async {
     if (newBoard.title.isEmpty) return;
 
     await boardDataSource.createBoard(BoardModel.fromEntity(newBoard));
   }
 
   @override
-  Stream<List<BoardEntity>> get readBoards => boardDataSource.readBoards;
+  Stream<List<Board>> get readBoards => boardDataSource.readBoards;
 
   @override
-  Future<void> updateBoard(BoardEntity oldBoard, BoardEntity newBoard) async {
+  Future<void> updateBoard(Board oldBoard, Board newBoard) async {
     await boardDataSource.updateBoard(
       BoardModel.fromEntity(oldBoard),
       BoardModel.fromEntity(newBoard),
@@ -32,7 +32,7 @@ class BoardRepositoryImpl extends BoardRepository {
   }
 
   @override
-  Future<void> updateBoardTitle(BoardEntity board, String newTitle) async {
+  Future<void> updateBoardTitle(Board board, String newTitle) async {
     await boardDataSource.updateBoardTitle(
       BoardModel.fromEntity(board),
       newTitle,
@@ -40,7 +40,7 @@ class BoardRepositoryImpl extends BoardRepository {
   }
 
   @override
-  Future<void> deleteBoard(BoardEntity board) async {
+  Future<void> deleteBoard(Board board) async {
     await Future.wait([
       boardDataSource.deleteBoard(BoardModel.fromEntity(board)),
       taskDataSource.deleteAllTasksWithStatus(board.title),

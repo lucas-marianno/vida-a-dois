@@ -10,7 +10,7 @@ sealed class BoardEvent extends Equatable {
 final class BoardInitialEvent extends BoardEvent {}
 
 final class BoardsListUpdate extends BoardEvent {
-  final List<BoardEntity> boardsList;
+  final List<Board> boardsList;
 
   const BoardsListUpdate(this.boardsList);
 
@@ -19,7 +19,7 @@ final class BoardsListUpdate extends BoardEvent {
 }
 
 final class CreateBoardEvent extends BoardEvent {
-  final BoardEntity newBoard;
+  final Board newBoard;
 
   const CreateBoardEvent(this.newBoard);
 
@@ -28,7 +28,7 @@ final class CreateBoardEvent extends BoardEvent {
 }
 
 final class RenameBoardEvent extends BoardEvent {
-  final BoardEntity board;
+  final Board board;
   final String newBoardTitle;
 
   const RenameBoardEvent(this.board, this.newBoardTitle);
@@ -38,8 +38,8 @@ final class RenameBoardEvent extends BoardEvent {
 }
 
 final class EditBoardEvent extends BoardEvent {
-  final BoardEntity oldBoard;
-  final BoardEntity newBoard;
+  final Board oldBoard;
+  final Board newBoard;
 
   const EditBoardEvent(this.oldBoard, this.newBoard);
 
@@ -48,7 +48,7 @@ final class EditBoardEvent extends BoardEvent {
 }
 
 final class DeleteBoardEvent extends BoardEvent {
-  final BoardEntity board;
+  final Board board;
 
   const DeleteBoardEvent(this.board);
 

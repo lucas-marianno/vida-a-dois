@@ -10,7 +10,7 @@ import 'package:kanban/features/kanban/presentation/widgets/form/task_form.dart'
 import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
 
 class KanbanTile extends StatefulWidget {
-  final TaskEntity task;
+  final Task task;
   final double tileWidth;
   final ScrollController horizontalScrollController;
 

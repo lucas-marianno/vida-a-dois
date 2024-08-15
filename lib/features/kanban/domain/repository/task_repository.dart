@@ -2,18 +2,17 @@ import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart'
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 
 abstract class TaskRepository {
-  Future<void> createTask(TaskEntity newTask);
+  Future<void> createTask(Task newTask);
 
-  Stream<List<TaskEntity>> get readTasks;
+  Stream<List<Task>> get readTasks;
 
-  Future<void> updateTask(TaskEntity task);
+  Future<void> updateTask(Task task);
 
-  Future<void> updateTaskImportance(
-      TaskEntity task, TaskImportance taskImportance);
+  Future<void> updateTaskImportance(Task task, TaskImportance taskImportance);
 
-  Future<void> updateTaskAssignee(TaskEntity task, String assigneeUID);
+  Future<void> updateTaskAssignee(Task task, String assigneeUID);
 
-  Future<void> updateTaskStatus(TaskEntity task, String newStatus);
+  Future<void> updateTaskStatus(Task task, String newStatus);
 
-  Future<void> deleteTask(TaskEntity task);
+  Future<void> deleteTask(Task task);
 }

@@ -15,9 +15,9 @@ part 'task_state.dart';
 final class TaskBloc extends Bloc<TaskEvent, TaskState> {
   final TaskRepository taskRepository;
   StreamSubscription? _streamSubscription;
-  Map<String, List<TaskEntity>> _taskList = {};
+  Map<String, List<Task>> _taskList = {};
 
-  List<BoardEntity> _boardList = [];
+  List<Board> _boardList = [];
 
   TaskBloc(this.taskRepository) : super(TasksLoadingState()) {
     on<TaskInitialEvent>(_onTaskInitialEvent);

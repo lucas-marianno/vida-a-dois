@@ -24,7 +24,7 @@ class _KanbanPageState extends State<KanbanPage> {
 
   void createBoard() async {
     final newBoard = await BoardForm.readBoard(
-      BoardEntity(title: L10n.of(context).newBoard, index: 0),
+      Board(title: L10n.of(context).newBoard, index: 0),
       context,
       initAsReadOnly: false,
     );
