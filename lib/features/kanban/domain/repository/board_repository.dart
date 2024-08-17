@@ -1,14 +1,9 @@
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 
-//CRUD
 abstract class BoardRepository {
-  Future<void> createBoard(Board newBoard);
+  Future<List<Board>> getBoards();
 
-  Stream<List<Board>> get readBoards;
+  Stream<List<Board>> readBoards();
 
-  Future<void> updateBoard(Board oldBoard, Board newBoard);
-
-  Future<void> updateBoardTitle(Board board, String newTitle);
-
-  Future<void> deleteBoard(Board board);
+  Future<void> updateBoards(List<Board> boardsList);
 }

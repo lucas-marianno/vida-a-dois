@@ -7,5 +7,8 @@ abstract class TaskRepository {
 
   Future<void> updateTask(Task task);
 
+  /// Updates every [Task] that has a [Task.status] as [status] to [newStatus].
+  Future<void> updateTasksStatusToNewStatus(String status, String newStatus);
+
   Future<void> deleteTask(Task task);
 }

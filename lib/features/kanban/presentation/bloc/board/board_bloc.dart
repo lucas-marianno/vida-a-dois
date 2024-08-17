@@ -4,18 +4,32 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:kanban/core/util/logger/logger.dart';
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
-import 'package:kanban/features/kanban/domain/repository/board_repository.dart';
+import 'package:kanban/features/kanban/domain/usecases/board/create_board.dart';
+import 'package:kanban/features/kanban/domain/usecases/board/delete_board.dart';
+import 'package:kanban/features/kanban/domain/usecases/board/read_boards.dart';
+import 'package:kanban/features/kanban/domain/usecases/board/rename_board.dart';
+import 'package:kanban/features/kanban/domain/usecases/board/update_board_index.dart';
 
 part 'board_event.dart';
 part 'board_state.dart';
 
 final class BoardBloc extends Bloc<BoardEvent, BoardState> {
-  final BoardRepository boardRepository;
+  final RenameBoardUseCase renameBoard;
+  final CreateBoardUseCase createBoard;
+  final ReadBoardsUseCase readBoards;
+  final UpdateBoardIndexUseCase updateBoardIndex;
+  final DeleteBoardUseCase deleteBoard;
 
   List<Board> _statusList = [];
   late StreamSubscription _boardSubscription;
 
-  BoardBloc(this.boardRepository) : super(BoardLoadingState()) {
+  BoardBloc({
+    required this.createBoard,
+    required this.readBoards,
+    required this.renameBoard,
+    required this.updateBoardIndex,
+    required this.deleteBoard,
+  }) : super(BoardLoadingState()) {
     on<BoardInitialEvent>(_onBoardInitialEvent);
     on<BoardsListUpdate>(_onBoardStreamDataUpdate);
     on<CreateBoardEvent>(_onCreateBoardEvent);
@@ -37,7 +51,7 @@ final class BoardBloc extends Bloc<BoardEvent, BoardState> {
     emit(BoardLoadingState());
 
     try {
-      _boardSubscription = boardRepository.readBoards.listen(
+      _boardSubscription = readBoards().listen(
         (snapshot) => add(BoardsListUpdate(snapshot)),
         onError: (e) => add(HandleBoardException(error: e)),
         onDone: () => Log.debug('_boardSubscription is `done`!'),
@@ -78,7 +92,7 @@ final class BoardBloc extends Bloc<BoardEvent, BoardState> {
   ) async {
     Log.trace('$BoardBloc $CreateBoardEvent \n $event');
     try {
-      await boardRepository.createBoard(event.newBoard);
+      await createBoard(event.newBoard);
     } catch (e) {
       add(HandleBoardException(error: e));
     }
@@ -89,11 +103,9 @@ final class BoardBloc extends Bloc<BoardEvent, BoardState> {
     Emitter<BoardState> emit,
   ) async {
     Log.info('$BoardBloc $RenameBoardEvent \n $event');
+
     try {
-      await boardRepository.updateBoardTitle(
-        event.board,
-        event.newBoardTitle,
-      );
+      await renameBoard(event.board, event.newBoardTitle);
     } catch (e) {
       add(HandleBoardException(error: e));
     }
@@ -105,8 +117,11 @@ final class BoardBloc extends Bloc<BoardEvent, BoardState> {
   ) async {
     emit(BoardLoadingState());
     Log.trace('$BoardBloc $EditBoardEvent \n $event');
+    final oldB = event.oldBoard;
+    final newB = event.newBoard;
     try {
-      await boardRepository.updateBoard(event.oldBoard, event.newBoard);
+      if (oldB.title != newB.title) renameBoard(oldB, newB.title);
+      if (oldB.index != newB.index) updateBoardIndex(oldB, newB.index);
     } catch (e) {
       add(HandleBoardException(error: e));
     }
@@ -118,7 +133,7 @@ final class BoardBloc extends Bloc<BoardEvent, BoardState> {
   ) async {
     Log.trace('$BoardBloc $DeleteBoardEvent \n $event');
     try {
-      await boardRepository.deleteBoard(event.board);
+      await deleteBoard(event.board);
     } catch (e) {
       add(HandleBoardException(error: e));
     }
