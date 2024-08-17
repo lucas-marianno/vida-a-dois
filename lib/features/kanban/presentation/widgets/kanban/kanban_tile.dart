@@ -6,7 +6,7 @@ import 'package:kanban/core/util/datetime_util.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 import 'package:kanban/features/kanban/presentation/bloc/task/task_bloc.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
-import 'package:kanban/features/kanban/presentation/controllers/draggable_scroll_controller.dart';
+import 'package:kanban/features/kanban/util/draggable_scroll_controller.dart';
 
 class KanbanTile extends StatelessWidget {
   final Task task;
