@@ -2,8 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:kanban/app.dart';
+import 'package:kanban/app/app.dart';
 import 'package:kanban/core/connectivity/bloc/connectivity_bloc.dart';
 import 'package:kanban/core/util/logger/logger.dart';
 import 'package:kanban/features/auth/presentation/bloc/auth_bloc.dart';

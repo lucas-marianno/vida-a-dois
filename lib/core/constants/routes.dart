@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:kanban/features/auth/presentation/pages/auth_page.dart';
 import 'package:kanban/features/kanban/presentation/pages/kanban_page.dart';
 import 'package:kanban/features/user_settings/presentation/pages/user_settings_page.dart';
-import 'package:kanban/home_page.dart';
-import 'package:kanban/root.dart';
+import 'package:kanban/app/pages/home_page.dart';
+import 'package:kanban/app/root.dart';
 
 class Routes {
   static const String root = '/root',
