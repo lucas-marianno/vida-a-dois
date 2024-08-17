@@ -59,15 +59,6 @@ final class ReadTaskEvent extends TaskEvent {
   List<Object> get props => [context, task];
 }
 
-final class _UpdateTask extends TaskEvent {
-  final Task task;
-
-  const _UpdateTask(this.task);
-
-  @override
-  List<Object> get props => [task];
-}
-
 final class UpdateTaskAssigneeUID extends TaskEvent {
   final Task task;
   final String newAssigneeUID;

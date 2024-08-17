@@ -1,7 +1,7 @@
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 
-Map<String, List<Task>> parseListIntoMap(
+Map<String, List<Task>> mergeIntoMap(
   List<Task> taskList,
   List<Board> boards,
 ) {

@@ -10,18 +10,30 @@ import 'package:kanban/features/kanban/presentation/bloc/board/board_bloc.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 
 class TaskForm {
-  static Future<Task?> readTask(
-    Task task,
-    BuildContext context, {
-    bool initAsReadOnly = true,
-  }) async {
+  final BuildContext context;
+  TaskForm(this.context);
+
+  Future<Task?> createTask(String initialStatus) async {
+    return await showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (context) {
+        return _EditTaskForm(
+          Task(title: L10n.of(context).newTask, status: initialStatus),
+          formType: FormType.create,
+        );
+      },
+    );
+  }
+
+  Future<Task?> readTask(Task task) async {
     return await showModalBottomSheet(
       isScrollControlled: true,
       context: context,
       builder: (context) {
         return _EditTaskForm(
           task,
-          formType: initAsReadOnly ? FormType.read : FormType.create,
+          formType: FormType.read,
         );
       },
     );

@@ -4,30 +4,41 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 
-import 'package:kanban/core/i18n/l10n.dart';
 import 'package:kanban/core/util/logger/logger.dart';
 import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
 
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
-import 'package:kanban/features/kanban/domain/repository/task_repository.dart';
-
+import 'package:kanban/features/kanban/domain/usecases/task_usecases.dart';
 import 'package:kanban/features/kanban/presentation/widgets/form/task_form.dart';
-
-import 'package:kanban/features/kanban/util/compare_task.dart';
 import 'package:kanban/features/kanban/util/parse_tasklist_into_taskmap.dart';
 
 part 'task_event.dart';
 part 'task_state.dart';
 
 final class TaskBloc extends Bloc<TaskEvent, TaskState> {
-  final TaskRepository taskRepository;
+  final CreateTaskUseCase createTask;
+  final UpdateTaskUseCase updateTask;
+  final UpdateTaskAssigneeUidUseCase updateTaskAssigneeUid;
+  final UpdateTaskImportanceUseCase updateTaskImportance;
+  final UpdateTaskStatusUseCase updateTaskStatus;
+  final DeleteTaskUseCase deleteTask;
+  final GetTaskStreamUseCase getTaskStream;
+
   StreamSubscription? _streamSubscription;
   Map<String, List<Task>> _taskList = {};
 
   List<Board> _boardList = [];
 
-  TaskBloc(this.taskRepository) : super(TasksLoadingState()) {
+  TaskBloc({
+    required this.getTaskStream,
+    required this.createTask,
+    required this.updateTask,
+    required this.updateTaskAssigneeUid,
+    required this.updateTaskImportance,
+    required this.updateTaskStatus,
+    required this.deleteTask,
+  }) : super(TasksLoadingState()) {
     on<_TaskInitial>(_onTaskInitialEvent);
     on<_TaskStreamDataUpdate>(_onTaskStreamDataUpdate);
     on<_HandleTaskError>(_onHandleTaskError);
@@ -37,7 +48,6 @@ final class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
     on<CreateTaskEvent>(_onCreateTaskEvent);
     on<ReadTaskEvent>(_onReadTaskEvent);
-    on<_UpdateTask>(_onUpdateTaskEvent);
     on<UpdateTaskStatus>(_onUpdateTaskStatus);
     on<UpdateTaskAssigneeUID>(_onUpdateTaskAssigneeUID);
     on<UpdateTaskImportance>(_onUpdateTaskImportance);
@@ -55,73 +65,47 @@ final class TaskBloc extends Bloc<TaskEvent, TaskState> {
   _onCreateTaskEvent(CreateTaskEvent event, Emitter<TaskState> emit) async {
     Log.trace('$TaskBloc $CreateTaskEvent \n $event');
 
-    final newTask = await TaskForm.readTask(
-      Task(title: L10n.of(event.context).newTask, status: event.initialStatus),
-      event.context,
-      initAsReadOnly: false,
-    );
+    final newTask =
+        await TaskForm(event.context).createTask(event.initialStatus);
 
     if (newTask == null) return;
 
-    try {
-      await taskRepository.createTask(newTask);
-    } catch (e) {
-      add(_HandleTaskError(e));
-    }
+    createTask(newTask);
   }
 
   _onReadTaskEvent(ReadTaskEvent event, Emitter<TaskState> emit) async {
     Log.trace('$TaskBloc $ReadTaskEvent \n $event');
 
-    final newTask = await TaskForm.readTask(event.task, event.context);
+    final newTask = await TaskForm(event.context).readTask(event.task);
 
-    if (newTask == null || !compareTasks(event.task, newTask)) return;
+    if (newTask == null) return;
 
-    try {
-      await taskRepository.updateTask(newTask);
-    } catch (e) {
-      add(_HandleTaskError(e));
-    }
-  }
-
-  _onUpdateTaskEvent(_UpdateTask event, Emitter<TaskState> emit) async {
-    Log.trace('$TaskBloc $_UpdateTask \n $event');
-    await taskRepository.updateTask(event.task);
+    await updateTask(event.task, newTask);
   }
 
   _onUpdateTaskStatus(UpdateTaskStatus event, Emitter<TaskState> emit) async {
     Log.trace('$TaskBloc $UpdateTaskStatus \n $event');
-    if (event.task.status == event.newStatus) return;
-    await taskRepository.updateTask(event.task..status = event.newStatus);
+    await updateTaskStatus(event.task, event.newStatus);
   }
 
   _onUpdateTaskAssigneeUID(
       UpdateTaskAssigneeUID event, Emitter<TaskState> emit) async {
     Log.trace('$TaskBloc $UpdateTaskAssigneeUID \n $event');
-    if (event.task.assingneeUID == event.newAssigneeUID) return;
 
-    await taskRepository.updateTask(
-      event.task..assingneeUID = event.newAssigneeUID,
-    );
+    await updateTaskAssigneeUid(event.task, event.newAssigneeUID);
   }
 
   _onUpdateTaskImportance(
       UpdateTaskImportance event, Emitter<TaskState> emit) async {
     Log.trace('$TaskBloc $UpdateTaskImportance \n $event');
-    if (event.task.taskImportance == event.newImportance) return;
 
-    await taskRepository.updateTask(
-      event.task..taskImportance = event.newImportance,
-    );
+    await updateTaskImportance(event.task, event.newImportance);
   }
 
   _onDeleteTaskEvent(DeleteTaskEvent event, Emitter<TaskState> emit) async {
     Log.trace('$TaskBloc $DeleteTaskEvent \n $event');
-    try {
-      await taskRepository.deleteTask(event.task);
-    } catch (e) {
-      add(_HandleTaskError(e));
-    }
+
+    await deleteTask(event.task);
   }
 
   _onLoadTaskEvent(LoadTasksEvent event, Emitter<TaskState> emit) {
@@ -129,7 +113,7 @@ final class TaskBloc extends Bloc<TaskEvent, TaskState> {
     if (event.boardList == _boardList) return;
     _boardList = event.boardList;
     try {
-      final taskStream = taskRepository.readTasks();
+      final taskStream = getTaskStream();
 
       _streamSubscription = taskStream.listen(
         (data) => add(_TaskStreamDataUpdate(data, _boardList)),
@@ -150,8 +134,8 @@ final class TaskBloc extends Bloc<TaskEvent, TaskState> {
   _onTaskStreamDataUpdate(
       _TaskStreamDataUpdate event, Emitter<TaskState> emit) async {
     Log.trace('$TaskBloc $_TaskStreamDataUpdate\n');
-    final organized = parseListIntoMap(event.updatedTasks, event.boardList);
-    _taskList = organized;
+    final organized = mergeIntoMap(event.updatedTasks, event.boardList);
+    _taskList = Map.from(organized);
     emit(TasksLoadedState(organized));
   }
 
