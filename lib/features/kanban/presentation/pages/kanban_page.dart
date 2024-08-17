@@ -4,7 +4,7 @@ import 'package:kanban/core/i18n/l10n.dart';
 import 'package:kanban/core/util/dialogs/error_dialog.dart';
 import 'package:kanban/core/util/dialogs/info_dialog.dart';
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
-import 'package:kanban/features/kanban/domain/exceptions/board_exception.dart';
+import 'package:kanban/features/kanban/domain/exceptions/kanban_exception.dart';
 import 'package:kanban/features/kanban/presentation/bloc/board/board_bloc.dart';
 import 'package:kanban/features/kanban/presentation/bloc/task/task_bloc.dart';
 import 'package:kanban/features/kanban/presentation/widgets/form/board_form.dart';
