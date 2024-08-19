@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
+import 'package:kanban/features/kanban/domain/constants/enum/task_importance.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 
 class TaskModel extends Task {

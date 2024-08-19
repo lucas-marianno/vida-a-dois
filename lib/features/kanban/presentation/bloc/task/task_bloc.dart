@@ -5,7 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:kanban/core/util/logger/logger.dart';
-import 'package:kanban/features/kanban/core/constants/enum/task_importance.dart';
+import 'package:kanban/features/kanban/domain/constants/enum/task_importance.dart';
 
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';

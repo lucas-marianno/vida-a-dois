@@ -4,11 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:kanban/core/util/logger/logger.dart';
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
-import 'package:kanban/features/kanban/domain/usecases/board/create_board.dart';
-import 'package:kanban/features/kanban/domain/usecases/board/delete_board.dart';
-import 'package:kanban/features/kanban/domain/usecases/board/read_boards.dart';
-import 'package:kanban/features/kanban/domain/usecases/board/rename_board.dart';
-import 'package:kanban/features/kanban/domain/usecases/board/update_board_index.dart';
+import 'package:kanban/features/kanban/domain/usecases/board_usecases.dart';
 
 part 'board_event.dart';
 part 'board_state.dart';
