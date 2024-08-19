@@ -1,5 +1,5 @@
 import 'package:get_it/get_it.dart';
-import 'package:kanban/features/kanban/core/constants/firebase/firebase_constants.dart';
+import 'package:kanban/core/constants/firebase_constants.dart';
 import 'package:kanban/features/kanban/data/data_sources/board_data_source.dart';
 import 'package:kanban/features/kanban/data/data_sources/task_data_source.dart';
 import 'package:kanban/features/kanban/data/repositories/board_repository_impl.dart';
@@ -61,7 +61,7 @@ void setUpLocator() {
 
   // data source
   locator.registerLazySingleton<BoardDataSource>(() => BoardDataSourceImpl(
-      boardsDocReference: FireStoreConstants.boardsDocReference));
+      boardsDocReference: FirebaseConstants.boardsDocReference));
   locator.registerLazySingleton<TaskDataSource>(() => TaskDataSourceImpl(
-      taskCollectionReference: FireStoreConstants.taskCollectionReference));
+      taskCollectionReference: FirebaseConstants.taskCollectionReference));
 }
