@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kanban/core/constants/enum.dart';
+import 'package:kanban/core/constants/form_type.dart';
 import 'package:kanban/core/i18n/l10n.dart';
 import 'package:kanban/core/util/dialogs/info_dialog.dart';
 import 'package:kanban/core/widgets/form/modal_form.dart';
@@ -103,7 +103,8 @@ class _EditTaskFormState extends State<_EditTaskForm> {
   @override
   void initState() {
     super.initState();
-    newTask = widget.task;
+
+    newTask = Task.copyFrom(widget.task);
     formType = widget.formType;
     taskBloc = context.read<TaskBloc>();
     boardBloc = context.read<BoardBloc>();

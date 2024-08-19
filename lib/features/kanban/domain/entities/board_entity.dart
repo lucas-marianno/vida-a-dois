@@ -3,4 +3,9 @@ class Board {
 
   String title;
   int index;
+
+  factory Board.copyFrom(Board board) => Board(
+        title: board.title,
+        index: board.index,
+      );
 }

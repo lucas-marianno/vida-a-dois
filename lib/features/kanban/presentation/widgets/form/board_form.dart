@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kanban/core/constants/enum.dart';
+import 'package:kanban/core/constants/form_type.dart';
 import 'package:kanban/core/i18n/l10n.dart';
 import 'package:kanban/core/widgets/form/modal_form.dart';
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
@@ -78,10 +78,7 @@ class _EditBoardFormState extends State<_EditBoardForm> {
     formType = widget.formType;
     boardBloc = context.read<BoardBloc>();
 
-    newBoard = Board(
-      title: widget.board.title,
-      index: widget.board.index,
-    );
+    newBoard = Board.copyFrom(widget.board);
   }
 
   @override
