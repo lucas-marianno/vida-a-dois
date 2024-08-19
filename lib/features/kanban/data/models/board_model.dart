@@ -22,11 +22,4 @@ class BoardModel extends Board {
   }
 
   Board toEntity() => this;
-
-  /// Returns a new [BoardModel] with the same values as the original.
-  BoardModel copy() => BoardModel.fromJson(toJson);
-
-  /// [equalsTo] makes a deep comparison between two [BoardModel] objects
-  /// and returns `true` if all parameters match.
-  bool equalsTo(BoardModel board) => '${board.toJson}' == '$toJson';
 }

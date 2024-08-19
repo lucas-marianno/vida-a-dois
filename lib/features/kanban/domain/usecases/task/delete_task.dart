@@ -6,5 +6,10 @@ class DeleteTaskUseCase {
 
   DeleteTaskUseCase(this.taskRepository);
 
-  Future<void> call(Task task) async => await taskRepository.deleteTask(task);
+  Future<void> call(Task task) async {
+    assert(task.id != null);
+    assert(task.id!.isNotEmpty);
+
+    await taskRepository.deleteTask(task);
+  }
 }

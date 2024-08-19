@@ -1,23 +1,31 @@
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
+import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 import 'package:kanban/features/kanban/domain/repository/board_repository.dart';
 import 'package:kanban/features/kanban/domain/repository/task_repository.dart';
 
 class DeleteBoardUseCase {
-  final BoardRepository boardRepository;
-  final TaskRepository taskRepository;
-  DeleteBoardUseCase({
-    required this.boardRepository,
-    required this.taskRepository,
-  });
+  final BoardRepository boardRepo;
+  final TaskRepository taskRepo;
+  DeleteBoardUseCase({required this.boardRepo, required this.taskRepo});
 
   Future<void> call(Board board) async {
-    final currentBoards = await boardRepository.getBoards();
+    final currentBoards = await boardRepo.getBoards();
 
     currentBoards.removeWhere((e) => e.title == board.title);
 
-    await boardRepository.updateBoards(currentBoards);
+    await boardRepo.updateBoards(currentBoards);
 
-    // TODO: must delete all tasks with board.status
-    throw UnimplementedError();
+    _deleteAllTasksWithStatus(board.title);
+  }
+
+  Future<void> _deleteAllTasksWithStatus(String status) async {
+    final allTasks = await taskRepo.getTaskList();
+    final allTasksWithStatus = allTasks
+        .map((task) => task.status == status ? task : null)
+        .nonNulls
+        .toList();
+
+    await Future.wait(
+        [for (Task task in allTasksWithStatus) taskRepo.deleteTask(task)]);
   }
 }

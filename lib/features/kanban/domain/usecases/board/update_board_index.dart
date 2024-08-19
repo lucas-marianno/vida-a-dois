@@ -15,8 +15,6 @@ class UpdateBoardIndexUseCase {
 
     _checkIfIndexIsValid(newIndex);
 
-    // TODO: get rid of 'mAgIcC'
-    // i dont remember why this is here, evaluate this later
     newIndex = board.index <= newIndex ? newIndex - 1 : newIndex;
 
     final oldIndex = board.index;

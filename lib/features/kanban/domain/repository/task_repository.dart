@@ -5,10 +5,9 @@ abstract class TaskRepository {
 
   Stream<List<Task>> readTasks();
 
-  Future<void> updateTask(Task task);
+  Future<List<Task>> getTaskList();
 
-  /// Updates every [Task] that has a [Task.status] as [status] to [newStatus].
-  Future<void> updateTasksStatusToNewStatus(String status, String newStatus);
+  Future<void> updateTask(Task task);
 
   Future<void> deleteTask(Task task);
 }

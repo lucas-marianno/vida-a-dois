@@ -46,11 +46,11 @@ void setUpLocator() {
 
   // board use cases
   locator.registerLazySingleton(() => CreateBoardUseCase(locator()));
-  locator.registerLazySingleton(() => DeleteBoardUseCase(
-      boardRepository: locator(), taskRepository: locator()));
+  locator.registerLazySingleton(
+      () => DeleteBoardUseCase(boardRepo: locator(), taskRepo: locator()));
   locator.registerLazySingleton(() => ReadBoardsUseCase(locator()));
-  locator.registerLazySingleton(() => RenameBoardUseCase(
-      boardRepository: locator(), taskRepository: locator()));
+  locator.registerLazySingleton(
+      () => RenameBoardUseCase(boardRepo: locator(), taskRepo: locator()));
   locator.registerLazySingleton(() => UpdateBoardIndexUseCase(locator()));
 
   // repository

@@ -2,44 +2,39 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:kanban/features/kanban/data/models/board_model.dart';
 
 abstract class BoardDataSource {
-  final DocumentReference boardsDocReference;
   BoardDataSource({required this.boardsDocReference});
-
-  Future<void> updateBoards(List<BoardModel> boardsList);
-
-  Stream<List<BoardModel>> readBoards();
+  final DocumentReference boardsDocReference;
 
   Future<List<BoardModel>> getBoards();
+  Stream<List<BoardModel>> readBoards();
+  Future<void> updateBoards(List<BoardModel> boardsList);
 }
 
 class BoardDataSourceImpl extends BoardDataSource {
   BoardDataSourceImpl({required super.boardsDocReference});
 
   @override
-  Future<void> updateBoards(List<BoardModel> boardsList) async {
-    final boards = <String>[];
-    for (BoardModel board in boardsList) {
-      boards.add(board.title);
-    }
-
-    await boardsDocReference.set({'status': boards});
+  Future<List<BoardModel>> getBoards() async {
+    return _parseSnapshotToBoardList(await boardsDocReference.get());
   }
 
   @override
   Stream<List<BoardModel>> readBoards() {
-    return boardsDocReference.snapshots().map((snapshot) {
-      final List<BoardModel> a = [];
-      for (int i = 0; i < snapshot['status'].length; i++) {
-        a.add(BoardModel(title: snapshot['status'][i], index: i));
-      }
-      return a;
-    });
+    return boardsDocReference.snapshots().map(_parseSnapshotToBoardList);
   }
 
   @override
-  Future<List<BoardModel>> getBoards() async {
-    final a = List<String>.from((await boardsDocReference.get())['status']);
+  Future<void> updateBoards(List<BoardModel> boardsList) async {
+    await boardsDocReference.set({
+      'status': boardsList.map((board) => board.title),
+    });
+  }
 
-    return a.map((e) => BoardModel(title: e, index: a.indexOf(e))).toList();
+  List<BoardModel> _parseSnapshotToBoardList(DocumentSnapshot snapshot) {
+    final list = List<String>.from(snapshot['status']);
+
+    return list
+        .map((e) => BoardModel(title: e, index: list.indexOf(e)))
+        .toList();
   }
 }

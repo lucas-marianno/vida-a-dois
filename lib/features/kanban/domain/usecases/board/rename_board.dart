@@ -1,33 +1,32 @@
 import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
+import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
 import 'package:kanban/features/kanban/domain/exceptions/kanban_exception.dart';
 import 'package:kanban/features/kanban/domain/repository/board_repository.dart';
 import 'package:kanban/features/kanban/domain/repository/task_repository.dart';
 
 class RenameBoardUseCase {
-  final BoardRepository boardRepository;
-  final TaskRepository taskRepository;
+  final BoardRepository boardRepo;
+  final TaskRepository taskRepo;
 
-  RenameBoardUseCase({
-    required this.boardRepository,
-    required this.taskRepository,
-  });
+  RenameBoardUseCase({required this.boardRepo, required this.taskRepo});
 
   late List<Board> currentBoards;
 
   Future<void> call(Board board, String newTitle) async {
+    if (newTitle.isEmpty) return;
     if (newTitle == board.title) return;
 
-    currentBoards = await boardRepository.getBoards();
+    currentBoards = await boardRepo.getBoards();
 
     _checkIfNameIsUnique(newTitle);
 
     final oldTitle = board.title;
 
-    currentBoards[board.index] = board..title = newTitle;
+    currentBoards[board.index].title = newTitle;
 
     Future.wait([
-      taskRepository.updateTasksStatusToNewStatus(oldTitle, newTitle),
-      boardRepository.updateBoards(currentBoards),
+      _updateTasksStatusToNewStatus(oldTitle, newTitle),
+      boardRepo.updateBoards(currentBoards),
     ]);
   }
 
@@ -35,5 +34,22 @@ class RenameBoardUseCase {
     if (currentBoards.map((e) => e.title).contains(newName)) {
       throw NameNotUniqueException();
     }
+  }
+
+  Future<void> _updateTasksStatusToNewStatus(
+    String status,
+    String newStatus,
+  ) async {
+    final allTasks = await taskRepo.getTaskList();
+    final updatedTasks = allTasks
+        .map((task) {
+          return task.status == status ? (task..status = newStatus) : null;
+        })
+        .nonNulls
+        .toList();
+
+    await Future.wait([
+      for (Task task in updatedTasks) taskRepo.updateTask(task),
+    ]);
   }
 }

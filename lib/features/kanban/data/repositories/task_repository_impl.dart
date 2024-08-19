@@ -1,4 +1,3 @@
-// CRUD
 import 'package:kanban/features/auth/data/auth_data.dart';
 import 'package:kanban/features/kanban/data/data_sources/task_data_source.dart';
 import 'package:kanban/features/kanban/data/models/task_model.dart';
@@ -17,7 +16,9 @@ class TaskRepositoryImpl extends TaskRepository {
   }
 
   @override
-  Stream<List<Task>> readTasks() => taskDataSource.readTasks();
+  Stream<List<Task>> readTasks() {
+    return taskDataSource.readTasks();
+  }
 
   @override
   Future<void> updateTask(Task task) async {
@@ -30,25 +31,9 @@ class TaskRepositoryImpl extends TaskRepository {
   }
 
   @override
-  Future<void> updateTasksStatusToNewStatus(
-      String status, String newStatus) async {
-    // get current task list
-    final allTasks = await taskDataSource.getTaskList();
-
-    // rename all tasks with corresponding status to new status and ignore the rest
-    final updatedTasks = allTasks
-        .map((task) {
-          if (task.status == status) {
-            task.status = newStatus;
-            return task;
-          }
-        })
-        .nonNulls
+  Future<List<Task>> getTaskList() async {
+    return (await taskDataSource.getTaskList())
+        .map((model) => model.toEntity())
         .toList();
-
-    // update each modified task in repo
-    await Future.wait([
-      for (TaskModel task in updatedTasks) taskDataSource.updateTask(task),
-    ]);
   }
 }
