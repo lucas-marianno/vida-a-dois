@@ -24,4 +24,39 @@ class Task {
     this.createdBy,
     this.createdDate,
   });
+
+  factory Task.copyFrom(Task task) => Task(
+        id: task.id,
+        title: task.title,
+        description: task.description,
+        assingneeUID: task.assingneeUID,
+        assingneeInitials: task.assingneeInitials,
+        taskImportance: task.taskImportance,
+        status: task.status,
+        dueDate: task.dueDate,
+        createdBy: task.createdBy,
+        createdDate: task.createdDate,
+      );
+
+  Map<String, dynamic> get asMap => {
+        'id': id,
+        'title': title,
+        'description': description,
+        'assingneeUID': assingneeUID,
+        'assingneeInitials': assingneeInitials,
+        'taskImportance': taskImportance,
+        'status': status,
+        'dueDate': dueDate,
+        'createdBy': createdBy,
+        'createdDate': createdDate,
+      };
+
+  @override
+  String toString() => asMap.toString();
+
+  @override
+  bool operator ==(covariant Task other) => toString() == other.toString();
+
+  @override
+  int get hashCode => toString().hashCode;
 }
