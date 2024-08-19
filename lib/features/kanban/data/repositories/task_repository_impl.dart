@@ -1,4 +1,3 @@
-import 'package:kanban/features/auth/data/auth_data.dart';
 import 'package:kanban/features/kanban/data/data_sources/task_data_source.dart';
 import 'package:kanban/features/kanban/data/models/task_model.dart';
 import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
@@ -10,9 +9,7 @@ class TaskRepositoryImpl extends TaskRepository {
 
   @override
   Future<void> createTask(Task newTask) async {
-    final currentUserUID = AuthData.currentUser!.uid;
-    await taskDataSource
-        .createTask(TaskModel.fromEntity(newTask)..createdBy = currentUserUID);
+    await taskDataSource.createTask(TaskModel.fromEntity(newTask));
   }
 
   @override
