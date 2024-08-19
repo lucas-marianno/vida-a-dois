@@ -67,26 +67,27 @@ class _KanbanBoardTitleState extends State<KanbanBoardTitle> {
   Widget build(BuildContext context) {
     if (editMode) {
       controller.text = widget.board.title;
-      return ListTile(
-        contentPadding: EdgeInsets.zero,
-        horizontalTitleGap: 0,
-        leading: IconButton(
-          padding: EdgeInsets.zero,
-          onPressed: toggleEditMode,
-          icon: const Icon(Icons.close),
-        ),
-        title: TextField(
-          decoration: const InputDecoration(border: OutlineInputBorder()),
+      return Padding(
+        padding: const EdgeInsets.all(10),
+        child: TextField(
+          decoration: InputDecoration(
+            prefixIcon: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: toggleEditMode,
+              icon: const Icon(Icons.close),
+            ),
+            suffixIcon: IconButton(
+              padding: EdgeInsets.zero,
+              onPressed: renameBoard,
+              icon: const Icon(Icons.check),
+            ),
+            border: const OutlineInputBorder(),
+          ),
           controller: controller,
           style: Theme.of(context).textTheme.titleMedium,
           autofocus: true,
           onSubmitted: (_) => renameBoard(),
           onTapOutside: (_) => toggleEditMode(),
-        ),
-        trailing: IconButton(
-          padding: EdgeInsets.zero,
-          onPressed: renameBoard,
-          icon: const Icon(Icons.check),
         ),
       );
     }
