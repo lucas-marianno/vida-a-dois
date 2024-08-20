@@ -65,6 +65,7 @@ class InfoDialog extends StatelessWidget {
       await showDialog(
         context: context,
         builder: (context) => InfoDialog(
+          key: const Key('info_dialog'),
           content,
           title: title,
           onAccept: () => Navigator.pop(context, true),

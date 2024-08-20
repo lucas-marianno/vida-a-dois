@@ -10,7 +10,7 @@ sealed class ConnectivityEvent extends Equatable {
 final class CheckConnectivityEvent extends ConnectivityEvent {}
 
 final class GotResponseEvent extends ConnectivityEvent {
-  final List<ConnectivityResult> result;
+  final ConnectivityResult result;
 
   const GotResponseEvent(this.result);
 
