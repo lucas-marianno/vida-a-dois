@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:kanban/core/i18n/l10n.dart';
-import 'package:kanban/core/util/logger/logger.dart';
-import 'package:kanban/features/auth/data/auth_data.dart';
-import 'package:kanban/features/user_settings/data/user_data.dart';
-import 'package:kanban/features/user_settings/domain/entities/user_settings.dart';
+import 'package:vida_a_dois/core/i18n/l10n.dart';
+import 'package:vida_a_dois/core/util/logger/logger.dart';
+import 'package:vida_a_dois/features/auth/data/auth_data.dart';
+import 'package:vida_a_dois/features/user_settings/data/user_data.dart';
+import 'package:vida_a_dois/features/user_settings/domain/entities/user_settings.dart';
 
 part 'user_settings_event.dart';
 part 'user_settings_state.dart';

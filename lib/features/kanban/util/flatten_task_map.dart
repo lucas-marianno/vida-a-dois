@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:kanban/features/kanban/data/models/task_model.dart';
-import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
+import 'package:vida_a_dois/features/kanban/data/models/task_model.dart';
+import 'package:vida_a_dois/features/kanban/domain/entities/task_entity.dart';
 
 String flattenTaskMap(Map<String, List<Task>> map) {
   StringBuffer answer = StringBuffer();

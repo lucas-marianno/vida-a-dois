@@ -1,5 +1,5 @@
-import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
-import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
+import 'package:vida_a_dois/features/kanban/domain/entities/board_entity.dart';
+import 'package:vida_a_dois/features/kanban/domain/entities/task_entity.dart';
 
 Map<String, List<Task>> mergeIntoMap(
   List<Task> taskList,

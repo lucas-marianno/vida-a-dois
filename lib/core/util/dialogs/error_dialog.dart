@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:kanban/core/i18n/l10n.dart';
-import 'package:kanban/core/util/dialogs/info_dialog.dart';
+import 'package:vida_a_dois/core/i18n/l10n.dart';
+import 'package:vida_a_dois/core/util/dialogs/info_dialog.dart';
 
 class ErrorDialog extends StatelessWidget {
   final Object error;

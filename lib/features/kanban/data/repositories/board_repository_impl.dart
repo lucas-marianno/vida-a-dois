@@ -1,7 +1,7 @@
-import 'package:kanban/features/kanban/data/data_sources/board_data_source.dart';
-import 'package:kanban/features/kanban/data/models/board_model.dart';
-import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
-import 'package:kanban/features/kanban/domain/repository/board_repository.dart';
+import 'package:vida_a_dois/features/kanban/data/data_sources/board_data_source.dart';
+import 'package:vida_a_dois/features/kanban/data/models/board_model.dart';
+import 'package:vida_a_dois/features/kanban/domain/entities/board_entity.dart';
+import 'package:vida_a_dois/features/kanban/domain/repository/board_repository.dart';
 
 class BoardRepositoryImpl extends BoardRepository {
   final BoardDataSource boardDataSource;

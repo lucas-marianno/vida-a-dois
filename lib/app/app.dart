@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kanban/core/constants/routes.dart';
-import 'package:kanban/core/theme/app_theme.dart';
-import 'package:kanban/core/i18n/l10n.dart';
-import 'package:kanban/features/user_settings/bloc/user_settings_bloc.dart';
+import 'package:vida_a_dois/core/constants/routes.dart';
+import 'package:vida_a_dois/core/theme/app_theme.dart';
+import 'package:vida_a_dois/core/i18n/l10n.dart';
+import 'package:vida_a_dois/features/user_settings/bloc/user_settings_bloc.dart';
 
 class VidaADoidApp extends StatelessWidget {
   const VidaADoidApp({super.key});

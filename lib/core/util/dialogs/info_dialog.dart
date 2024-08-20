@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kanban/core/i18n/l10n.dart';
+import 'package:vida_a_dois/core/i18n/l10n.dart';
 
 /// [InfoDialog] is an [AlertDialog] widget with pre-built style and buttons to reduce
 /// boiler-plate code.

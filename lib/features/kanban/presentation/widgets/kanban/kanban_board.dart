@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kanban/core/util/dialogs/error_dialog.dart';
-import 'package:kanban/features/kanban/presentation/bloc/task/task_bloc.dart';
-import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
-import 'package:kanban/features/kanban/presentation/widgets/kanban/board_drag_target.dart';
-import 'package:kanban/features/kanban/presentation/widgets/kanban/kanban_board_title.dart';
+import 'package:vida_a_dois/core/util/dialogs/error_dialog.dart';
+import 'package:vida_a_dois/features/kanban/presentation/bloc/task/task_bloc.dart';
+import 'package:vida_a_dois/features/kanban/domain/entities/board_entity.dart';
+import 'package:vida_a_dois/features/kanban/presentation/widgets/kanban/board_drag_target.dart';
+import 'package:vida_a_dois/features/kanban/presentation/widgets/kanban/kanban_board_title.dart';
 import 'kanban_add_task_button.dart';
 
 class KanbanBoard extends StatelessWidget {

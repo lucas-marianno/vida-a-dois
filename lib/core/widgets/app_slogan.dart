@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:kanban/core/i18n/l10n.dart';
+import 'package:vida_a_dois/core/i18n/l10n.dart';
 
 class AppSlogan extends StatelessWidget {
   const AppSlogan({super.key});

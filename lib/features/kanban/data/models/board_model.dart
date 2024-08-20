@@ -1,4 +1,4 @@
-import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
+import 'package:vida_a_dois/features/kanban/domain/entities/board_entity.dart';
 
 class BoardModel extends Board {
   BoardModel({required super.title, required super.index});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:kanban/core/util/color_util.dart';
+import 'package:vida_a_dois/core/util/color_util.dart';
 
 class BottomPageNavigator extends StatelessWidget {
   final List<BottomPageNavigatorItem> pages;

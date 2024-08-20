@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kanban/core/util/datetime_util.dart';
+import 'package:vida_a_dois/core/util/datetime_util.dart';
 
 class FormDatePicker extends StatefulWidget {
   final String label;

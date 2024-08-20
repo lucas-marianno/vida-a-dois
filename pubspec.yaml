@@ -1,4 +1,4 @@
-name: kanban
+name: vida_a_dois
 description: "A new Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
@@ -26,6 +26,7 @@ dependencies:
   google_nav_bar: ^5.0.6
   google_fonts: ^6.2.1
   get_it: ^7.7.0
+  mockito: ^5.4.4
 
 dev_dependencies:
   flutter_test:

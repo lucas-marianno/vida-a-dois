@@ -4,14 +4,14 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 
-import 'package:kanban/core/util/logger/logger.dart';
-import 'package:kanban/features/kanban/domain/constants/enum/task_importance.dart';
+import 'package:vida_a_dois/core/util/logger/logger.dart';
+import 'package:vida_a_dois/features/kanban/domain/constants/enum/task_importance.dart';
 
-import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
-import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
-import 'package:kanban/features/kanban/domain/usecases/task_usecases.dart';
-import 'package:kanban/features/kanban/presentation/widgets/form/task_form.dart';
-import 'package:kanban/features/kanban/util/parse_tasklist_into_taskmap.dart';
+import 'package:vida_a_dois/features/kanban/domain/entities/board_entity.dart';
+import 'package:vida_a_dois/features/kanban/domain/entities/task_entity.dart';
+import 'package:vida_a_dois/features/kanban/domain/usecases/task_usecases.dart';
+import 'package:vida_a_dois/features/kanban/presentation/widgets/form/task_form.dart';
+import 'package:vida_a_dois/features/kanban/util/parse_tasklist_into_taskmap.dart';
 
 part 'task_event.dart';
 part 'task_state.dart';

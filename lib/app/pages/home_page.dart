@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kanban/core/constants/routes.dart';
-import 'package:kanban/core/widgets/app_title.dart';
-import 'package:kanban/core/widgets/bottom_page_navigator.dart';
-import 'package:kanban/core/widgets/user_initials.dart';
-import 'package:kanban/features/calendar/presentation/pages/calendar_page.dart';
-import 'package:kanban/features/enternainment/presentation/pages/entertainment_page.dart';
-import 'package:kanban/features/finance/presentation/pages/finance_page.dart';
-import 'package:kanban/features/kanban/presentation/pages/kanban_page.dart';
-import 'package:kanban/features/user_settings/bloc/user_settings_bloc.dart';
+import 'package:vida_a_dois/core/constants/routes.dart';
+import 'package:vida_a_dois/core/widgets/app_title.dart';
+import 'package:vida_a_dois/core/widgets/bottom_page_navigator.dart';
+import 'package:vida_a_dois/core/widgets/user_initials.dart';
+import 'package:vida_a_dois/features/calendar/presentation/pages/calendar_page.dart';
+import 'package:vida_a_dois/features/enternainment/presentation/pages/entertainment_page.dart';
+import 'package:vida_a_dois/features/finance/presentation/pages/finance_page.dart';
+import 'package:vida_a_dois/features/kanban/presentation/pages/kanban_page.dart';
+import 'package:vida_a_dois/features/user_settings/bloc/user_settings_bloc.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
