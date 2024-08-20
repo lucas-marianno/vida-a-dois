@@ -72,26 +72,27 @@ class _FormDropDownMenuButtonState extends State<FormDropDownMenuButton> {
         onChanged: (_) {},
       );
     }
-    return Padding(
+    return DropdownButtonFormField<String>(
+      isExpanded: true,
       padding: const EdgeInsets.symmetric(vertical: 5),
-      child: DropdownButtonFormField<String>(
-        value: value,
-        decoration: InputDecoration(
-          labelText: widget.label,
-          border: const OutlineInputBorder(),
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-        ),
-        icon: const Icon(Icons.expand_more),
-        alignment: AlignmentDirectional.topStart,
-        items: [
-          for (String item in widget.items)
-            DropdownMenuItem(
-              value: item,
-              child: Text(item),
-            ),
-        ],
-        onChanged: (item) => changeValue(item!),
+      value: value,
+      decoration: InputDecoration(
+        labelText: widget.label,
+        border: const OutlineInputBorder(),
+        floatingLabelBehavior: FloatingLabelBehavior.always,
       ),
+      alignment: AlignmentDirectional.topStart,
+      items: [
+        for (String item in widget.items)
+          DropdownMenuItem(
+            value: item,
+            child: Text(
+              item,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+      ],
+      onChanged: (item) => changeValue(item!),
     );
   }
 }

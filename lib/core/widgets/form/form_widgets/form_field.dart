@@ -38,7 +38,7 @@ class MyFormField extends StatelessWidget {
           initialValue: mandatory ? initialValue ?? label : initialValue,
           autovalidateMode: AutovalidateMode.always,
           decoration: InputDecoration(
-            labelText: mandatory ? '$label *' : label,
+            label: FittedBox(child: Text(mandatory ? '$label *' : label)),
             border: const OutlineInputBorder(),
             floatingLabelBehavior: FloatingLabelBehavior.always,
           ),

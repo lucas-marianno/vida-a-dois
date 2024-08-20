@@ -15,9 +15,12 @@ class AppTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = fontSize ?? Theme.of(context).textTheme.displayLarge?.fontSize;
 
-    return Text(
-      L10n.of(context).appTitle,
-      style: GoogleFonts.caveat(fontSize: size),
+    return FittedBox(
+      fit: BoxFit.fitWidth,
+      child: Text(
+        L10n.of(context).appTitle,
+        style: GoogleFonts.caveat(fontSize: size),
+      ),
     );
   }
 }
