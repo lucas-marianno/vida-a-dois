@@ -1,7 +1,7 @@
-import 'package:kanban/features/kanban/data/data_sources/task_data_source.dart';
-import 'package:kanban/features/kanban/data/models/task_model.dart';
-import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
-import 'package:kanban/features/kanban/domain/repository/task_repository.dart';
+import 'package:vida_a_dois/features/kanban/data/data_sources/task_data_source.dart';
+import 'package:vida_a_dois/features/kanban/data/models/task_model.dart';
+import 'package:vida_a_dois/features/kanban/domain/entities/task_entity.dart';
+import 'package:vida_a_dois/features/kanban/domain/repository/task_repository.dart';
 
 class TaskRepositoryImpl extends TaskRepository {
   TaskRepositoryImpl(this.taskDataSource);

@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:kanban/features/user_settings/core/constants/firebase_constants.dart';
-import 'package:kanban/features/user_settings/domain/entities/user_settings.dart';
+import 'package:vida_a_dois/features/user_settings/core/constants/firebase_constants.dart';
+import 'package:vida_a_dois/features/user_settings/domain/entities/user_settings.dart';
 
 class UserSettingsDataSource {
   static final _firebase = FirebaseConstants.userSettingsCollection;

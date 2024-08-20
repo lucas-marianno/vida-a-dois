@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:kanban/features/auth/presentation/pages/auth_page.dart';
-import 'package:kanban/features/kanban/presentation/pages/kanban_page.dart';
-import 'package:kanban/features/user_settings/presentation/pages/user_settings_page.dart';
-import 'package:kanban/app/pages/home_page.dart';
-import 'package:kanban/app/root.dart';
+import 'package:vida_a_dois/features/auth/presentation/pages/auth_page.dart';
+import 'package:vida_a_dois/features/kanban/presentation/pages/kanban_page.dart';
+import 'package:vida_a_dois/features/user_settings/presentation/pages/user_settings_page.dart';
+import 'package:vida_a_dois/app/pages/home_page.dart';
+import 'package:vida_a_dois/app/root.dart';
 
 class Routes {
   static const String root = '/root',

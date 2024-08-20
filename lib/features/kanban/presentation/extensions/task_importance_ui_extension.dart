@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kanban/features/kanban/domain/constants/enum/task_importance.dart';
+import 'package:vida_a_dois/features/kanban/domain/constants/enum/task_importance.dart';
 
 extension TaskImportanceUI on TaskImportance {
   IconData get icon {

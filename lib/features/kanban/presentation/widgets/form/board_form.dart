@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kanban/core/constants/form_type.dart';
-import 'package:kanban/core/i18n/l10n.dart';
-import 'package:kanban/core/widgets/form/modal_form.dart';
-import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
-import 'package:kanban/features/kanban/presentation/bloc/board/board_bloc.dart';
+import 'package:vida_a_dois/core/constants/form_type.dart';
+import 'package:vida_a_dois/core/i18n/l10n.dart';
+import 'package:vida_a_dois/core/widgets/form/modal_form.dart';
+import 'package:vida_a_dois/features/kanban/domain/entities/board_entity.dart';
+import 'package:vida_a_dois/features/kanban/presentation/bloc/board/board_bloc.dart';
 
 class BoardForm {
   static Future<Board?> readBoard(

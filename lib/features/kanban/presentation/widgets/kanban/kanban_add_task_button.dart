@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kanban/core/i18n/l10n.dart';
+import 'package:vida_a_dois/core/i18n/l10n.dart';
 
 class KanbanAddTaskButton extends StatelessWidget {
   final void Function() onTap;

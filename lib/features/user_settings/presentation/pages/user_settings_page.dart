@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kanban/core/extentions/icon_extension.dart';
-import 'package:kanban/core/extentions/theme_mode_extension.dart';
-import 'package:kanban/core/i18n/l10n.dart';
-import 'package:kanban/core/util/dialogs/info_dialog.dart';
-import 'package:kanban/core/widgets/divider_with_label.dart';
-import 'package:kanban/core/widgets/editable_list_tile.dart';
-import 'package:kanban/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:kanban/features/user_settings/bloc/user_settings_bloc.dart';
+import 'package:vida_a_dois/core/extentions/icon_extension.dart';
+import 'package:vida_a_dois/core/extentions/theme_mode_extension.dart';
+import 'package:vida_a_dois/core/i18n/l10n.dart';
+import 'package:vida_a_dois/core/util/dialogs/info_dialog.dart';
+import 'package:vida_a_dois/core/widgets/divider_with_label.dart';
+import 'package:vida_a_dois/core/widgets/editable_list_tile.dart';
+import 'package:vida_a_dois/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:vida_a_dois/features/user_settings/bloc/user_settings_bloc.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});

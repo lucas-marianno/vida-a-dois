@@ -1,6 +1,6 @@
-import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
-import 'package:kanban/features/kanban/domain/exceptions/kanban_exception.dart';
-import 'package:kanban/features/kanban/domain/repository/board_repository.dart';
+import 'package:vida_a_dois/features/kanban/domain/entities/board_entity.dart';
+import 'package:vida_a_dois/features/kanban/domain/exceptions/kanban_exception.dart';
+import 'package:vida_a_dois/features/kanban/domain/repository/board_repository.dart';
 
 class CreateBoardUseCase {
   CreateBoardUseCase(this.boardRepository);

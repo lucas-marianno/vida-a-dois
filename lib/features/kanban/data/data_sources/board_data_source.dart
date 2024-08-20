@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:kanban/features/kanban/data/models/board_model.dart';
+import 'package:vida_a_dois/features/kanban/data/models/board_model.dart';
 
 abstract class BoardDataSource {
   BoardDataSource({required this.boardsDocReference});

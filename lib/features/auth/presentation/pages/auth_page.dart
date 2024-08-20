@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kanban/core/widgets/app_title.dart';
-import 'package:kanban/core/widgets/app_slogan.dart';
-import 'package:kanban/core/widgets/divider_with_label.dart';
-import 'package:kanban/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:kanban/core/i18n/l10n.dart';
+import 'package:vida_a_dois/core/widgets/app_title.dart';
+import 'package:vida_a_dois/core/widgets/app_slogan.dart';
+import 'package:vida_a_dois/core/widgets/divider_with_label.dart';
+import 'package:vida_a_dois/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:vida_a_dois/core/i18n/l10n.dart';
 
 /// TODO: implement form and form validator so that all field
 /// validations are unified

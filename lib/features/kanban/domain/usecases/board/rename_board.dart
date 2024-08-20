@@ -1,11 +1,12 @@
-import 'package:kanban/features/kanban/domain/entities/board_entity.dart';
-import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
-import 'package:kanban/features/kanban/domain/exceptions/kanban_exception.dart';
-import 'package:kanban/features/kanban/domain/repository/board_repository.dart';
-import 'package:kanban/features/kanban/domain/repository/task_repository.dart';
+import 'package:vida_a_dois/features/kanban/domain/entities/board_entity.dart';
+import 'package:vida_a_dois/features/kanban/domain/entities/task_entity.dart';
+import 'package:vida_a_dois/features/kanban/domain/exceptions/kanban_exception.dart';
+import 'package:vida_a_dois/features/kanban/domain/repository/board_repository.dart';
+import 'package:vida_a_dois/features/kanban/domain/repository/task_repository.dart';
 
 class RenameBoardUseCase {
   final BoardRepository boardRepo;
+
   final TaskRepository taskRepo;
 
   RenameBoardUseCase({required this.boardRepo, required this.taskRepo});

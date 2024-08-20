@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kanban/features/kanban/domain/constants/enum/task_importance.dart';
-import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
+import 'package:vida_a_dois/features/kanban/domain/constants/enum/task_importance.dart';
+import 'package:vida_a_dois/features/kanban/domain/entities/task_entity.dart';
 
 void main() {
   final dueDate = DateTime.parse('2024-08-15 09:59:55.288283');

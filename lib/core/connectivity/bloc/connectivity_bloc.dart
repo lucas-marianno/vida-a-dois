@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:equatable/equatable.dart';
-import 'package:kanban/core/util/logger/logger.dart';
+import 'package:vida_a_dois/core/util/logger/logger.dart';
 
 part 'connectivity_event.dart';
 part 'connectivity_state.dart';

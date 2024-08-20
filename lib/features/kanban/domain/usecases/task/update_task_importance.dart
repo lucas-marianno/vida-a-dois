@@ -1,6 +1,6 @@
-import 'package:kanban/features/kanban/domain/constants/enum/task_importance.dart';
-import 'package:kanban/features/kanban/domain/entities/task_entity.dart';
-import 'package:kanban/features/kanban/domain/repository/task_repository.dart';
+import 'package:vida_a_dois/features/kanban/domain/constants/enum/task_importance.dart';
+import 'package:vida_a_dois/features/kanban/domain/entities/task_entity.dart';
+import 'package:vida_a_dois/features/kanban/domain/repository/task_repository.dart';
 
 class UpdateTaskImportanceUseCase {
   final TaskRepository taskRepository;

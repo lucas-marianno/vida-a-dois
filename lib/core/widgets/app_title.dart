@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:kanban/core/i18n/l10n.dart';
+import 'package:vida_a_dois/core/i18n/l10n.dart';
 
 /// [AppTitle] returns the application title with i18n and l10.
 ///
