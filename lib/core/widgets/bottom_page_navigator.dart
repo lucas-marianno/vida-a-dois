@@ -14,6 +14,7 @@ class BottomPageNavigator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isShittyDevice = MediaQuery.of(context).size.height < 1000;
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.secondary,
@@ -26,9 +27,13 @@ class BottomPageNavigator extends StatelessWidget {
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
+        padding: isShittyDevice
+            ? const EdgeInsets.all(5)
+            : const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
         child: GNav(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          padding: isShittyDevice
+              ? const EdgeInsets.all(2)
+              : const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
           activeColor: Theme.of(context).colorScheme.secondary,
           tabBackgroundColor: Theme.of(context).colorScheme.onSecondary,
           color: ColorUtil.makeTransparencyFrom(

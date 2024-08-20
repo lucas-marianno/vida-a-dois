@@ -18,7 +18,9 @@ class KanbanBoard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double widthMultiplier = 0.6;
+    bool isShittyDevice = MediaQuery.of(context).size.height < 1000;
+
+    double widthMultiplier = isShittyDevice ? 0.8 : 0.6;
     double width = MediaQuery.of(context).size.width * widthMultiplier;
 
     final taskBloc = context.read<TaskBloc>();

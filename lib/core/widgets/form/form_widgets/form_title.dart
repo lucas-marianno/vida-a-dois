@@ -16,9 +16,12 @@ class FormTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isShittyDevice = MediaQuery.of(context).size.height < 1000;
     return ListTile(
+      contentPadding: isShittyDevice ? EdgeInsets.zero : null,
       title: Text(
         title,
+        textScaler: TextScaler.linear(isShittyDevice ? 0.7 : 1),
         style: Theme.of(context).textTheme.headlineSmall,
         overflow: TextOverflow.ellipsis,
       ),

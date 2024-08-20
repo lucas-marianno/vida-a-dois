@@ -39,10 +39,13 @@ class _ModalBottomForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double deviceHeight = MediaQuery.of(context).size.height;
+    bool isShittyDevice = deviceHeight < 1000;
+
     double padding = 15;
     return Container(
       height: MediaQuery.of(context).viewInsets.bottom +
-          MediaQuery.of(context).size.height * 0.6,
+          deviceHeight * (isShittyDevice ? 0.92 : 0.7),
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
         left: padding,

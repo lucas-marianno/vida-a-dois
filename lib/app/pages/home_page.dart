@@ -56,6 +56,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    bool isShittyDevice = MediaQuery.of(context).size.height < 1000;
     return BlocBuilder<UserSettingsBloc, UserSettingsState>(
       builder: (context, state) {
         Widget userIcon = const Icon(Icons.person);
@@ -64,9 +65,13 @@ class _HomePageState extends State<HomePage> {
         }
 
         return Scaffold(
+          resizeToAvoidBottomInset: !isShittyDevice,
           appBar: AppBar(
+            toolbarHeight: isShittyDevice ? 40 : null,
             title: Padding(
-              padding: const EdgeInsets.only(left: 15),
+              padding: isShittyDevice
+                  ? EdgeInsets.zero
+                  : const EdgeInsets.only(left: 15),
               child: AppTitle(
                 fontSize: Theme.of(context).textTheme.displayMedium?.fontSize,
               ),
