@@ -16,7 +16,7 @@ import 'package:vida_a_dois/features/kanban/util/parse_tasklist_into_taskmap.dar
 part 'task_event.dart';
 part 'task_state.dart';
 
-final class TaskBloc extends Bloc<TaskEvent, TaskState> {
+class TaskBloc extends Bloc<TaskEvent, TaskState> {
   final CreateTaskUseCase createTask;
   final UpdateTaskUseCase updateTask;
   final UpdateTaskAssigneeUidUseCase updateTaskAssigneeUid;

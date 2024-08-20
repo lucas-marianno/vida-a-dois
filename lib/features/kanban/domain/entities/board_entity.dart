@@ -8,4 +8,18 @@ class Board {
         title: board.title,
         index: board.index,
       );
+
+  Map<String, dynamic> get asMap => {
+        'title': title,
+        'index': index,
+      };
+
+  @override
+  String toString() => asMap.toString();
+
+  @override
+  bool operator ==(covariant Board other) => toString() == other.toString();
+
+  @override
+  int get hashCode => toString().hashCode;
 }

@@ -9,7 +9,7 @@ import 'package:vida_a_dois/features/kanban/domain/usecases/board_usecases.dart'
 part 'board_event.dart';
 part 'board_state.dart';
 
-final class BoardBloc extends Bloc<BoardEvent, BoardState> {
+class BoardBloc extends Bloc<BoardEvent, BoardState> {
   final RenameBoardUseCase renameBoard;
   final CreateBoardUseCase createBoard;
   final ReadBoardsUseCase readBoards;
