@@ -11,25 +11,20 @@ import '../helper/mock_blocs.dart';
 
 void main() async {
   late Widget myApp;
-  final multiMockBloc = MultiMockBloc();
-  myApp = multiMockBloc.provideWithBlocs(const VidaADoidApp());
+  final multiBloc = MultiMockBloc();
+  myApp = multiBloc.provideWithBlocs(const VidaADoidApp());
 
   setUp(() {
-    when(
-      () => multiMockBloc.userSettings.state,
-    ).thenReturn(UserSettingsLoading());
+    when(() => multiBloc.userSettings.state).thenReturn(UserSettingsLoading());
 
-    when(
-      () => multiMockBloc.auth.state,
-    ).thenReturn(AuthLoading());
+    when(() => multiBloc.auth.state).thenReturn(AuthLoading());
   });
 
   testWidgets(
       'should find one empty SizedBox \n'
       'when launching app Without internet', (tester) async {
     // arrange
-    when(() => multiMockBloc.connectivity.state)
-        .thenReturn(NoInternetConnection());
+    when(() => multiBloc.connectivity.state).thenReturn(NoInternetConnection());
 
     // act
     await tester.pumpWidget(myApp);
@@ -44,11 +39,11 @@ void main() async {
     "when launching app with internet but Unauthenticated",
     (tester) async {
       // arrange
-      when(() => multiMockBloc.connectivity.state)
+      when(() => multiBloc.connectivity.state)
           .thenReturn(HasInternetConnection());
-      when(() => multiMockBloc.userSettings.state)
+      when(() => multiBloc.userSettings.state)
           .thenReturn(UserSettingsLoading());
-      when(() => multiMockBloc.auth.state).thenReturn(AuthUnauthenticated());
+      when(() => multiBloc.auth.state).thenReturn(AuthUnauthenticated());
 
       // act
       await tester.pumpWidget(myApp);
