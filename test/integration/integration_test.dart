@@ -1,112 +1,60 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_test/flutter_test.dart';
-// import 'package:mocktail/mocktail.dart';
-// import 'package:vida_a_dois/app/app.dart';
-// import 'package:vida_a_dois/core/connectivity/bloc/connectivity_bloc.dart';
-// import 'package:vida_a_dois/features/auth/presentation/bloc/auth_bloc.dart';
-// import 'package:vida_a_dois/features/auth/presentation/pages/auth_page.dart';
-// import 'package:vida_a_dois/features/user_settings/bloc/user_settings_bloc.dart';
-// import 'package:vida_a_dois/features/user_settings/domain/entities/user_settings.dart';
+import 'dart:async';
+import 'dart:io';
 
-// import '../helper/mock_blocs.dart';
-// // final auth = MockFirebaseAuth();
-// // final user = MockUser(
-// //   email: 'email@mail.com',
-// //   uid: 'uid',
-// //   displayName: 'userName',
-// // );
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:vida_a_dois/app/app.dart';
+import 'package:vida_a_dois/features/kanban/presentation/pages/kanban_page.dart';
+import 'package:vida_a_dois/features/kanban/presentation/widgets/form/task_form.dart';
+import 'package:vida_a_dois/firebase_options.dart';
+import 'package:vida_a_dois/injection_container.dart';
 
-// /// `flutter run test/integration/integration_test.dart`
-// void main() async {
-//   late Widget myApp;
-//   final multiMockBloc = MultiMockBloc();
+import '../helper/mock_blocs.dart';
 
-//   myApp = multiMockBloc.provideWithBlocs(const VidaADoidApp());
-//   setUp(() {
-//     when(() => multiMockBloc.userSettings.state)
-//         .thenReturn(UserSettingsLoading());
-//     when(() => multiMockBloc.auth.state).thenReturn(AuthLoading());
-//   });
+void main() async {
+  HttpOverrides.global = null;
 
-//   testWidgets(
-//       'should find one empty SizedBox \n'
-//       'when launching app Without internet', (tester) async {
-//     // arrange
-//     when(() => multiMockBloc.connectivity.state)
-//         .thenReturn(NoInternetConnection());
+  TestWidgetsFlutterBinding.ensureInitialized();
 
-//     // act
-//     await tester.pumpWidget(myApp);
-//     final dialog = find.byType(SizedBox);
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  setUpLocator();
 
-//     // assert
-//     expect(dialog, findsOneWidget);
-//   });
+  await kanbanTests();
+}
 
-//   testWidgets(
-//     'should launch auth page \n'
-//     "when launching app with internet but Unauthenticated",
-//     (tester) async {
-//       // arrange
-//       when(() => multiMockBloc.connectivity.state)
-//           .thenReturn(HasInternetConnection());
-//       when(() => multiMockBloc.userSettings.state)
-//           .thenReturn(UserSettingsLoading());
-//       when(() => multiMockBloc.auth.state).thenReturn(AuthUnauthenticated());
+Future<void> kanbanTests() async {
+  final mockUserSettings = MockUserSettingsBloc();
 
-//       // act
-//       await tester.pumpWidget(myApp);
-//       final authPage = find.byType(AuthPage);
+  final app = MultiBlocProvider(
+    providers: [
+      BlocProvider<ConnectivityBloc>(create: (_) => ConnectivityBloc()),
+      BlocProvider<UserSettingsBloc>(create: (_) => mockUserSettings),
+      BlocProvider<AuthBloc>(create: (_) => AuthBloc()),
+      BlocProvider<BoardBloc>(create: (_) => locator<BoardBloc>()),
+      BlocProvider<TaskBloc>(create: (_) => locator<TaskBloc>()),
+    ],
+    child: const VidaADoidApp(),
+  );
 
-//       // assert
-//       expect(authPage, findsOneWidget);
-//     },
-//   );
+  setUp(() {
+    when(() => mockUserSettings.state).thenReturn(UserSettingsLoading());
+  });
+  testWidgets('should find kanban page', (tester) async {
+    await tester.pumpWidget(app);
 
-//   group('l10n test', () {
-//     setUp(() {
-//       when(() => multiMockBloc.connectivity.state)
-//           .thenReturn(HasInternetConnection());
-//       when(() => multiMockBloc.auth.state).thenReturn(AuthUnauthenticated());
-//     });
+    await tester.pumpAndSettle();
+    expect(find.byType(KanbanPage), findsOneWidget);
+  });
 
-//     testWidgets('should launch the app in portuguese', (tester) async {
-//       // arrange
-//       final userSettingsPT = UserSettings(
-//         uid: 'uid',
-//         userName: 'userName',
-//         themeMode: ThemeMode.light,
-//         locale: const Locale('pt'),
-//         initials: 'un',
-//       );
-//       when(() => multiMockBloc.userSettings.state)
-//           .thenReturn(UserSettingsLoaded(userSettingsPT));
+  testWidgets('should open new task form', (tester) async {
+    await tester.pumpWidget(app);
+    await tester.pumpAndSettle();
 
-//       // act
-//       await tester.pumpWidget(myApp);
-//       final portugueseTitle = find.text('Vida a dois');
+    await tester.tap(find.text('New task').first);
+    await tester.pumpAndSettle();
 
-//       // assert
-//       expect(portugueseTitle, findsOneWidget);
-//     });
-//     testWidgets('should launch the app in english', (tester) async {
-//       // arrange
-//       final userSettingsEN = UserSettings(
-//         uid: 'uid',
-//         userName: 'userName',
-//         themeMode: ThemeMode.light,
-//         locale: const Locale('en'),
-//         initials: 'un',
-//       );
-//       when(() => multiMockBloc.userSettings.state)
-//           .thenReturn(UserSettingsLoaded(userSettingsEN));
-
-//       // act
-//       await tester.pumpWidget(myApp);
-//       final portugueseTitle = find.text("A Couple's Life");
-
-//       // assert
-//       expect(portugueseTitle, findsOneWidget);
-//     });
-//   });
-// }
+    final form = find.text('Creating a new task');
+    expect(form, findsOneWidget);
+  });
+}

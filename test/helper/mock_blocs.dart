@@ -7,23 +7,30 @@ import 'package:vida_a_dois/features/user_settings/bloc/user_settings_bloc.dart'
 import 'package:vida_a_dois/features/kanban/presentation/bloc/board/board_bloc.dart';
 import 'package:vida_a_dois/features/kanban/presentation/bloc/task/task_bloc.dart';
 
+export 'package:flutter_bloc/flutter_bloc.dart';
+export 'package:bloc_test/bloc_test.dart';
+
+export 'package:vida_a_dois/core/connectivity/bloc/connectivity_bloc.dart';
+export 'package:vida_a_dois/features/auth/presentation/bloc/auth_bloc.dart';
+export 'package:vida_a_dois/features/user_settings/bloc/user_settings_bloc.dart';
+export 'package:vida_a_dois/features/kanban/presentation/bloc/board/board_bloc.dart';
+export 'package:vida_a_dois/features/kanban/presentation/bloc/task/task_bloc.dart';
+
 // Mock Blocs
-class _MockConnectivityBloc
+class MockConnectivityBloc
     extends MockBloc<ConnectivityEvent, ConnectivityState>
     implements ConnectivityBloc {}
 
-class _MockUserSettingsBloc
+class MockUserSettingsBloc
     extends MockBloc<UserSettingsEvent, UserSettingsState>
     implements UserSettingsBloc {}
 
-class _MockAuthBloc extends MockBloc<AuthEvent, AuthState>
-    implements AuthBloc {}
+class MockAuthBloc extends MockBloc<AuthEvent, AuthState> implements AuthBloc {}
 
-class _MockBoardBloc extends MockBloc<BoardEvent, BoardState>
+class MockBoardBloc extends MockBloc<BoardEvent, BoardState>
     implements BoardBloc {}
 
-class _MockTaskBloc extends MockBloc<TaskEvent, TaskState>
-    implements TaskBloc {}
+class MockTaskBloc extends MockBloc<TaskEvent, TaskState> implements TaskBloc {}
 
 class MultiMockBloc {
   late final ConnectivityBloc connectivity;
@@ -33,11 +40,11 @@ class MultiMockBloc {
   late final TaskBloc task;
 
   void initBlocs() {
-    connectivity = _MockConnectivityBloc();
-    userSettings = _MockUserSettingsBloc();
-    auth = _MockAuthBloc();
-    board = _MockBoardBloc();
-    task = _MockTaskBloc();
+    connectivity = MockConnectivityBloc();
+    userSettings = MockUserSettingsBloc();
+    auth = MockAuthBloc();
+    board = MockBoardBloc();
+    task = MockTaskBloc();
   }
 
   Widget provideWithBlocs(Widget widget) {

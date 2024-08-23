@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:vida_a_dois/app/app.dart';
-import 'package:vida_a_dois/core/connectivity/bloc/connectivity_bloc.dart';
-import 'package:vida_a_dois/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:vida_a_dois/features/auth/presentation/pages/auth_page.dart';
-import 'package:vida_a_dois/features/user_settings/bloc/user_settings_bloc.dart';
 
 import '../helper/mock_blocs.dart';
 
