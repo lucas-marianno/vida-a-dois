@@ -10,6 +10,7 @@ class UpdateTaskImportanceUseCase {
   Future<void> call(Task task, TaskImportance newImportance) async {
     if (task.taskImportance == newImportance) return;
 
-    await taskRepository.updateTask(task..taskImportance = newImportance);
+    final updatedTask = task.copyWith(taskImportance: newImportance);
+    await taskRepository.updateTask(updatedTask);
   }
 }

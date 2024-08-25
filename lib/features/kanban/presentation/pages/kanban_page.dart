@@ -8,6 +8,7 @@ import 'package:vida_a_dois/features/kanban/domain/exceptions/kanban_exception.d
 import 'package:vida_a_dois/features/kanban/presentation/bloc/board/board_bloc.dart';
 import 'package:vida_a_dois/features/kanban/presentation/bloc/task/task_bloc.dart';
 import 'package:vida_a_dois/features/kanban/presentation/widgets/form/board_form.dart';
+import 'package:vida_a_dois/features/kanban/presentation/widgets/form/task_form.dart';
 import 'package:vida_a_dois/features/kanban/presentation/widgets/kanban/kanban_board.dart';
 
 class KanbanPage extends StatefulWidget {
@@ -47,24 +48,41 @@ class _KanbanPageState extends State<KanbanPage> {
     final l10n = L10n.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
-      child: BlocListener<BoardBloc, BoardState>(
-        listener: (context, state) async {
-          if (state is BoardErrorState) {
-            boardBloc.add(ReloadBoards());
-            if (state.error is NameNotUniqueException) {
-              await InfoDialog.show(
-                context,
-                L10n.of(context).boardUniqueNameException,
-                title: L10n.of(context).youCannotDoThat,
-              );
-            } else {
-              await ErrorDialog.show(
-                context,
-                state.error,
-              );
-            }
-          }
-        },
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<BoardBloc, BoardState>(
+            listener: (context, state) async {
+              if (state is BoardErrorState) {
+                boardBloc.add(ReloadBoards());
+                if (state.error is NameNotUniqueException) {
+                  await InfoDialog.show(
+                    context,
+                    L10n.of(context).boardUniqueNameException,
+                    title: L10n.of(context).youCannotDoThat,
+                  );
+                } else {
+                  await ErrorDialog.show(
+                    context,
+                    state.error,
+                  );
+                }
+              }
+            },
+          ),
+          BlocListener<TaskBloc, TaskState>(
+            listener: (context, state) async {
+              if (state is ReadingTask) {
+                final newTask = await TaskForm(context)
+                    .show(state.task, isNewTask: state.isNewTask);
+
+                if (newTask == null) return;
+                if (!state.isNewTask && newTask == state.task) return;
+
+                taskBloc.add(UpdateTask(newTask, isNewTask: state.isNewTask));
+              }
+            },
+          ),
+        ],
         child: BlocBuilder<BoardBloc, BoardState>(
           builder: (context, state) {
             if (state is BoardLoadingState) {
@@ -82,7 +100,7 @@ class _KanbanPageState extends State<KanbanPage> {
                 );
               }
 
-              taskBloc.add(LoadTasksEvent(boards));
+              taskBloc.add(LoadTasks(boards));
 
               return ListView.builder(
                 controller: scrlCtrl,

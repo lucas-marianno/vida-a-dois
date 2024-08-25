@@ -12,6 +12,6 @@ class CreateTaskUseCase {
 
     final currentUserUID = AuthData.currentUser!.uid;
 
-    await taskRepository.createTask(newTask..id = currentUserUID);
+    await taskRepository.createTask(newTask.copyWith(id: currentUserUID));
   }
 }

@@ -1,19 +1,18 @@
 import 'package:get_it/get_it.dart';
 import 'package:vida_a_dois/core/constants/firebase_constants.dart';
+
 import 'package:vida_a_dois/features/kanban/data/data_sources/board_data_source.dart';
 import 'package:vida_a_dois/features/kanban/data/data_sources/task_data_source.dart';
 import 'package:vida_a_dois/features/kanban/data/repositories/board_repository_impl.dart';
 import 'package:vida_a_dois/features/kanban/data/repositories/task_repository_impl.dart';
+
 import 'package:vida_a_dois/features/kanban/domain/repository/board_repository.dart';
 import 'package:vida_a_dois/features/kanban/domain/repository/task_repository.dart';
-import 'package:vida_a_dois/features/kanban/domain/usecases/board/create_board.dart';
-import 'package:vida_a_dois/features/kanban/domain/usecases/board/delete_board.dart';
-import 'package:vida_a_dois/features/kanban/domain/usecases/board/read_boards.dart';
-import 'package:vida_a_dois/features/kanban/domain/usecases/board/rename_board.dart';
-import 'package:vida_a_dois/features/kanban/domain/usecases/board/update_board_index.dart';
+import 'package:vida_a_dois/features/kanban/domain/usecases/board_usecases.dart';
+import 'package:vida_a_dois/features/kanban/domain/usecases/task_usecases.dart';
+
 import 'package:vida_a_dois/features/kanban/presentation/bloc/board/board_bloc.dart';
 import 'package:vida_a_dois/features/kanban/presentation/bloc/task/task_bloc.dart';
-import 'package:vida_a_dois/features/kanban/domain/usecases/task_usecases.dart';
 
 final locator = GetIt.instance;
 
@@ -30,7 +29,7 @@ void setUpLocator() {
       getTaskStream: locator(),
       createTask: locator(),
       updateTask: locator(),
-      updateTaskAssigneeUid: locator(),
+      updateTaskAssigneeUID: locator(),
       updateTaskImportance: locator(),
       updateTaskStatus: locator(),
       deleteTask: locator()));

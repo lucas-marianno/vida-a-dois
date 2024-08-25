@@ -6,11 +6,10 @@ class UpdateTaskUseCase {
 
   UpdateTaskUseCase(this.taskRepository);
 
-  Future<void> call(Task task, Task newTask) async {
-    if (task == newTask) return;
+  Future<void> call(Task task) async {
+    assert(task.title.isNotEmpty);
+    assert(task.id != null);
 
-    assert(task.id == newTask.id);
-
-    taskRepository.updateTask(newTask);
+    taskRepository.updateTask(task.copyWith());
   }
 }
