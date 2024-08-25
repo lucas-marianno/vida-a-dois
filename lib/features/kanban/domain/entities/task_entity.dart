@@ -1,18 +1,18 @@
 import '../constants/enum/task_importance.dart';
 
 class Task {
-  String? id;
-  String title;
-  String? description;
-  String? assingneeUID;
-  String? assingneeInitials;
-  TaskImportance taskImportance;
-  String status;
-  DateTime? dueDate;
-  String? createdBy;
-  DateTime? createdDate;
+  final String? id;
+  final String title;
+  final String? description;
+  final String? assingneeUID;
+  final String? assingneeInitials;
+  final TaskImportance taskImportance;
+  final String status;
+  final DateTime? dueDate;
+  final String? createdBy;
+  final DateTime? createdDate;
 
-  Task({
+  const Task({
     this.id,
     required this.title,
     this.description,
@@ -25,18 +25,31 @@ class Task {
     this.createdDate,
   });
 
-  factory Task.copyFrom(Task task) => Task(
-        id: task.id,
-        title: task.title,
-        description: task.description,
-        assingneeUID: task.assingneeUID,
-        assingneeInitials: task.assingneeInitials,
-        taskImportance: task.taskImportance,
-        status: task.status,
-        dueDate: task.dueDate,
-        createdBy: task.createdBy,
-        createdDate: task.createdDate,
-      );
+  Task copyWith({
+    String? id,
+    String? title,
+    String? description,
+    String? assingneeUID,
+    String? assingneeInitials,
+    TaskImportance? taskImportance,
+    String? status,
+    DateTime? dueDate,
+    String? createdBy,
+    DateTime? createdDate,
+  }) {
+    return Task(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      assingneeUID: assingneeUID ?? this.assingneeUID,
+      assingneeInitials: assingneeInitials ?? this.assingneeInitials,
+      taskImportance: taskImportance ?? this.taskImportance,
+      status: status ?? this.status,
+      dueDate: dueDate ?? this.dueDate,
+      createdBy: createdBy ?? this.createdBy,
+      createdDate: createdDate ?? this.createdDate,
+    );
+  }
 
   Map<String, dynamic> get asMap => {
         'id': id,

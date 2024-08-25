@@ -78,7 +78,7 @@ class _EditBoardFormState extends State<_EditBoardForm> {
     formType = widget.formType;
     boardBloc = context.read<BoardBloc>();
 
-    newBoard = Board.copyFrom(widget.board);
+    newBoard = widget.board.copyWith();
   }
 
   @override
@@ -108,7 +108,7 @@ class _EditBoardFormState extends State<_EditBoardForm> {
           enabled: !readOnly,
           initialValue: newBoard.title,
           onChanged: (newString) {
-            newBoard.title = newString!;
+            newBoard.copyWith(title: newString);
           },
           mandatory: true,
         ),
@@ -120,7 +120,8 @@ class _EditBoardFormState extends State<_EditBoardForm> {
                       .toList() +
                   ['${state.boards.length} - ${l10n.addToEnd}'];
 
-              newBoard.index = newBoard.index.clamp(0, items.length - 1);
+              newBoard.copyWith(
+                  index: newBoard.index.clamp(0, items.length - 1));
 
               return FormDropDownMenuButton(
                 enabled: !readOnly,
@@ -130,8 +131,10 @@ class _EditBoardFormState extends State<_EditBoardForm> {
                     : items[newBoard.index],
                 items: items,
                 onChanged: (e) {
-                  newBoard.index =
-                      int.tryParse(e?.substring(0, 1) ?? '') ?? newBoard.index;
+                  newBoard.copyWith(
+                    index: int.tryParse(e?.substring(0, 1) ?? '') ??
+                        newBoard.index,
+                  );
                 },
               );
             }

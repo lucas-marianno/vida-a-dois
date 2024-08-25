@@ -65,7 +65,7 @@ class _TaskTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     void readTask() async {
-      context.read<TaskBloc>().add(ReadTaskEvent(context, task));
+      context.read<TaskBloc>().add(ReadTask(task));
     }
 
     return Container(

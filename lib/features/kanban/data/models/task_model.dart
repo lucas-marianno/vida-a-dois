@@ -19,7 +19,8 @@ class TaskModel extends Task {
   factory TaskModel.fromJson(QueryDocumentSnapshot<Object?> json) {
     final taskId = json.reference.id;
 
-    return TaskModel.fromMap(json.data() as Map<String, dynamic>)..id = taskId;
+    return TaskModel.fromMap(json.data() as Map<String, dynamic>)
+        .copyWith(id: taskId);
   }
 
   factory TaskModel.fromMap(Map<String, dynamic> json) {
@@ -74,5 +75,30 @@ class TaskModel extends Task {
   /// and returns `true` if all parameters match.
   bool equalsTo(TaskModel task) => '$toJson' == '${task.toJson}';
 
-  TaskModel copy() => TaskModel.fromMap(toJson);
+  @override
+  TaskModel copyWith({
+    String? id,
+    String? title,
+    String? description,
+    String? assingneeUID,
+    String? assingneeInitials,
+    TaskImportance? taskImportance,
+    String? status,
+    DateTime? dueDate,
+    String? createdBy,
+    DateTime? createdDate,
+  }) {
+    return TaskModel(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      assingneeUID: assingneeUID ?? this.assingneeUID,
+      assingneeInitials: assingneeInitials ?? this.assingneeInitials,
+      taskImportance: taskImportance ?? this.taskImportance,
+      status: status ?? this.status,
+      dueDate: dueDate ?? this.dueDate,
+      createdBy: createdBy ?? this.createdBy,
+      createdDate: createdDate ?? this.createdDate,
+    );
+  }
 }

@@ -1,13 +1,15 @@
 class Board {
-  Board({required this.title, required this.index});
+  const Board({required this.title, required this.index});
 
-  String title;
-  int index;
+  final String title;
+  final int index;
 
-  factory Board.copyFrom(Board board) => Board(
-        title: board.title,
-        index: board.index,
-      );
+  Board copyWith({String? title, int? index}) {
+    return Board(
+      title: title ?? this.title,
+      index: index ?? this.index,
+    );
+  }
 
   Map<String, dynamic> get asMap => {
         'title': title,

@@ -54,7 +54,7 @@ void main() {
 
     test('should return [false] if tasks have nearly identical content', () {
       // arrange
-      final nearClone = task1clone..title = task1clone.title += 'a';
+      final nearClone = task1clone.copyWith(title: '${task1.title}a');
       // act
       final result = task1 == nearClone;
 

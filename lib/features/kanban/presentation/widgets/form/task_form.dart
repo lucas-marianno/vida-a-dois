@@ -13,27 +13,14 @@ class TaskForm {
   final BuildContext context;
   TaskForm(this.context);
 
-  Future<Task?> createTask(String initialStatus) async {
-    return await showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      builder: (context) {
-        return _EditTaskForm(
-          Task(title: L10n.of(context).newTask, status: initialStatus),
-          formType: FormType.create,
-        );
-      },
-    );
-  }
-
-  Future<Task?> readTask(Task task) async {
+  Future<Task?> show(Task task, {bool isNewTask = false}) async {
     return await showModalBottomSheet(
       isScrollControlled: true,
       context: context,
       builder: (context) {
         return _EditTaskForm(
           task,
-          formType: FormType.read,
+          formType: isNewTask ? FormType.create : FormType.read,
         );
       },
     );
@@ -62,8 +49,9 @@ class _EditTaskFormState extends State<_EditTaskForm> {
 
   void sendForm() {
     if (newTask.title == '') return;
-
-    newTask.createdDate ??= DateTime.now();
+    if (newTask.createdDate == null) {
+      newTask.copyWith(createdDate: DateTime.now());
+    }
     Navigator.pop(context, newTask);
   }
 
@@ -80,7 +68,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
 
     if (response != true) return;
 
-    taskBloc.add(DeleteTaskEvent(widget.task));
+    taskBloc.add(DeleteTask(widget.task));
   }
 
   void toggleEditMode() {
@@ -104,7 +92,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
   void initState() {
     super.initState();
 
-    newTask = Task.copyFrom(widget.task);
+    newTask = widget.task.copyWith();
     formType = widget.formType;
     taskBloc = context.read<TaskBloc>();
     boardBloc = context.read<BoardBloc>();
@@ -137,7 +125,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
           enabled: !readOnly,
           initialValue: newTask.title,
           onChanged: (newString) {
-            newTask.title = newString!;
+            newTask.copyWith(title: newString);
           },
           mandatory: true,
         ),
@@ -147,7 +135,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
           initialValue: newTask.description,
           multilineFormField: true,
           onChanged: (newString) {
-            newTask.description = newString;
+            newTask.copyWith(description: newString);
           },
         ),
         //TODO: allow user to determine an assignee
@@ -167,7 +155,8 @@ class _EditTaskFormState extends State<_EditTaskForm> {
           initialValue: newTask.taskImportance.name,
           items: TaskImportance.values.map((e) => e.name).toList(),
           onChanged: (newValue) {
-            newTask.taskImportance = TaskImportance.fromString(newValue);
+            newTask.copyWith(
+                taskImportance: TaskImportance.fromString(newValue));
           },
         ),
         Row(
@@ -183,7 +172,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
                     initialValue: newTask.status,
                     items: state.boards.map((e) => e.title).toList(),
                     onChanged: (newValue) {
-                      newTask.status = newValue ??= newTask.status;
+                      newTask.copyWith(status: newValue);
                     },
                   );
                 }
@@ -198,7 +187,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
               enabled: !readOnly,
               initialDate: newTask.dueDate,
               onChanged: (newDate) {
-                newTask.dueDate = newDate;
+                newTask.copyWith(dueDate: newDate);
               },
             ),
           ],

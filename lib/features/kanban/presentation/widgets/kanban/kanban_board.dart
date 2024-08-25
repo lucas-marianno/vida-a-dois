@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vida_a_dois/core/i18n/l10n.dart';
 import 'package:vida_a_dois/core/util/dialogs/error_dialog.dart';
+import 'package:vida_a_dois/features/kanban/domain/entities/task_entity.dart';
 import 'package:vida_a_dois/features/kanban/presentation/bloc/task/task_bloc.dart';
 import 'package:vida_a_dois/features/kanban/domain/entities/board_entity.dart';
 import 'package:vida_a_dois/features/kanban/presentation/widgets/kanban/board_drag_target.dart';
@@ -40,14 +42,14 @@ class KanbanBoard extends StatelessWidget {
           KanbanBoardTitle(board: board),
           BlocBuilder<TaskBloc, TaskState>(
             builder: (context, state) {
-              if (state is TasksLoadingState) {
+              if (state is TaskLoading) {
                 return const Expanded(
                   child: Align(
                     alignment: Alignment.topCenter,
                     child: LinearProgressIndicator(),
                   ),
                 );
-              } else if (state is TasksLoadedState) {
+              } else if (state is TasksLoaded) {
                 return KanbanBoardDragTarget(
                   board: board,
                   width: width,
@@ -70,7 +72,12 @@ class KanbanBoard extends StatelessWidget {
           // bellow '+ new task' button.
           // Possibly, only show '+ new task' when the last item is being shown
           KanbanAddTaskButton(
-            () => taskBloc.add(CreateTaskEvent(context, board.title)),
+            () => taskBloc.add(
+              ReadTask(
+                Task(title: L10n.of(context).newTask, status: board.title),
+                isNewTask: true,
+              ),
+            ),
           ),
         ],
       ),
