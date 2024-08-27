@@ -108,7 +108,7 @@ class _EditBoardFormState extends State<_EditBoardForm> {
           enabled: !readOnly,
           initialValue: newBoard.title,
           onChanged: (newString) {
-            newBoard.copyWith(title: newString);
+            newBoard = newBoard.copyWith(title: newString);
           },
           mandatory: true,
         ),
@@ -120,7 +120,7 @@ class _EditBoardFormState extends State<_EditBoardForm> {
                       .toList() +
                   ['${state.boards.length} - ${l10n.addToEnd}'];
 
-              newBoard.copyWith(
+              newBoard = newBoard.copyWith(
                   index: newBoard.index.clamp(0, items.length - 1));
 
               return FormDropDownMenuButton(
@@ -131,7 +131,7 @@ class _EditBoardFormState extends State<_EditBoardForm> {
                     : items[newBoard.index],
                 items: items,
                 onChanged: (e) {
-                  newBoard.copyWith(
+                  newBoard = newBoard.copyWith(
                     index: int.tryParse(e?.substring(0, 1) ?? '') ??
                         newBoard.index,
                   );

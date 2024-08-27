@@ -50,7 +50,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
   void sendForm() {
     if (newTask.title == '') return;
     if (newTask.createdDate == null) {
-      newTask.copyWith(createdDate: DateTime.now());
+      newTask = newTask.copyWith(createdDate: DateTime.now());
     }
     Navigator.pop(context, newTask);
   }
@@ -125,7 +125,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
           enabled: !readOnly,
           initialValue: newTask.title,
           onChanged: (newString) {
-            newTask.copyWith(title: newString);
+            newTask = newTask.copyWith(title: newString);
           },
           mandatory: true,
         ),
@@ -135,7 +135,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
           initialValue: newTask.description,
           multilineFormField: true,
           onChanged: (newString) {
-            newTask.copyWith(description: newString);
+            newTask = newTask.copyWith(description: newString);
           },
         ),
         //TODO: allow user to determine an assignee
@@ -155,7 +155,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
           initialValue: newTask.taskImportance.name,
           items: TaskImportance.values.map((e) => e.name).toList(),
           onChanged: (newValue) {
-            newTask.copyWith(
+            newTask = newTask.copyWith(
                 taskImportance: TaskImportance.fromString(newValue));
           },
         ),
@@ -172,7 +172,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
                     initialValue: newTask.status,
                     items: state.boards.map((e) => e.title).toList(),
                     onChanged: (newValue) {
-                      newTask.copyWith(status: newValue);
+                      newTask = newTask.copyWith(status: newValue);
                     },
                   );
                 }
@@ -187,7 +187,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
               enabled: !readOnly,
               initialDate: newTask.dueDate,
               onChanged: (newDate) {
-                newTask.copyWith(dueDate: newDate);
+                newTask = newTask.copyWith(dueDate: newDate);
               },
             ),
           ],
