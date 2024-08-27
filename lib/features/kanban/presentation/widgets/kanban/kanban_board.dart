@@ -72,12 +72,31 @@ class KanbanBoard extends StatelessWidget {
           // bellow '+ new task' button.
           // Possibly, only show '+ new task' when the last item is being shown
           KanbanAddTaskButton(
-            () => taskBloc.add(
-              ReadTask(
+            () {
+              // Navigator.of(context).push(
+              //   DialogRoute(
+              //     context: context,
+              //     builder: (context) => const AlertDialog(
+              //       title: Text('reading dialog'),
+              //       content: Text('saporra'),
+              //     ),
+              //   ),
+              // MaterialPageRoute(
+              //   builder: (context) => Scaffold(
+              //     appBar: AppBar(
+              //       title: Text('reading page'),
+              //     ),
+              //     body: Center(
+              //       child: Text('saporra'),
+              //     ),
+              //   ),
+              // ),
+              // );
+              taskBloc.add(ReadTask(
                 Task(title: L10n.of(context).newTask, status: board.title),
                 isNewTask: true,
-              ),
-            ),
+              ));
+            },
           ),
         ],
       ),

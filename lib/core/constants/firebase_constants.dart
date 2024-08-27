@@ -11,3 +11,15 @@ abstract class FirebaseConstants {
   static final CollectionReference taskCollectionReference =
       boardsDocReference.collection('tasks');
 }
+
+abstract class MockFirebaseConstants extends FirebaseConstants {
+  static const String mockKanbanCollection = 'mockKanbanCollection3';
+  static final CollectionReference mockCollectionReference =
+      FirebaseFirestore.instance.collection(mockKanbanCollection);
+
+  static final DocumentReference boardsDocReference =
+      mockCollectionReference.doc('boards');
+
+  static final CollectionReference taskCollectionReference =
+      boardsDocReference.collection('tasks');
+}

@@ -16,7 +16,7 @@ import 'package:vida_a_dois/features/kanban/presentation/bloc/task/task_bloc.dar
 
 final locator = GetIt.instance;
 
-void setUpLocator() {
+void setUpLocator({bool mockDataSource = false}) {
   // bloc
   locator.registerFactory(() => BoardBloc(
         renameBoard: locator(),
@@ -59,8 +59,27 @@ void setUpLocator() {
       () => TaskRepositoryImpl(locator()));
 
   // data source
-  locator.registerLazySingleton<BoardDataSource>(() => BoardDataSourceImpl(
-      boardsDocReference: FirebaseConstants.boardsDocReference));
-  locator.registerLazySingleton<TaskDataSource>(() => TaskDataSourceImpl(
-      taskCollectionReference: FirebaseConstants.taskCollectionReference));
+  if (mockDataSource) {
+    locator.registerLazySingleton<BoardDataSource>(
+      () => BoardDataSourceImpl(
+        boardsDocReference: MockFirebaseConstants.boardsDocReference,
+      ),
+    );
+    locator.registerLazySingleton<TaskDataSource>(
+      () => TaskDataSourceImpl(
+        taskCollectionReference: MockFirebaseConstants.taskCollectionReference,
+      ),
+    );
+  } else {
+    locator.registerLazySingleton<BoardDataSource>(
+      () => BoardDataSourceImpl(
+        boardsDocReference: FirebaseConstants.boardsDocReference,
+      ),
+    );
+    locator.registerLazySingleton<TaskDataSource>(
+      () => TaskDataSourceImpl(
+        taskCollectionReference: FirebaseConstants.taskCollectionReference,
+      ),
+    );
+  }
 }

@@ -18,25 +18,26 @@ class TaskForm {
       isScrollControlled: true,
       context: context,
       builder: (context) {
-        return _EditTaskForm(
+        return EditTaskForm(
           task,
           formType: isNewTask ? FormType.create : FormType.read,
+          key: const Key('taskForm'),
         );
       },
     );
   }
 }
 
-class _EditTaskForm extends StatefulWidget {
+class EditTaskForm extends StatefulWidget {
   final Task task;
   final FormType formType;
-  const _EditTaskForm(this.task, {required this.formType});
+  const EditTaskForm(this.task, {super.key, required this.formType});
 
   @override
-  State<_EditTaskForm> createState() => _EditTaskFormState();
+  State<EditTaskForm> createState() => _EditTaskFormState();
 }
 
-class _EditTaskFormState extends State<_EditTaskForm> {
+class _EditTaskFormState extends State<EditTaskForm> {
   late TaskBloc taskBloc;
   late BoardBloc boardBloc;
   late Task newTask;
@@ -213,6 +214,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             ElevatedButton(
+              key: const Key('editCancelButton'),
               style: readOnly
                   ? ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).colorScheme.primary,
@@ -224,6 +226,7 @@ class _EditTaskFormState extends State<_EditTaskForm> {
               child: Text(readOnly ? l10n.edit : l10n.cancel),
             ),
             FilledButton(
+              key: const Key('doneButton'),
               onPressed: formType == FormType.read ? null : sendForm,
               child: Text(l10n.done),
             ),
