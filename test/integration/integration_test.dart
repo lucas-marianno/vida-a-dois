@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -16,36 +17,43 @@ import 'package:vida_a_dois/features/user_settings/domain/entities/user_settings
 import 'package:vida_a_dois/firebase_options.dart';
 import 'package:vida_a_dois/injection_container.dart';
 
-import 'firebase_helper.dart';
+import '../helper/firebase/firebase_helper.dart';
 import '../helper/mock_blocs.dart';
 
 void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  await fullIntegrationTests();
-  // await mockKanbanTests();
+  // await fullIntegrationTests();
+  // await mockKanbanTests(skip: true);
 }
 
-Future<void> fullIntegrationTests() async {
-  if (!Platform.isAndroid) return;
+Future<void> fullIntegrationTests({bool skip = false}) async {
+  final bool hasInternet =
+      (await Connectivity().checkConnectivity())[0] != ConnectivityResult.none;
+  shouldSkip() {
+    const String androidOnly =
+        '`Integration Tests` must be run in an android device';
+    const String internetAccessRequired =
+        '`Integration Tests` require internet access';
+    if (skip) return true;
+    if (!Platform.isAndroid) return androidOnly;
+    if (!hasInternet) return internetAccessRequired;
+    return false;
+  }
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   setUpLocator(mockDataSource: true);
-
-  final app = MultiBlocProvider(
-    providers: [
-      BlocProvider<ConnectivityBloc>(create: (_) => ConnectivityBloc()),
-      BlocProvider<UserSettingsBloc>(create: (_) => UserSettingsBloc()),
-      BlocProvider<AuthBloc>(create: (_) => AuthBloc()),
-      BlocProvider<BoardBloc>(create: (_) => locator<BoardBloc>()),
-      BlocProvider<TaskBloc>(create: (_) => locator<TaskBloc>()),
-    ],
-    child: const VidaADoidApp(),
-  );
-  group(
-      'integration tests\n'
-      'the following tests require an android device\n'
-      'internet connection is required and will be tested\n\n', () {
+  group('integration tests', skip: shouldSkip(), () {
+    final app = MultiBlocProvider(
+      providers: [
+        BlocProvider<ConnectivityBloc>(create: (_) => ConnectivityBloc()),
+        BlocProvider<UserSettingsBloc>(create: (_) => UserSettingsBloc()),
+        BlocProvider<AuthBloc>(create: (_) => AuthBloc()),
+        BlocProvider<BoardBloc>(create: (_) => locator<BoardBloc>()),
+        BlocProvider<TaskBloc>(create: (_) => locator<TaskBloc>()),
+      ],
+      child: const VidaADoidApp(),
+    );
     group('kanban layout', () {
       testWidgets('should find kanban page\n' 'should find a kanban board',
           (tester) async {
@@ -150,7 +158,7 @@ Future<void> fullIntegrationTests() async {
   });
 }
 
-Future<void> mockKanbanTests() async {
+Future<void> mockKanbanTests({bool skip = false}) async {
   final mockUserSettingsBloc = MockUserSettingsBloc();
   final mockConnectivityBloc = MockConnectivityBloc();
   final mockAuthBloc = MockAuthBloc();
@@ -168,7 +176,7 @@ Future<void> mockKanbanTests() async {
     child: const VidaADoidApp(),
   );
 
-  group('mock kanban', () {
+  group('mock kanban', skip: skip, () {
     final mockUser = MockUser(email: 'email@mail.com', uid: 'uid123');
     final mockUserSettings = UserSettings(
       uid: 'uid134',

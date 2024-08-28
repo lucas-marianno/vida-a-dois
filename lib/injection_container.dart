@@ -1,5 +1,5 @@
 import 'package:get_it/get_it.dart';
-import 'package:vida_a_dois/core/constants/firebase_constants.dart';
+import 'package:vida_a_dois/features/kanban/data/cloud_firestore/firestore_constants.dart';
 
 import 'package:vida_a_dois/features/kanban/data/data_sources/board_data_source.dart';
 import 'package:vida_a_dois/features/kanban/data/data_sources/task_data_source.dart';
@@ -62,23 +62,23 @@ void setUpLocator({bool mockDataSource = false}) {
   if (mockDataSource) {
     locator.registerLazySingleton<BoardDataSource>(
       () => BoardDataSourceImpl(
-        boardsDocReference: MockFirebaseConstants.boardsDocReference,
+        boardsDocReference: MockFirestoreConstants.boardsDocReference,
       ),
     );
     locator.registerLazySingleton<TaskDataSource>(
       () => TaskDataSourceImpl(
-        taskCollectionReference: MockFirebaseConstants.taskCollectionReference,
+        taskCollectionReference: MockFirestoreConstants.taskCollectionReference,
       ),
     );
   } else {
     locator.registerLazySingleton<BoardDataSource>(
       () => BoardDataSourceImpl(
-        boardsDocReference: FirebaseConstants.boardsDocReference,
+        boardsDocReference: FirestoreConstants.boardsDocReference,
       ),
     );
     locator.registerLazySingleton<TaskDataSource>(
       () => TaskDataSourceImpl(
-        taskCollectionReference: FirebaseConstants.taskCollectionReference,
+        taskCollectionReference: FirestoreConstants.taskCollectionReference,
       ),
     );
   }

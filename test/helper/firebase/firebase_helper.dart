@@ -1,7 +1,7 @@
-import 'package:vida_a_dois/core/constants/firebase_constants.dart';
+import 'package:vida_a_dois/features/kanban/data/cloud_firestore/firestore_constants.dart';
 
 deleteAllTasksFromMockFirebaseCollection() async {
-  final taskMockCollection = MockFirebaseConstants.taskCollectionReference;
+  final taskMockCollection = MockFirestoreConstants.taskCollectionReference;
 
   final docs = (await taskMockCollection.get()).docs;
 

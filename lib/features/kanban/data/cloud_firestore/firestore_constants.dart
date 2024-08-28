@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-abstract class FirebaseConstants {
+abstract class FirestoreConstants {
+  static final FirebaseFirestore _instance = FirebaseFirestore.instance;
+
   static const String mockKanbanCollection = 'mockKanbanCollection2';
+
   static final CollectionReference mockCollectionReference =
-      FirebaseFirestore.instance.collection(mockKanbanCollection);
+      _instance.collection(mockKanbanCollection);
 
   static final DocumentReference boardsDocReference =
       mockCollectionReference.doc('boards');
@@ -12,10 +15,13 @@ abstract class FirebaseConstants {
       boardsDocReference.collection('tasks');
 }
 
-abstract class MockFirebaseConstants extends FirebaseConstants {
+abstract class MockFirestoreConstants extends FirestoreConstants {
+  static final FirebaseFirestore _instance = FirebaseFirestore.instance;
+
   static const String mockKanbanCollection = 'mockKanbanCollection3';
+
   static final CollectionReference mockCollectionReference =
-      FirebaseFirestore.instance.collection(mockKanbanCollection);
+      _instance.collection(mockKanbanCollection);
 
   static final DocumentReference boardsDocReference =
       mockCollectionReference.doc('boards');
