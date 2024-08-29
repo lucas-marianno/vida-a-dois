@@ -143,7 +143,6 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     emit(BoardLoadingState());
 
     final error = event.error;
-    Log.error(error.runtimeType, error: error);
 
     if (error is StateError) {
       await createInitialBoard();
@@ -152,6 +151,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
       return;
     }
 
+    Log.error(error.runtimeType, error: error);
     emit(BoardErrorState(error.runtimeType.toString(), error: error));
   }
 

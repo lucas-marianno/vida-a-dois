@@ -12,12 +12,15 @@ import 'package:vida_a_dois/features/kanban/presentation/bloc/task/task_bloc.dar
 import 'package:vida_a_dois/features/user_settings/bloc/user_settings_bloc.dart';
 import 'package:vida_a_dois/injection_container.dart';
 
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+
 void main() async {
   Log.initializing('main');
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  setUpLocator(FirebaseFirestore.instance);
+  // setUpLocator(FirebaseFirestore.instance);
+  setUpLocator(FakeFirebaseFirestore());
 
   runApp(
     MultiBlocProvider(

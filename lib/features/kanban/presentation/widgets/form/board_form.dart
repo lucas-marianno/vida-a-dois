@@ -158,6 +158,7 @@ class _EditBoardFormState extends State<EditBoardForm> {
               child: Text(readOnly ? l10n.edit : l10n.cancel),
             ),
             FilledButton(
+              key: const Key('boardFormDoneButton'),
               onPressed: formType == FormType.read ? null : sendForm,
               child: Text(l10n.done),
             ),

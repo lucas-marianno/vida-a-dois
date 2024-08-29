@@ -19,6 +19,8 @@ void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUpLocator(fakeFirestore);
 
+  fakeFirestore.clearPersistence();
+
   await fullIntegrationTests(skip: true);
   await mockKanbanTests(skip: false);
 }
@@ -46,9 +48,6 @@ Future<void> fullIntegrationTests({bool skip = false}) async {
       });
     });
     group('task', () {
-      //clear tasks from collection
-      fakeFirestore.clearPersistence();
-
       testWidgets('should find no kanban tile', (tester) async {
         await tester.pumpWidget(app);
         await tester.pumpAndSettle();
@@ -143,8 +142,6 @@ Future<void> mockKanbanTests({bool skip = false}) async {
   final mockUserSettingsBloc = MockUserSettingsBloc();
   final mockConnectivityBloc = MockConnectivityBloc();
   final mockAuthBloc = MockAuthBloc();
-  // final mockTaskBloc = MockTaskBloc();
-  // final mockBoardBloc = MockBoardBloc();
 
   final app = MultiBlocProvider(
     providers: [
@@ -166,10 +163,6 @@ Future<void> mockKanbanTests({bool skip = false}) async {
       locale: const Locale('en'),
       initials: 'un',
     );
-    // const mockBoard = Board(title: 'mock board', index: 0);
-    // final mockBoardsList = [mockBoard];
-    // const mockTask = Task(title: 'mock task', status: 'mock board');
-    // final mockMappedTasks = mergeIntoMap([mockTask], mockBoardsList);
 
     setUp(() {
       when(
@@ -206,18 +199,36 @@ Future<void> mockKanbanTests({bool skip = false}) async {
       final okButton = find.text('Ok');
       expect(okButton, findsOneWidget);
 
-      // tap button
+      // tap 'ok button'
       await tester.runAsync(() async => await tester.tap(okButton));
       await tester.pump();
 
       // should find a `boardForm`
-      expect(find.byKey(const Key('boardForm')), findsOneWidget);
+      final boardForm = find.byKey(const Key('boardForm'));
+      expect(boardForm, findsOneWidget);
+
+      // drag until find 'done button'
+      final doneButton = find.byKey(const Key('boardFormDoneButton'));
+      await tester.dragUntilVisible(
+        doneButton,
+        boardForm,
+        const Offset(0, -250),
+      );
+      print(doneButton);
+      await tester.pump();
+      expect(doneButton, findsOneWidget);
+
+      // // tap 'done button'
+      await tester.runAsync(() async => await tester.tap(doneButton));
+      // await tester.pump();
+
+      // // should find a kanban board
+      // expect(find.byType(LinearProgressIndicator), findsOneWidget);
     });
 
     testWidgets('should find a kanban board', skip: true, (tester) async {
       await tester.pumpWidget(app);
       await tester.pumpAndSettle();
-
       expect(find.byType(KanbanBoard), findsOneWidget);
     });
     testWidgets('should find a kanban tile', skip: true, (tester) async {
