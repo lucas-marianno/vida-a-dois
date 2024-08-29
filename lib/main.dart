@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -12,13 +13,11 @@ import 'package:vida_a_dois/features/user_settings/bloc/user_settings_bloc.dart'
 import 'package:vida_a_dois/injection_container.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  setUpLocator(mockDataSource: true);
-
   Log.initializing('main');
-  Log.initializing('$MultiBlocProvider');
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  setUpLocator(FirebaseFirestore.instance);
 
   runApp(
     MultiBlocProvider(

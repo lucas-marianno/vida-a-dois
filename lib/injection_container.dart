@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
-import 'package:vida_a_dois/features/kanban/data/cloud_firestore/firestore_constants.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:vida_a_dois/features/kanban/data/cloud_firestore/firestore_references.dart';
 import 'package:vida_a_dois/features/kanban/data/data_sources/board_data_source.dart';
 import 'package:vida_a_dois/features/kanban/data/data_sources/task_data_source.dart';
 import 'package:vida_a_dois/features/kanban/data/repositories/board_repository_impl.dart';
@@ -16,8 +17,8 @@ import 'package:vida_a_dois/features/kanban/presentation/bloc/task/task_bloc.dar
 
 final locator = GetIt.instance;
 
-void setUpLocator({bool mockDataSource = false}) {
-  // bloc
+void setUpLocator(FirebaseFirestore firebaseFirestore) {
+  // blocs
   locator.registerFactory(() => BoardBloc(
         createInitialBoard: locator(),
         renameBoard: locator(),
@@ -54,34 +55,17 @@ void setUpLocator({bool mockDataSource = false}) {
       () => RenameBoardUseCase(boardRepo: locator(), taskRepo: locator()));
   locator.registerLazySingleton(() => UpdateBoardIndexUseCase(locator()));
 
-  // repository
+  // repositories
   locator.registerLazySingleton<BoardRepository>(
       () => BoardRepositoryImpl(locator()));
   locator.registerLazySingleton<TaskRepository>(
       () => TaskRepositoryImpl(locator()));
 
-  // data source
-  if (mockDataSource) {
-    locator.registerLazySingleton<BoardDataSource>(
-      () => BoardDataSourceImpl(
-        boardsDocReference: MockFirestoreConstants.boardsDocReference,
-      ),
-    );
-    locator.registerLazySingleton<TaskDataSource>(
-      () => TaskDataSourceImpl(
-        taskCollectionReference: MockFirestoreConstants.taskCollectionReference,
-      ),
-    );
-  } else {
-    locator.registerLazySingleton<BoardDataSource>(
-      () => BoardDataSourceImpl(
-        boardsDocReference: FirestoreConstants.boardsDocReference,
-      ),
-    );
-    locator.registerLazySingleton<TaskDataSource>(
-      () => TaskDataSourceImpl(
-        taskCollectionReference: FirestoreConstants.taskCollectionReference,
-      ),
-    );
-  }
+  // data sources
+  locator.registerLazySingleton<BoardDataSource>(() => BoardDataSourceImpl(
+      boardsDocReference:
+          FirestoreReferencesImpl(firebaseFirestore).boardsDocRef));
+  locator.registerLazySingleton<TaskDataSource>(() => TaskDataSourceImpl(
+      taskCollectionReference:
+          FirestoreReferencesImpl(firebaseFirestore).taskCollectionRef));
 }
