@@ -19,6 +19,7 @@ final locator = GetIt.instance;
 void setUpLocator({bool mockDataSource = false}) {
   // bloc
   locator.registerFactory(() => BoardBloc(
+        createInitialBoard: locator(),
         renameBoard: locator(),
         createBoard: locator(),
         readBoards: locator(),
@@ -44,6 +45,7 @@ void setUpLocator({bool mockDataSource = false}) {
   locator.registerLazySingleton(() => UpdateTaskUseCase(locator()));
 
   // board use cases
+  locator.registerLazySingleton(() => CreateInitialBoardUseCase(locator()));
   locator.registerLazySingleton(() => CreateBoardUseCase(locator()));
   locator.registerLazySingleton(
       () => DeleteBoardUseCase(boardRepo: locator(), taskRepo: locator()));

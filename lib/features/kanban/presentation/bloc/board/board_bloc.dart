@@ -12,6 +12,7 @@ part 'board_state.dart';
 class BoardBloc extends Bloc<BoardEvent, BoardState> {
   final RenameBoardUseCase renameBoard;
   final CreateBoardUseCase createBoard;
+  final CreateInitialBoardUseCase createInitialBoard;
   final ReadBoardsUseCase readBoards;
   final UpdateBoardIndexUseCase updateBoardIndex;
   final DeleteBoardUseCase deleteBoard;
@@ -20,6 +21,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
   late StreamSubscription _boardSubscription;
 
   BoardBloc({
+    required this.createInitialBoard,
     required this.createBoard,
     required this.readBoards,
     required this.renameBoard,
@@ -51,7 +53,6 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
         (snapshot) => add(BoardsListUpdate(snapshot)),
         onError: (e) => add(HandleBoardException(error: e)),
         onDone: () => Log.debug('_boardSubscription is `done`!'),
-        cancelOnError: true,
       );
     } catch (e) {
       add(HandleBoardException(error: e));
@@ -139,8 +140,18 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     HandleBoardException event,
     Emitter<BoardState> emit,
   ) async {
+    emit(BoardLoadingState());
+
     final error = event.error;
     Log.error(error.runtimeType, error: error);
+
+    if (error is StateError) {
+      await createInitialBoard();
+      add(ReloadBoards());
+
+      return;
+    }
+
     emit(BoardErrorState(error.runtimeType.toString(), error: error));
   }
 
