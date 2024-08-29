@@ -3,7 +3,7 @@ import 'package:vida_a_dois/features/kanban/domain/entities/task_entity.dart';
 import 'package:vida_a_dois/features/kanban/util/flatten_task_map.dart';
 
 void main() {
-  final task = Task(
+  const task = Task(
     id: '123',
     title: 'do something',
     status: 'to do',

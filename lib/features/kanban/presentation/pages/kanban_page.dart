@@ -93,8 +93,9 @@ class _KanbanPageState extends State<KanbanPage> {
               if (state.boards.isEmpty) {
                 return Center(
                   child: InfoDialog(
-                    l10n.createYourFirstBoard,
+                    key: const Key('noBoardsYetDialog'),
                     title: l10n.noBoardsYet,
+                    l10n.createYourFirstBoard,
                     onAccept: createBoard,
                   ),
                 );

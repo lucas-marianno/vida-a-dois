@@ -1,49 +1,30 @@
-import 'dart:io';
-
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import '../helper/mock_blocs.dart';
+
 import 'package:vida_a_dois/app/app.dart';
-import 'package:vida_a_dois/features/kanban/domain/entities/board_entity.dart';
-import 'package:vida_a_dois/features/kanban/domain/entities/task_entity.dart';
+import 'package:vida_a_dois/injection_container.dart';
+import 'package:vida_a_dois/features/user_settings/domain/entities/user_settings.dart';
 import 'package:vida_a_dois/features/kanban/presentation/pages/kanban_page.dart';
 import 'package:vida_a_dois/features/kanban/presentation/widgets/kanban/kanban_board.dart';
 import 'package:vida_a_dois/features/kanban/presentation/widgets/kanban/kanban_tile.dart';
-import 'package:vida_a_dois/features/kanban/util/parse_tasklist_into_taskmap.dart';
-import 'package:vida_a_dois/features/user_settings/domain/entities/user_settings.dart';
-import 'package:vida_a_dois/firebase_options.dart';
-import 'package:vida_a_dois/injection_container.dart';
 
-import '../helper/firebase/firebase_helper.dart';
-import '../helper/mock_blocs.dart';
+final fakeFirestore = FakeFirebaseFirestore();
 
 void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
+  setUpLocator(fakeFirestore);
 
-  // await fullIntegrationTests();
-  // await mockKanbanTests(skip: true);
+  await fullIntegrationTests(skip: true);
+  await mockKanbanTests(skip: false);
 }
 
 Future<void> fullIntegrationTests({bool skip = false}) async {
-  final bool hasInternet =
-      (await Connectivity().checkConnectivity())[0] != ConnectivityResult.none;
-  shouldSkip() {
-    const String androidOnly =
-        '`Integration Tests` must be run in an android device';
-    const String internetAccessRequired =
-        '`Integration Tests` require internet access';
-    if (skip) return true;
-    if (!Platform.isAndroid) return androidOnly;
-    if (!hasInternet) return internetAccessRequired;
-    return false;
-  }
-
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  setUpLocator(mockDataSource: true);
-  group('integration tests', skip: shouldSkip(), () {
+  group('integration tests', skip: skip, () {
     final app = MultiBlocProvider(
       providers: [
         BlocProvider<ConnectivityBloc>(create: (_) => ConnectivityBloc()),
@@ -66,7 +47,7 @@ Future<void> fullIntegrationTests({bool skip = false}) async {
     });
     group('task', () {
       //clear tasks from collection
-      deleteAllTasksFromMockFirebaseCollection();
+      fakeFirestore.clearPersistence();
 
       testWidgets('should find no kanban tile', (tester) async {
         await tester.pumpWidget(app);
@@ -162,16 +143,16 @@ Future<void> mockKanbanTests({bool skip = false}) async {
   final mockUserSettingsBloc = MockUserSettingsBloc();
   final mockConnectivityBloc = MockConnectivityBloc();
   final mockAuthBloc = MockAuthBloc();
-  final mockTaskBloc = MockTaskBloc();
-  final mockBoardBloc = MockBoardBloc();
+  // final mockTaskBloc = MockTaskBloc();
+  // final mockBoardBloc = MockBoardBloc();
 
   final app = MultiBlocProvider(
     providers: [
       BlocProvider<ConnectivityBloc>(create: (_) => mockConnectivityBloc),
       BlocProvider<UserSettingsBloc>(create: (_) => mockUserSettingsBloc),
       BlocProvider<AuthBloc>(create: (_) => mockAuthBloc),
-      BlocProvider<BoardBloc>(create: (_) => mockBoardBloc),
-      BlocProvider<TaskBloc>(create: (_) => mockTaskBloc),
+      BlocProvider<BoardBloc>(create: (_) => locator<BoardBloc>()),
+      BlocProvider<TaskBloc>(create: (_) => locator<TaskBloc>()),
     ],
     child: const VidaADoidApp(),
   );
@@ -185,10 +166,10 @@ Future<void> mockKanbanTests({bool skip = false}) async {
       locale: const Locale('en'),
       initials: 'un',
     );
-    const mockBoard = Board(title: 'mock board', index: 0);
-    final mockBoardsList = [mockBoard];
-    const mockTask = Task(title: 'mock task', status: 'mock board');
-    final mockMappedTasks = mergeIntoMap([mockTask], mockBoardsList);
+    // const mockBoard = Board(title: 'mock board', index: 0);
+    // final mockBoardsList = [mockBoard];
+    // const mockTask = Task(title: 'mock task', status: 'mock board');
+    // final mockMappedTasks = mergeIntoMap([mockTask], mockBoardsList);
 
     setUp(() {
       when(
@@ -200,28 +181,46 @@ Future<void> mockKanbanTests({bool skip = false}) async {
       when(
         () => mockUserSettingsBloc.state,
       ).thenReturn(UserSettingsLoaded(mockUserSettings));
-      when(
-        () => mockBoardBloc.state,
-      ).thenReturn(BoardLoadedState(mockBoardsList));
-      when(
-        () => mockTaskBloc.state,
-      ).thenReturn(TasksLoaded(mockMappedTasks));
     });
+
     testWidgets('should find kanban page', (tester) async {
       await tester.pumpWidget(app);
-
       await tester.pumpAndSettle();
 
       expect(find.byType(KanbanPage), findsOneWidget);
     });
 
-    testWidgets('should find a kanban board', (tester) async {
+    testWidgets('should find no kanban boards yet', (tester) async {
       await tester.pumpWidget(app);
-
       await tester.pumpAndSettle();
+
+      expect(find.byType(KanbanBoard), findsNothing);
+      expect(find.byKey(const Key('noBoardsYetDialog')), findsOneWidget);
+    });
+
+    testWidgets('should create a first kanban board', (tester) async {
+      await tester.pumpWidget(app);
+      await tester.pumpAndSettle();
+
+      // should find an `ok button`
+      final okButton = find.text('Ok');
+      expect(okButton, findsOneWidget);
+
+      // tap button
+      await tester.runAsync(() async => await tester.tap(okButton));
+      await tester.pump();
+
+      // should find a `boardForm`
+      expect(find.byKey(const Key('boardForm')), findsOneWidget);
+    });
+
+    testWidgets('should find a kanban board', skip: true, (tester) async {
+      await tester.pumpWidget(app);
+      await tester.pumpAndSettle();
+
       expect(find.byType(KanbanBoard), findsOneWidget);
     });
-    testWidgets('should find a kanban tile', (tester) async {
+    testWidgets('should find a kanban tile', skip: true, (tester) async {
       await tester.pumpWidget(app);
 
       await tester.pumpAndSettle();

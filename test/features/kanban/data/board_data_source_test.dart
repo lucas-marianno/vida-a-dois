@@ -2,10 +2,9 @@ import 'dart:async';
 
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:vida_a_dois/features/kanban/data/cloud_firestore/firestore_references.dart';
 import 'package:vida_a_dois/features/kanban/data/data_sources/board_data_source.dart';
 import 'package:vida_a_dois/features/kanban/data/models/board_model.dart';
-
-import '../../../helper/firebase/fake_firestore_constants.dart';
 
 //  Future<List<BoardModel>> getBoards();
 //  Stream<List<BoardModel>> readBoards();
@@ -19,8 +18,8 @@ void main() async {
 
   group('board data source test', () {
     final fakeFirestore = FakeFirebaseFirestore();
-    final fakeFirestoreConstants = FakeFirestoreConstants(fakeFirestore);
-    final boardsRef = fakeFirestoreConstants.boardsDocReference;
+    final fakeFirestoreConstants = FirestoreReferencesImpl(fakeFirestore);
+    final boardsRef = fakeFirestoreConstants.boardsDocRef;
 
     final BoardDataSource boardDataSource =
         BoardDataSourceImpl(boardsDocReference: boardsRef);

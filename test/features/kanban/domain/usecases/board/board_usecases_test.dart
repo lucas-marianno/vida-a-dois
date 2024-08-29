@@ -11,9 +11,9 @@ void main() {
 
   final MockBoardRepository boardRepo = MockBoardRepository();
   List<Board> mockBoardsList = [
-    Board(title: 'todo', index: 0),
-    Board(title: 'in progress', index: 1),
-    Board(title: 'done', index: 2),
+    const Board(title: 'todo', index: 0),
+    const Board(title: 'in progress', index: 1),
+    const Board(title: 'done', index: 2),
   ];
 
   group('testing CreateBoardUseCase', () {
@@ -27,7 +27,7 @@ void main() {
 
     test('should call BoardRepository and not throw any errors', () async {
       // arrange
-      Board testBoard = Board(title: 'title', index: 0);
+      Board testBoard = const Board(title: 'title', index: 0);
 
       // act
       await createBoard.call(testBoard);
@@ -35,7 +35,7 @@ void main() {
 
     test('should throw EmptyNameException', () {
       // arrange
-      Board testBoard = Board(title: '', index: 0);
+      Board testBoard = const Board(title: '', index: 0);
 
       // act
       final response = createBoard.call(testBoard);
@@ -45,8 +45,8 @@ void main() {
     });
     test('should throw InvalidBoardIndex', () {
       // arrange
-      Board testBoard1 = Board(title: 'title', index: 999);
-      Board testBoard2 = Board(title: 'title', index: -1);
+      Board testBoard1 = const Board(title: 'title', index: 999);
+      Board testBoard2 = const Board(title: 'title', index: -1);
 
       // act
       final response1 = createBoard.call(testBoard1);
@@ -58,7 +58,7 @@ void main() {
     });
     test('should throw NameNotUniqueException', () {
       // arrange
-      Board testBoard = Board(title: 'todo', index: 0);
+      Board testBoard = const Board(title: 'todo', index: 0);
 
       // act
       final response = createBoard.call(testBoard);

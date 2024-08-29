@@ -16,25 +16,26 @@ class BoardForm {
       isScrollControlled: true,
       context: context,
       builder: (context) {
-        return _EditBoardForm(
+        return EditBoardForm(
           board,
           formType: initAsReadOnly ? FormType.read : FormType.create,
+          key: const Key('boardForm'),
         );
       },
     );
   }
 }
 
-class _EditBoardForm extends StatefulWidget {
+class EditBoardForm extends StatefulWidget {
   final Board board;
   final FormType formType;
-  const _EditBoardForm(this.board, {required this.formType});
+  const EditBoardForm(this.board, {super.key, required this.formType});
 
   @override
-  State<_EditBoardForm> createState() => _EditBoardFormState();
+  State<EditBoardForm> createState() => _EditBoardFormState();
 }
 
-class _EditBoardFormState extends State<_EditBoardForm> {
+class _EditBoardFormState extends State<EditBoardForm> {
   late BoardBloc boardBloc;
   late Board newBoard;
   late bool readOnly;
