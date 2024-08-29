@@ -26,7 +26,7 @@ class BoardDataSourceImpl extends BoardDataSource {
   @override
   Future<void> updateBoards(List<BoardModel> boardsList) async {
     await boardsDocReference.set({
-      'status': boardsList.map((board) => board.title),
+      'status': boardsList.map((board) => board.title).toList(),
     });
   }
 

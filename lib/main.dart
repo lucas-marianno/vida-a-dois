@@ -15,7 +15,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  setUpLocator();
+  setUpLocator(mockDataSource: true);
 
   Log.initializing('main');
   Log.initializing('$MultiBlocProvider');
