@@ -7,7 +7,7 @@ import 'package:vida_a_dois/core/util/dialogs/info_dialog.dart';
 import 'package:vida_a_dois/core/widgets/divider_with_label.dart';
 import 'package:vida_a_dois/core/widgets/editable_list_tile.dart';
 import 'package:vida_a_dois/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:vida_a_dois/features/user_settings/bloc/user_settings_bloc.dart';
+import 'package:vida_a_dois/features/user_settings/presentation/bloc/user_settings_bloc.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});

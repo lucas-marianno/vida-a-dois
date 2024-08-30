@@ -1,25 +1,28 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+
 import 'package:vida_a_dois/core/i18n/l10n.dart';
 import 'package:vida_a_dois/core/util/logger/logger.dart';
+
 import 'package:vida_a_dois/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:vida_a_dois/features/user_settings/data/user_data.dart';
+import 'package:vida_a_dois/features/user_settings/data/user_settings_data_source.dart';
 import 'package:vida_a_dois/features/user_settings/domain/entities/user_settings.dart';
 
 part 'user_settings_event.dart';
 part 'user_settings_state.dart';
 
+/// TODO: [UserSettingsBloc] is complete garbage, refactor everything
 class UserSettingsBloc extends Bloc<UserSettingsEvent, UserSettingsState> {
-  final FirebaseAuth firebaseAuth;
+  final UserSettingsDataSource userSettingsDataSource;
   late StreamSubscription subscription;
+
   UserSettings? currentUserSettings;
 
-  UserSettingsBloc(this.firebaseAuth) : super(UserSettingsLoading()) {
-    on<UserSettingsEvent>(_logEvents);
+  UserSettingsBloc(this.userSettingsDataSource) : super(UserSettingsLoading()) {
     on<LoadUserSettings>(_onLoadUserSettings);
     on<ChangeLocale>(_onChangeLocaleEvent);
     on<ChangeThemeMode>(_onChangeThemeMode);
@@ -32,24 +35,6 @@ class UserSettingsBloc extends Bloc<UserSettingsEvent, UserSettingsState> {
 
     logger.initializing(UserSettingsBloc);
   }
-  _logEvents(UserSettingsEvent event, _) {
-    switch (event) {
-      case _UserSettingsUpdated():
-        logger.trace(
-          '$UserSettingsBloc $_UserSettingsUpdated \n'
-          ' ${event.userSettings.toJson}',
-        );
-        break;
-      case _HandleUserSettingsError():
-        logger.warning(
-          '$UserSettingsBloc $_HandleUserSettingsError',
-          error: event.error,
-        );
-        break;
-      default:
-        logger.trace('$UserSettingsBloc ${event.runtimeType} \n $event');
-    }
-  }
 
   _onLoadUserSettings(
     LoadUserSettings event,
@@ -58,7 +43,7 @@ class UserSettingsBloc extends Bloc<UserSettingsEvent, UserSettingsState> {
     emit(UserSettingsLoading());
 
     //check if user has settings configured
-    final userSettings = await UserSettingsDataSource.getSettings(event.uid);
+    final userSettings = await userSettingsDataSource.getSettings(event.uid);
     if (userSettings == null) {
       add(_CreateSettingsForCurrentUser());
       return;
@@ -79,21 +64,21 @@ class UserSettingsBloc extends Bloc<UserSettingsEvent, UserSettingsState> {
     if (currentUserSettings!.locale == event.locale) return;
     currentUserSettings!.locale = event.locale;
 
-    await UserSettingsDataSource.update(currentUserSettings!);
+    await userSettingsDataSource.update(currentUserSettings!);
   }
 
   _onChangeThemeMode(ChangeThemeMode event, __) async {
     if (currentUserSettings!.themeMode == event.themeMode) return;
 
     currentUserSettings!.themeMode = event.themeMode;
-    await UserSettingsDataSource.update(currentUserSettings!);
+    await userSettingsDataSource.update(currentUserSettings!);
   }
 
   _onChangeUserName(ChangeUserName event, _) async {
     if (currentUserSettings!.userName == event.userName) return;
     currentUserSettings!.userName = event.userName;
 
-    await UserSettingsDataSource.update(currentUserSettings!);
+    await userSettingsDataSource.update(currentUserSettings!);
   }
 
   _onChangeUserInitials(ChangeUserInitials event, _) async {
@@ -101,7 +86,7 @@ class UserSettingsBloc extends Bloc<UserSettingsEvent, UserSettingsState> {
     currentUserSettings!.initials =
         event.initials.substring(0, 2).toUpperCase();
 
-    await UserSettingsDataSource.update(currentUserSettings!);
+    await userSettingsDataSource.update(currentUserSettings!);
   }
 
   _onListenToSettingsChanges(
@@ -109,12 +94,11 @@ class UserSettingsBloc extends Bloc<UserSettingsEvent, UserSettingsState> {
     Emitter<UserSettingsState> emmit,
   ) {
     try {
-      subscription = UserSettingsDataSource.read(event.uid).listen(
-        (data) => add(_UserSettingsUpdated(data)),
-        cancelOnError: true,
-        onError: (e) => add(_HandleUserSettingsError(e)),
-        onDone: () => logger.trace('$UserSettingsBloc Stream is done!'),
-      );
+      subscription = userSettingsDataSource.read(event.uid).listen(
+            (data) => add(_UserSettingsUpdated(data)),
+            cancelOnError: false,
+            onError: (e) => add(_HandleUserSettingsError(e)),
+          );
     } catch (e) {
       add(_HandleUserSettingsError(e));
     }
@@ -130,8 +114,9 @@ class UserSettingsBloc extends Bloc<UserSettingsEvent, UserSettingsState> {
     emit(UserSettingsLoaded(currentUserSettings!));
   }
 
+  /// TODO: [_onCreateUserSettings] is garbage, it should not be here. And this algo is error prone
   _onCreateUserSettings(_, __) async {
-    final user = firebaseAuth.currentUser!;
+    final user = userSettingsDataSource.currentUser!;
     final userName = user.displayName ?? user.email!.split('@')[0];
 
     logger.trace('$AuthBloc: current user: $user');
@@ -140,12 +125,13 @@ class UserSettingsBloc extends Bloc<UserSettingsEvent, UserSettingsState> {
     if (userName.isEmpty) {
       initials = user.email!.substring(0, 2);
     } else {
+      // TODO: this will throw exception depending on user displayName, it's shit
       initials = userName
           .splitMapJoin(' ', onMatch: (_) => '', onNonMatch: (m) => m[0])
           .substring(0, 2);
     }
 
-    await UserSettingsDataSource.create(UserSettings(
+    await userSettingsDataSource.create(UserSettings(
       uid: user.uid,
       userName: userName,
       themeMode: ThemeMode.system,
@@ -161,6 +147,18 @@ class UserSettingsBloc extends Bloc<UserSettingsEvent, UserSettingsState> {
     Emitter<UserSettingsState> emit,
   ) async {
     emit(UserSettingsError(event.error));
+  }
+
+  @override
+  void onChange(Change<UserSettingsState> change) {
+    logger.debug('$UserSettingsBloc: ${change.nextState}');
+    super.onChange(change);
+  }
+
+  @override
+  void onEvent(UserSettingsEvent event) {
+    logger.trace('$UserSettingsBloc: ${event.runtimeType} \n $event');
+    super.onEvent(event);
   }
 
   @override

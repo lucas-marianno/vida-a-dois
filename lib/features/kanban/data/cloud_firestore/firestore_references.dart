@@ -1,16 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class FirestoreReferences {
-  FirestoreReferences(this.firestoreInstance);
   final FirebaseFirestore firestoreInstance;
+  final FirebaseAuth firebaseAuth;
+  FirestoreReferences({
+    required this.firestoreInstance,
+    required this.firebaseAuth,
+  });
 
   CollectionReference get kanbanCollectionRef;
   DocumentReference get boardsDocRef;
   CollectionReference get taskCollectionRef;
+  CollectionReference get userSettingsCollectionRef;
 }
 
 class FirestoreReferencesImpl extends FirestoreReferences {
-  FirestoreReferencesImpl(super.firestoreInstance);
+  FirestoreReferencesImpl({
+    required super.firestoreInstance,
+    required super.firebaseAuth,
+  });
 
   @override
   CollectionReference get kanbanCollectionRef =>
@@ -21,4 +30,8 @@ class FirestoreReferencesImpl extends FirestoreReferences {
 
   @override
   CollectionReference get taskCollectionRef => boardsDocRef.collection('tasks');
+
+  @override
+  CollectionReference get userSettingsCollectionRef =>
+      firestoreInstance.collection("userSettings");
 }
