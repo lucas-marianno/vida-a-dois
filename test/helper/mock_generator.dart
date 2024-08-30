@@ -1,6 +1,5 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:mockito/annotations.dart';
-import 'package:vida_a_dois/features/kanban/data/data_sources/board_data_source.dart';
-import 'package:vida_a_dois/features/kanban/data/data_sources/task_data_source.dart';
 import 'package:vida_a_dois/features/kanban/domain/repository/board_repository.dart';
 import 'package:vida_a_dois/features/kanban/domain/repository/task_repository.dart';
 
@@ -12,7 +11,8 @@ import 'package:vida_a_dois/features/kanban/domain/repository/task_repository.da
 @GenerateMocks([
   TaskRepository,
   BoardRepository,
-  TaskDataSource,
-  BoardDataSource,
+  // TaskDataSource,
+  // BoardDataSource,
+  Connectivity,
 ])
 void main() {}

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vida_a_dois/core/connectivity/bloc/connectivity_bloc.dart';
 import 'package:vida_a_dois/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:vida_a_dois/features/user_settings/bloc/user_settings_bloc.dart';
+import 'package:vida_a_dois/features/user_settings/presentation/bloc/user_settings_bloc.dart';
 import 'package:vida_a_dois/features/kanban/presentation/bloc/board/board_bloc.dart';
 import 'package:vida_a_dois/features/kanban/presentation/bloc/task/task_bloc.dart';
 
@@ -12,7 +12,7 @@ export 'package:bloc_test/bloc_test.dart';
 
 export 'package:vida_a_dois/core/connectivity/bloc/connectivity_bloc.dart';
 export 'package:vida_a_dois/features/auth/presentation/bloc/auth_bloc.dart';
-export 'package:vida_a_dois/features/user_settings/bloc/user_settings_bloc.dart';
+export 'package:vida_a_dois/features/user_settings/presentation/bloc/user_settings_bloc.dart';
 export 'package:vida_a_dois/features/kanban/presentation/bloc/board/board_bloc.dart';
 export 'package:vida_a_dois/features/kanban/presentation/bloc/task/task_bloc.dart';
 
