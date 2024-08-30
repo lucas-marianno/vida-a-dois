@@ -1,7 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:vida_a_dois/core/connectivity/bloc/connectivity_bloc.dart';
+import 'package:vida_a_dois/features/user_settings/data/user_settings_data_source.dart';
+import 'package:vida_a_dois/features/user_settings/presentation/bloc/user_settings_bloc.dart';
+
 import 'package:vida_a_dois/features/auth/data/auth_data.dart';
+import 'package:vida_a_dois/features/auth/presentation/bloc/auth_bloc.dart';
 
 import 'package:vida_a_dois/features/kanban/data/cloud_firestore/firestore_references.dart';
 import 'package:vida_a_dois/features/kanban/data/data_sources/board_data_source.dart';
@@ -16,15 +22,18 @@ import 'package:vida_a_dois/features/kanban/domain/usecases/task_usecases.dart';
 
 import 'package:vida_a_dois/features/kanban/presentation/bloc/board/board_bloc.dart';
 import 'package:vida_a_dois/features/kanban/presentation/bloc/task/task_bloc.dart';
-import 'package:vida_a_dois/features/user_settings/bloc/user_settings_bloc.dart';
 
 final locator = GetIt.instance;
 
 void setUpLocator(
   FirebaseFirestore firebaseFirestore,
   FirebaseAuth firebaseAuth,
+  Connectivity connectivity,
 ) {
   // blocs
+  locator.registerFactory(() => ConnectivityBloc(connectivity));
+  locator.registerFactory(() => AuthBloc(locator()));
+  locator.registerFactory(() => UserSettingsBloc(locator()));
   locator.registerFactory(() => BoardBloc(
         createInitialBoard: locator(),
         renameBoard: locator(),
@@ -41,7 +50,6 @@ void setUpLocator(
       updateTaskImportance: locator(),
       updateTaskStatus: locator(),
       deleteTask: locator()));
-  locator.registerFactory(() => UserSettingsBloc(firebaseAuth));
 
   // task use cases
   locator.registerLazySingleton(() => CreateTaskUseCase(locator(), locator()));
@@ -69,13 +77,17 @@ void setUpLocator(
       () => TaskRepositoryImpl(locator()));
 
   // data sources
-  locator.registerLazySingleton<BoardDataSource>(() => BoardDataSourceImpl(
-      boardsDocReference:
-          FirestoreReferencesImpl(firebaseFirestore).boardsDocRef));
-  locator.registerLazySingleton<TaskDataSource>(() => TaskDataSourceImpl(
-      taskCollectionReference:
-          FirestoreReferencesImpl(firebaseFirestore).taskCollectionRef));
-
+  locator.registerLazySingleton<BoardDataSource>(
+      () => BoardDataSourceImpl(firestoreReferences: locator()));
+  locator.registerLazySingleton<TaskDataSource>(
+      () => TaskDataSourceImpl(firestoreReferences: locator()));
   locator.registerLazySingleton<AuthDataSource>(
       () => AuthDataSourceImpl(firebaseAuth));
+  locator.registerLazySingleton<UserSettingsDataSource>(
+      () => UserSettingsDataSourceImpl(firestoreReferences: locator()));
+
+  // firestore references
+  locator.registerLazySingleton<FirestoreReferences>(() =>
+      FirestoreReferencesImpl(
+          firestoreInstance: firebaseFirestore, firebaseAuth: firebaseAuth));
 }

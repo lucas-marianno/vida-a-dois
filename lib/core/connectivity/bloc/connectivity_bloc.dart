@@ -5,75 +5,70 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:equatable/equatable.dart';
 import 'package:vida_a_dois/core/util/logger/logger.dart';
 
+export 'package:connectivity_plus/connectivity_plus.dart';
+
 part 'connectivity_event.dart';
 part 'connectivity_state.dart';
 
 class ConnectivityBloc extends Bloc<ConnectivityEvent, ConnectivityState> {
-  late StreamSubscription _connection;
-  ConnectivityResult? _connectionStatus;
-  ConnectivityBloc() : super(ConnectivityLoading()) {
-    on<ConnectivityEvent>(_logEvents);
-    on<CheckConnectivity>(_onCheckConnectivityEvent);
-    on<GotResponse>(_onGotResponseEvent);
+  final Connectivity connectivity;
+  late StreamSubscription _streamSubscription;
+
+  ConnectivityBloc(this.connectivity) : super(ConnectivityLoading()) {
     on<_ListenToConnectivityChanges>(_onListenToConnectivityChanges);
+    on<_GotResponse>(_onGotResponse);
 
     logger.initializing(ConnectivityBloc);
-    add(CheckConnectivity());
-  }
-
-  _logEvents(ConnectivityEvent event, _) {
-    logger.trace('$ConnectivityBloc $ConnectivityEvent \n $event');
-  }
-
-  _onCheckConnectivityEvent(_, Emitter<ConnectivityState> emit) async {
-    emit(ConnectivityLoading());
-
-    try {
-      final connectionStatus = await Connectivity().checkConnectivity();
-
-      if (connectionStatus[0] == _connectionStatus) {
-        await Future.delayed(const Duration(seconds: 3));
-      }
-
-      add(GotResponse(connectionStatus[0]));
-    } catch (e) {
-      emit(ConnectivityErrorState(e));
-      add(_ListenToConnectivityChanges());
-    }
+    add(_ListenToConnectivityChanges());
   }
 
   _onListenToConnectivityChanges(_, Emitter<ConnectivityState> emit) {
-    _connection = Connectivity().onConnectivityChanged.listen(
-          (response) => add(GotResponse(response[0])),
-          onError: (e) => emit(ConnectivityErrorState(e)),
-          cancelOnError: false,
-        );
+    emit(ConnectivityLoading());
+    _streamSubscription = connectivity.onConnectivityChanged.listen(
+      (result) => add(_GotResponse(result.first)),
+      onError: (e) => emit(ConnectivityError(e)),
+    );
   }
 
-  _onGotResponseEvent(
-      GotResponse event, Emitter<ConnectivityState> emit) async {
-    _connectionStatus = event.result;
-
-    if (_connectionStatus == ConnectivityResult.mobile ||
-        _connectionStatus == ConnectivityResult.wifi ||
-        _connectionStatus == ConnectivityResult.ethernet) {
-      logger.info("$ConnectivityBloc $HasInternetConnection");
-      emit(HasInternetConnection());
-    } else if (_connectionStatus == ConnectivityResult.none) {
-      logger.warning("$ConnectivityBloc $NoInternetConnection");
+  _onGotResponse(_GotResponse event, Emitter<ConnectivityState> emit) {
+    if (event.result == ConnectivityResult.none) {
       emit(NoInternetConnection());
     } else {
-      logger.error("$ConnectivityBloc $ConnectivityErrorState \n "
-          "$_connectionStatus");
-      emit(ConnectivityErrorState(_connectionStatus!));
+      emit(HasInternetConnection());
     }
-    add(_ListenToConnectivityChanges());
+  }
+
+  @override
+  void onError(Object error, StackTrace stackTrace) {
+    logger.error(
+      '$ConnectivityBloc: ${error.runtimeType}',
+      error: error,
+      stackTrace: stackTrace,
+    );
+    super.onError(error, stackTrace);
+  }
+
+  @override
+  void onChange(Change<ConnectivityState> change) {
+    final message = '$ConnectivityBloc: ${change.nextState.runtimeType}';
+    if (change.nextState is ConnectivityError) {
+      logger.warning(message);
+    } else {
+      logger.debug(message);
+    }
+    super.onChange(change);
+  }
+
+  @override
+  void onEvent(ConnectivityEvent event) {
+    logger.trace('$ConnectivityBloc: ${event.runtimeType} \n $event');
+    super.onEvent(event);
   }
 
   @override
   Future<void> close() {
     logger.trace('$ConnectivityBloc close()');
-    _connection.cancel();
+    _streamSubscription.cancel();
     return super.close();
   }
 }

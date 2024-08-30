@@ -13,10 +13,10 @@ final class HasInternetConnection extends ConnectivityState {}
 
 final class NoInternetConnection extends ConnectivityState {}
 
-final class ConnectivityErrorState extends ConnectivityState {
+final class ConnectivityError extends ConnectivityState {
   final Object error;
 
-  const ConnectivityErrorState(this.error);
+  const ConnectivityError(this.error);
 
   @override
   List<Object> get props => [error];
