@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:vida_a_dois/features/kanban/data/cloud_firestore/firestore_references.dart';
 import 'package:vida_a_dois/features/kanban/data/models/task_model.dart';
 
 abstract class TaskDataSource {
-  TaskDataSource({required this.taskCollectionReference});
-  final CollectionReference taskCollectionReference;
+  final FirestoreReferences firestoreReferences;
+  TaskDataSource({required this.firestoreReferences});
 
   Future<List<TaskModel>> getTaskList();
   Stream<List<TaskModel>> readTasks();
@@ -13,7 +14,9 @@ abstract class TaskDataSource {
 }
 
 class TaskDataSourceImpl extends TaskDataSource {
-  TaskDataSourceImpl({required super.taskCollectionReference});
+  final CollectionReference taskCollectionReference;
+  TaskDataSourceImpl({required super.firestoreReferences})
+      : taskCollectionReference = firestoreReferences.taskCollectionRef;
 
   @override
   Future<List<TaskModel>> getTaskList() async {

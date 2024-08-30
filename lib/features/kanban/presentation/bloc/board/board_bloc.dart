@@ -50,7 +50,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
         logger.warning('$BoardBloc $_BoardException', error: event.error);
         break;
       default:
-        logger.trace('$BoardBloc $BoardEvent \n $event');
+        logger.trace('$BoardBloc ${event.runtimeType} \n $event');
     }
   }
 

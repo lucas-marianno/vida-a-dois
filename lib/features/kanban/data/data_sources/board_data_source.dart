@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:vida_a_dois/features/kanban/data/cloud_firestore/firestore_references.dart';
 import 'package:vida_a_dois/features/kanban/data/models/board_model.dart';
 
 abstract class BoardDataSource {
-  BoardDataSource({required this.boardsDocReference});
-  final DocumentReference boardsDocReference;
+  final FirestoreReferences firestoreReferences;
+  const BoardDataSource({required this.firestoreReferences});
 
   Future<List<BoardModel>> getBoards();
   Stream<List<BoardModel>> readBoards();
@@ -11,7 +12,9 @@ abstract class BoardDataSource {
 }
 
 class BoardDataSourceImpl extends BoardDataSource {
-  BoardDataSourceImpl({required super.boardsDocReference});
+  final DocumentReference boardsDocReference;
+  BoardDataSourceImpl({required super.firestoreReferences})
+      : boardsDocReference = firestoreReferences.boardsDocRef;
 
   @override
   Future<List<BoardModel>> getBoards() async {

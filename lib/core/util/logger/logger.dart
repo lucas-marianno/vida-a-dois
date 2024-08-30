@@ -1,13 +1,6 @@
 import 'package:logger/logger.dart';
 export 'package:logger/src/log_level.dart';
 
-late final Log logger;
-
-void initLogger(Log log) {
-  logger = log;
-  logger.initializing('Logger');
-}
-
 /// Logger that logs everything...
 ///
 /// ```dart
@@ -18,6 +11,13 @@ void initLogger(Log log) {
 /// e: "Error log",
 /// f: "What a fatal log",
 /// ```
+late final Log logger;
+
+void initLogger(Log log) {
+  logger = log;
+  logger.initializing('Logger');
+}
+
 class Log {
   final Level level;
   final bool verbose;
