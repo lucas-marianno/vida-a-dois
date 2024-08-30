@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:vida_a_dois/core/i18n/l10n.dart';
 import 'package:vida_a_dois/core/util/logger/logger.dart';
 import 'package:vida_a_dois/features/auth/data/auth_data.dart';
+import 'package:vida_a_dois/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:vida_a_dois/features/user_settings/data/user_data.dart';
 import 'package:vida_a_dois/features/user_settings/domain/entities/user_settings.dart';
 
@@ -16,6 +17,7 @@ class UserSettingsBloc extends Bloc<UserSettingsEvent, UserSettingsState> {
   late StreamSubscription subscription;
   UserSettings? currentUserSettings;
   UserSettingsBloc() : super(UserSettingsLoading()) {
+    on<UserSettingsEvent>(_logEvents);
     on<LoadUserSettings>(_onLoadUserSettings);
     on<ChangeLocale>(_onChangeLocaleEvent);
     on<ChangeThemeMode>(_onChangeThemeMode);
@@ -26,14 +28,31 @@ class UserSettingsBloc extends Bloc<UserSettingsEvent, UserSettingsState> {
     on<_CreateSettingsForCurrentUser>(_onCreateUserSettings);
     on<_HandleUserSettingsError>(_onHandleUserSettingsError);
 
-    Log.initializing(UserSettingsBloc);
+    logger.initializing(UserSettingsBloc);
+  }
+  _logEvents(UserSettingsEvent event, _) {
+    switch (event) {
+      case _UserSettingsUpdated():
+        logger.trace(
+          '$UserSettingsBloc $_UserSettingsUpdated \n'
+          ' ${event.userSettings.toJson}',
+        );
+        break;
+      case _HandleUserSettingsError():
+        logger.warning(
+          '$UserSettingsBloc $_HandleUserSettingsError',
+          error: event.error,
+        );
+        break;
+      default:
+        logger.trace('$UserSettingsBloc ${event.runtimeType} \n $event');
+    }
   }
 
   _onLoadUserSettings(
     LoadUserSettings event,
     Emitter<UserSettingsState> emit,
   ) async {
-    Log.trace('$UserSettingsBloc $LoadUserSettings \n $event');
     emit(UserSettingsLoading());
 
     //check if user has settings configured
@@ -46,8 +65,6 @@ class UserSettingsBloc extends Bloc<UserSettingsEvent, UserSettingsState> {
   }
 
   _onChangeLocaleEvent(ChangeLocale event, __) async {
-    Log.trace("$UserSettingsBloc $ChangeLocale \n $event");
-
     if (!L10n.all.contains(event.locale)) {
       add(_HandleUserSettingsError(
         UnimplementedError(
@@ -64,8 +81,6 @@ class UserSettingsBloc extends Bloc<UserSettingsEvent, UserSettingsState> {
   }
 
   _onChangeThemeMode(ChangeThemeMode event, __) async {
-    Log.trace('$UserSettingsBloc $ChangeThemeMode \n $event');
-
     if (currentUserSettings!.themeMode == event.themeMode) return;
 
     currentUserSettings!.themeMode = event.themeMode;
@@ -73,8 +88,6 @@ class UserSettingsBloc extends Bloc<UserSettingsEvent, UserSettingsState> {
   }
 
   _onChangeUserName(ChangeUserName event, _) async {
-    Log.trace('$UserSettingsBloc $ChangeUserName \n $event');
-
     if (currentUserSettings!.userName == event.userName) return;
     currentUserSettings!.userName = event.userName;
 
@@ -82,8 +95,6 @@ class UserSettingsBloc extends Bloc<UserSettingsEvent, UserSettingsState> {
   }
 
   _onChangeUserInitials(ChangeUserInitials event, _) async {
-    Log.trace('$UserSettingsBloc $ChangeUserInitials \n $event');
-
     if (currentUserSettings?.initials == event.initials) return;
     currentUserSettings!.initials =
         event.initials.substring(0, 2).toUpperCase();
@@ -95,17 +106,14 @@ class UserSettingsBloc extends Bloc<UserSettingsEvent, UserSettingsState> {
     _ListenToSettingsChanges event,
     Emitter<UserSettingsState> emmit,
   ) {
-    Log.trace('$UserSettingsBloc $_ListenToSettingsChanges');
-
     try {
       subscription = UserSettingsDataSource.read(event.uid).listen(
         (data) => add(_UserSettingsUpdated(data)),
         cancelOnError: true,
         onError: (e) => add(_HandleUserSettingsError(e)),
-        onDone: () => Log.trace('$UserSettingsBloc Stream is done!'),
+        onDone: () => logger.trace('$UserSettingsBloc Stream is done!'),
       );
     } catch (e) {
-      Log.warning('$UserSettingsBloc $LoadUserSettings error!');
       add(_HandleUserSettingsError(e));
     }
   }
@@ -114,11 +122,6 @@ class UserSettingsBloc extends Bloc<UserSettingsEvent, UserSettingsState> {
     _UserSettingsUpdated event,
     Emitter<UserSettingsState> emit,
   ) {
-    Log.trace(
-      '$UserSettingsBloc $_UserSettingsUpdated \n'
-      ' ${event.userSettings.toJson}',
-    );
-
     if (event.userSettings == currentUserSettings) return;
     currentUserSettings = event.userSettings;
 
@@ -129,10 +132,7 @@ class UserSettingsBloc extends Bloc<UserSettingsEvent, UserSettingsState> {
     final user = AuthData.currentUser!;
     final userName = user.displayName ?? user.email!.split('@')[0];
 
-    Log.trace(
-      '$UserSettingsBloc $_CreateSettingsForCurrentUser\n'
-      'current user: $user',
-    );
+    logger.trace('$AuthBloc: current user: $user');
 
     late final String initials;
     if (userName.isEmpty) {
@@ -158,15 +158,12 @@ class UserSettingsBloc extends Bloc<UserSettingsEvent, UserSettingsState> {
     _HandleUserSettingsError event,
     Emitter<UserSettingsState> emit,
   ) async {
-    Log.error('$UserSettingsBloc $_HandleUserSettingsError',
-        error: event.error);
-
     emit(UserSettingsError(event.error));
   }
 
   @override
   Future<void> close() {
-    Log.trace('$UserSettingsBloc closed');
+    logger.trace('$UserSettingsBloc closed');
     subscription.cancel();
     return super.close();
   }

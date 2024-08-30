@@ -28,34 +28,43 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     required this.updateBoardIndex,
     required this.deleteBoard,
   }) : super(BoardLoadingState()) {
+    on<BoardEvent>(_logEvents);
     on<BoardInitialEvent>(_onBoardInitialEvent);
     on<BoardsListUpdate>(_onBoardStreamDataUpdate);
     on<CreateBoardEvent>(_onCreateBoardEvent);
     on<RenameBoardEvent>(_onRenameBoardEvent);
     on<EditBoardEvent>(_onEditBoardEvent);
     on<DeleteBoardEvent>(_onDeleteBoardEvent);
-    on<HandleBoardException>(_onHandleBoardException);
+    on<_BoardException>(_onHandleBoardException);
     on<ReloadBoards>(_onReloadBoards);
 
-    Log.initializing(BoardBloc);
     add(BoardInitialEvent());
   }
+  _logEvents(BoardEvent event, _) {
+    switch (event) {
+      case BoardInitialEvent():
+        logger.initializing(BoardBloc);
+        break;
+      case _BoardException():
+        if (event.error is StateError) break;
+        logger.warning('$BoardBloc $_BoardException', error: event.error);
+        break;
+      default:
+        logger.trace('$BoardBloc $BoardEvent \n $event');
+    }
+  }
 
-  _onBoardInitialEvent(
-    BoardInitialEvent event,
-    Emitter<BoardState> emit,
-  ) {
-    Log.trace('$BoardBloc $BoardInitialEvent \n $event');
+  _onBoardInitialEvent(_, Emitter<BoardState> emit) {
     emit(BoardLoadingState());
 
     try {
       _boardSubscription = readBoards().listen(
         (snapshot) => add(BoardsListUpdate(snapshot)),
-        onError: (e) => add(HandleBoardException(error: e)),
-        onDone: () => Log.debug('_boardSubscription is `done`!'),
+        onError: (e) => add(_BoardException(error: e)),
+        onDone: () => logger.debug('_boardSubscription is `done`!'),
       );
     } catch (e) {
-      add(HandleBoardException(error: e));
+      add(_BoardException(error: e));
     }
   }
 
@@ -67,9 +76,8 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
   /// with the last known `List<ColumnEntity>`.
   ///
   /// This event should only be called after an error has been properly
-  /// handled by [HandleBoardException] event.
+  /// handled by [_BoardException] event.
   _onReloadBoards(_, Emitter<BoardState> emit) {
-    Log.info("$BoardBloc $ReloadBoards");
     emit(BoardLoadedState(_statusList));
   }
 
@@ -79,32 +87,22 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
 
     _statusList = event.boardsList;
 
-    Log.trace('$BoardBloc $BoardsListUpdate\n$_statusList');
     emit(BoardLoadedState(_statusList));
   }
 
-  _onCreateBoardEvent(
-    CreateBoardEvent event,
-    Emitter<BoardState> emit,
-  ) async {
-    Log.trace('$BoardBloc $CreateBoardEvent \n $event');
+  _onCreateBoardEvent(CreateBoardEvent event, _) async {
     try {
       await createBoard(event.newBoard);
     } catch (e) {
-      add(HandleBoardException(error: e));
+      add(_BoardException(error: e));
     }
   }
 
-  _onRenameBoardEvent(
-    RenameBoardEvent event,
-    Emitter<BoardState> emit,
-  ) async {
-    Log.info('$BoardBloc $RenameBoardEvent \n $event');
-
+  _onRenameBoardEvent(RenameBoardEvent event, _) async {
     try {
       await renameBoard(event.board, event.newBoardTitle);
     } catch (e) {
-      add(HandleBoardException(error: e));
+      add(_BoardException(error: e));
     }
   }
 
@@ -113,31 +111,26 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     Emitter<BoardState> emit,
   ) async {
     emit(BoardLoadingState());
-    Log.trace('$BoardBloc $EditBoardEvent \n $event');
     final oldB = event.oldBoard;
     final newB = event.newBoard;
     try {
       if (oldB.title != newB.title) renameBoard(oldB, newB.title);
       if (oldB.index != newB.index) updateBoardIndex(oldB, newB.index);
     } catch (e) {
-      add(HandleBoardException(error: e));
+      add(_BoardException(error: e));
     }
   }
 
-  _onDeleteBoardEvent(
-    DeleteBoardEvent event,
-    Emitter<BoardState> emit,
-  ) async {
-    Log.trace('$BoardBloc $DeleteBoardEvent \n $event');
+  _onDeleteBoardEvent(DeleteBoardEvent event, _) async {
     try {
       await deleteBoard(event.board);
     } catch (e) {
-      add(HandleBoardException(error: e));
+      add(_BoardException(error: e));
     }
   }
 
   _onHandleBoardException(
-    HandleBoardException event,
+    _BoardException event,
     Emitter<BoardState> emit,
   ) async {
     emit(BoardLoadingState());
@@ -151,13 +144,12 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
       return;
     }
 
-    Log.error(error.runtimeType, error: error);
     emit(BoardErrorState(error.runtimeType.toString(), error: error));
   }
 
   @override
   Future<void> close() {
-    Log.trace('$BoardBloc close()');
+    logger.trace('$BoardBloc close()');
     _boardSubscription.cancel();
     return super.close();
   }

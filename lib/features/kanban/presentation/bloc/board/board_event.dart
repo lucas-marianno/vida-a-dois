@@ -56,10 +56,10 @@ final class DeleteBoardEvent extends BoardEvent {
   List<Object> get props => [board];
 }
 
-final class HandleBoardException extends BoardEvent {
+final class _BoardException extends BoardEvent {
   final Object error;
 
-  const HandleBoardException({
+  const _BoardException({
     required this.error,
   });
 

@@ -1,26 +1,27 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
+
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:vida_a_dois/app/app.dart';
-import 'package:vida_a_dois/core/connectivity/bloc/connectivity_bloc.dart';
+import 'package:vida_a_dois/injection_container.dart';
 import 'package:vida_a_dois/core/util/logger/logger.dart';
+import 'package:vida_a_dois/core/connectivity/bloc/connectivity_bloc.dart';
 import 'package:vida_a_dois/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:vida_a_dois/features/kanban/presentation/bloc/board/board_bloc.dart';
 import 'package:vida_a_dois/features/kanban/presentation/bloc/task/task_bloc.dart';
 import 'package:vida_a_dois/features/user_settings/bloc/user_settings_bloc.dart';
-import 'package:vida_a_dois/injection_container.dart';
-
-import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 
 void main() async {
-  Log.initializing('main');
+  initLogger(Log(level: Level.all));
+  logger.initializing('main');
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // setUpLocator(FirebaseFirestore.instance);
-  setUpLocator(FakeFirebaseFirestore());
+  setUpLocator(FirebaseFirestore.instance);
 
   runApp(
     MultiBlocProvider(

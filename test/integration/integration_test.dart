@@ -4,6 +4,7 @@ import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:vida_a_dois/core/util/logger/logger.dart';
 import '../helper/mock_blocs.dart';
 
 import 'package:vida_a_dois/app/app.dart';
@@ -18,6 +19,8 @@ final fakeFirestore = FakeFirebaseFirestore();
 void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUpLocator(fakeFirestore);
+
+  initLogger(Log(level: Level.warning));
 
   fakeFirestore.clearPersistence();
 

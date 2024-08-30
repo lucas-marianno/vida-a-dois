@@ -12,6 +12,7 @@ part 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   late StreamSubscription authServiceListener;
   AuthBloc() : super(AuthInitial()) {
+    on<AuthEvent>(_logEvents);
     on<AuthStarted>(_onAuthStarted);
     on<_AuthLoggedIn>(_onAuthLoggedIn);
     on<_AuthLoggedOut>(_onAuthLoggedOut);
@@ -22,12 +23,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<_SignInWithCredential>(_onSignInWithCredential);
     on<SignOut>(_onSignOut);
 
-    Log.initializing(AuthBloc);
+    logger.initializing(AuthBloc);
     add(AuthStarted());
+  }
+  _logEvents(AuthEvent event, _) {
+    switch (event) {
+      case _AuthException():
+        logger.warning('$AuthBloc $_AuthException', error: event.error);
+        break;
+      default:
+        logger.trace('$AuthBloc $AuthEvent \n $event');
+    }
   }
 
   _onAuthStarted(AuthStarted event, Emitter<AuthState> emit) async {
-    Log.trace('$AuthBloc $AuthStarted');
     emit(AuthLoading());
 
     try {
@@ -37,7 +46,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           if (data == null) add(_AuthLoggedOut());
         },
         cancelOnError: true,
-        onDone: () => Log.info("$AuthBloc AuthListener is DONE"),
+        onDone: () => logger.info("$AuthBloc AuthListener is DONE"),
         onError: (e) => add(_AuthException(e)),
       );
     } catch (e) {
@@ -47,12 +56,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   _onAuthLoggedIn(_, Emitter<AuthState> emit) {
     final currentUser = AuthData.currentUser!;
-    Log.info("$AuthBloc $_AuthLoggedIn \n $currentUser");
     emit(AuthAuthenticated(currentUser));
   }
 
   _onAuthLoggedOut(_AuthLoggedOut event, Emitter<AuthState> emit) {
-    Log.trace("$AuthBloc $_AuthLoggedOut \n $event");
     emit(AuthUnauthenticated());
   }
 
@@ -60,7 +67,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     CreateUserWithEmailAndPassword event,
     Emitter<AuthState> emit,
   ) async {
-    Log.trace("$AuthBloc $CreateUserWithEmailAndPassword \n $event");
     emit(AuthLoading());
     try {
       await AuthData.createUserWithEmailAndPassword(
@@ -77,7 +83,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     SignInWithEmailAndPassword event,
     Emitter<AuthState> emit,
   ) async {
-    Log.trace("$AuthBloc $SignInWithEmailAndPassword \n $event");
     emit(AuthLoading());
     try {
       await AuthData.singInWithEmailAndPassword(event.email, event.password);
@@ -90,7 +95,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     SignInWithGoogle event,
     Emitter<AuthState> emit,
   ) async {
-    Log.trace("$AuthBloc $SignInWithGoogle");
     emit(AuthLoading());
     try {
       final credential = await AuthData.getCredentialFromGoogleAuthProvider();
@@ -109,7 +113,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     _SignInWithCredential event,
     Emitter<AuthState> emit,
   ) async {
-    Log.trace("$AuthBloc $_SignInWithCredential \n $event");
     emit(AuthLoading());
 
     try {
@@ -120,7 +123,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   _onAuthException(_AuthException event, Emitter<AuthState> emit) {
-    Log.warning("$AuthBloc $_AuthException \n $event");
     if (event.error is FirebaseAuthException) {
       emit(AuthError(event.error as FirebaseAuthException));
     } else {
@@ -129,14 +131,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   _onSignOut(_, Emitter<AuthState> emit) async {
-    Log.trace('$AuthBloc $SignOut');
     emit(AuthLoading());
     await AuthData.signout();
   }
 
   @override
   Future<void> close() {
-    Log.trace('$AuthBloc Bloc closed');
+    logger.trace('$AuthBloc Bloc closed');
     authServiceListener.cancel();
     return super.close();
   }

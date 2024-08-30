@@ -43,7 +43,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         _updateTaskUseCase = updateTask,
         _createTaskUseCase = createTask,
         super(TaskLoading()) {
-    on<TaskEvent>(_logEvent);
+    on<TaskEvent>(_logEvents);
     on<_TaskInitial>(_onTaskInitialEvent);
     on<_TaskStreamUpdate>(_onTaskStreamDataUpdate);
     on<_HandleTaskError>(_onHandleTaskError);
@@ -61,16 +61,16 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     add(_TaskInitial());
   }
 
-  _logEvent(TaskEvent event, _) {
+  _logEvents(TaskEvent event, _) {
     switch (event) {
       case _TaskInitial():
-        Log.initializing(TaskBloc);
+        logger.initializing(TaskBloc);
         break;
       case _HandleTaskError():
-        Log.error(event.error.runtimeType, error: event.error);
+        logger.error(event.error.runtimeType, error: event.error);
         break;
       default:
-        Log.trace('$TaskBloc ${event.runtimeType} \n $event');
+        logger.trace('$TaskBloc ${event.runtimeType} \n $event');
     }
   }
 
@@ -115,7 +115,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       _streamSubscription = _getTaskStreamUseCase().listen(
         (data) => add(_TaskStreamUpdate(data, _boardList)),
         onError: (e) => _HandleTaskError(e),
-        onDone: () => Log.debug('$TaskBloc streamSubscription is Done!'),
+        onDone: () => logger.debug('$TaskBloc streamSubscription is Done!'),
         cancelOnError: true,
       );
     } catch (e) {
@@ -143,7 +143,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   @override
   Future<void> close() {
-    Log.trace('$TaskBloc close()');
+    logger.trace('$TaskBloc close()');
     _streamSubscription?.cancel();
     return super.close();
   }

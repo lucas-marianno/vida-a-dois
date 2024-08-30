@@ -37,11 +37,11 @@ class Root extends StatelessWidget {
                   break;
                 case NoInternetConnection():
                   await InfoDialog.show(context, l10n.warningNoInternet);
-                  connection.add(CheckConnectivityEvent());
+                  connection.add(CheckConnectivity());
                   break;
                 case ConnectivityErrorState():
                   await ErrorDialog.show(context, state.error);
-                  connection.add(CheckConnectivityEvent());
+                  connection.add(CheckConnectivity());
                   break;
                 default:
                   popUntilRoot(context);

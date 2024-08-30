@@ -7,15 +7,15 @@ sealed class ConnectivityEvent extends Equatable {
   List<Object> get props => [];
 }
 
-final class CheckConnectivityEvent extends ConnectivityEvent {}
+final class CheckConnectivity extends ConnectivityEvent {}
 
-final class GotResponseEvent extends ConnectivityEvent {
+final class GotResponse extends ConnectivityEvent {
   final ConnectivityResult result;
 
-  const GotResponseEvent(this.result);
+  const GotResponse(this.result);
 
   @override
   List<Object> get props => [result];
 }
 
-final class ListenToConnectivityChanges extends ConnectivityEvent {}
+final class _ListenToConnectivityChanges extends ConnectivityEvent {}
