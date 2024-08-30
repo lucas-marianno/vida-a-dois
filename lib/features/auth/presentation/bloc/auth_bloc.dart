@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:vida_a_dois/features/auth/data/auth_data.dart';
 import 'package:vida_a_dois/core/util/logger/logger.dart';
 
@@ -12,56 +13,36 @@ part 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthDataSource authDataSource;
   late StreamSubscription authServiceListener;
+
   AuthBloc(this.authDataSource) : super(AuthInitial()) {
-    on<AuthEvent>(_logEvents);
     on<AuthStarted>(_onAuthStarted);
-    on<_AuthLoggedIn>(_onAuthLoggedIn);
-    on<_AuthLoggedOut>(_onAuthLoggedOut);
-    on<_AuthException>(_onAuthException);
     on<CreateUserWithEmailAndPassword>(_onCreateUserWithEmailAndPassword);
     on<SignInWithEmailAndPassword>(_onSignInWithEmailAndPassword);
     on<SignInWithGoogle>(_onSignInWithGoogle);
-    on<_SignInWithCredential>(_onSignInWithCredential);
     on<SignOut>(_onSignOut);
 
     logger.initializing(AuthBloc);
     add(AuthStarted());
   }
-  _logEvents(AuthEvent event, _) {
-    switch (event) {
-      case _AuthException():
-        logger.warning('$AuthBloc $_AuthException', error: event.error);
-        break;
-      default:
-        logger.trace('$AuthBloc $AuthEvent \n $event');
-    }
-  }
 
   _onAuthStarted(AuthStarted event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
 
+    final currentUser = authDataSource.authInstance.currentUser;
+    if (currentUser != null) emit(AuthAuthenticated(currentUser));
+
     try {
       authServiceListener = authDataSource.stream.listen(
         (data) {
-          if (data is User) add(_AuthLoggedIn());
-          if (data == null) add(_AuthLoggedOut());
+          if (data is User) emit(AuthAuthenticated(data));
+          if (data == null) emit(AuthUnauthenticated());
         },
-        cancelOnError: true,
-        onDone: () => logger.info("$AuthBloc AuthListener is DONE"),
-        onError: (e) => add(_AuthException(e)),
+        cancelOnError: false,
+        onError: (e) => emit(AuthError(e)),
       );
     } catch (e) {
-      add(_AuthException(e as FirebaseAuthException));
+      emit(AuthError(e));
     }
-  }
-
-  _onAuthLoggedIn(_, Emitter<AuthState> emit) {
-    final currentUser = authDataSource.authInstance.currentUser!;
-    emit(AuthAuthenticated(currentUser));
-  }
-
-  _onAuthLoggedOut(_AuthLoggedOut event, Emitter<AuthState> emit) {
-    emit(AuthUnauthenticated());
   }
 
   _onCreateUserWithEmailAndPassword(
@@ -77,7 +58,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await authDataSource.singInWithEmailAndPassword(
           event.email, event.password);
     } catch (e) {
-      add(_AuthException(e as FirebaseAuthException));
+      emit(AuthError(e));
     }
   }
 
@@ -90,7 +71,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await authDataSource.singInWithEmailAndPassword(
           event.email, event.password);
     } catch (e) {
-      add(_AuthException(e as FirebaseAuthException));
+      emit(AuthError(e));
     }
   }
 
@@ -99,44 +80,42 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(AuthLoading());
+
+    OAuthCredential? credential;
     try {
-      final credential =
-          await authDataSource.getCredentialFromGoogleAuthProvider();
-      if (credential == null) {
-        add(_AuthLoggedOut());
-        return;
-      }
-
-      add(_SignInWithCredential(credential));
+      credential = await authDataSource.getCredentialFromGoogleAuthProvider();
     } catch (e) {
-      add(_AuthException(e));
+      emit(AuthError(e));
     }
-  }
 
-  _onSignInWithCredential(
-    _SignInWithCredential event,
-    Emitter<AuthState> emit,
-  ) async {
-    emit(AuthLoading());
+    if (credential == null) {
+      emit(AuthUnauthenticated());
+      return;
+    }
 
     try {
-      await authDataSource.signInWithCredential(event.credential);
+      await authDataSource.signInWithCredential(credential);
     } catch (e) {
-      add(_AuthException(e));
-    }
-  }
-
-  _onAuthException(_AuthException event, Emitter<AuthState> emit) {
-    if (event.error is FirebaseAuthException) {
-      emit(AuthError(event.error as FirebaseAuthException));
-    } else {
-      emit(AuthError(event.error));
+      emit(AuthError(e));
     }
   }
 
   _onSignOut(_, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     await authDataSource.signout();
+  }
+
+  @override
+  void onChange(Change<AuthState> change) {
+    logger.debug('$AuthBloc ${change.nextState.runtimeType}\n'
+        '${change.nextState.props}');
+    super.onChange(change);
+  }
+
+  @override
+  void onEvent(AuthEvent event) {
+    logger.trace('$AuthBloc ${event.runtimeType} \n $event');
+    super.onEvent(event);
   }
 
   @override
