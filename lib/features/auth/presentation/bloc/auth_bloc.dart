@@ -10,8 +10,9 @@ part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
+  final AuthDataSource authDataSource;
   late StreamSubscription authServiceListener;
-  AuthBloc() : super(AuthInitial()) {
+  AuthBloc(this.authDataSource) : super(AuthInitial()) {
     on<AuthEvent>(_logEvents);
     on<AuthStarted>(_onAuthStarted);
     on<_AuthLoggedIn>(_onAuthLoggedIn);
@@ -40,7 +41,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
 
     try {
-      authServiceListener = AuthData.stream.listen(
+      authServiceListener = authDataSource.stream.listen(
         (data) {
           if (data is User) add(_AuthLoggedIn());
           if (data == null) add(_AuthLoggedOut());
@@ -55,7 +56,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   _onAuthLoggedIn(_, Emitter<AuthState> emit) {
-    final currentUser = AuthData.currentUser!;
+    final currentUser = authDataSource.authInstance.currentUser!;
     emit(AuthAuthenticated(currentUser));
   }
 
@@ -69,11 +70,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(AuthLoading());
     try {
-      await AuthData.createUserWithEmailAndPassword(
+      await authDataSource.createUserWithEmailAndPassword(
         event.email,
         event.password,
       );
-      await AuthData.singInWithEmailAndPassword(event.email, event.password);
+      await authDataSource.singInWithEmailAndPassword(
+          event.email, event.password);
     } catch (e) {
       add(_AuthException(e as FirebaseAuthException));
     }
@@ -85,7 +87,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(AuthLoading());
     try {
-      await AuthData.singInWithEmailAndPassword(event.email, event.password);
+      await authDataSource.singInWithEmailAndPassword(
+          event.email, event.password);
     } catch (e) {
       add(_AuthException(e as FirebaseAuthException));
     }
@@ -97,7 +100,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(AuthLoading());
     try {
-      final credential = await AuthData.getCredentialFromGoogleAuthProvider();
+      final credential =
+          await authDataSource.getCredentialFromGoogleAuthProvider();
       if (credential == null) {
         add(_AuthLoggedOut());
         return;
@@ -116,7 +120,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
 
     try {
-      await AuthData.signInWithCredential(event.credential);
+      await authDataSource.signInWithCredential(event.credential);
     } catch (e) {
       add(_AuthException(e));
     }
@@ -132,7 +136,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   _onSignOut(_, Emitter<AuthState> emit) async {
     emit(AuthLoading());
-    await AuthData.signout();
+    await authDataSource.signout();
   }
 
   @override

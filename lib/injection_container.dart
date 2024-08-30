@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:vida_a_dois/features/auth/data/auth_data.dart';
 
 import 'package:vida_a_dois/features/kanban/data/cloud_firestore/firestore_references.dart';
 import 'package:vida_a_dois/features/kanban/data/data_sources/board_data_source.dart';
@@ -14,10 +16,14 @@ import 'package:vida_a_dois/features/kanban/domain/usecases/task_usecases.dart';
 
 import 'package:vida_a_dois/features/kanban/presentation/bloc/board/board_bloc.dart';
 import 'package:vida_a_dois/features/kanban/presentation/bloc/task/task_bloc.dart';
+import 'package:vida_a_dois/features/user_settings/bloc/user_settings_bloc.dart';
 
 final locator = GetIt.instance;
 
-void setUpLocator(FirebaseFirestore firebaseFirestore) {
+void setUpLocator(
+  FirebaseFirestore firebaseFirestore,
+  FirebaseAuth firebaseAuth,
+) {
   // blocs
   locator.registerFactory(() => BoardBloc(
         createInitialBoard: locator(),
@@ -35,9 +41,10 @@ void setUpLocator(FirebaseFirestore firebaseFirestore) {
       updateTaskImportance: locator(),
       updateTaskStatus: locator(),
       deleteTask: locator()));
+  locator.registerFactory(() => UserSettingsBloc(firebaseAuth));
 
   // task use cases
-  locator.registerLazySingleton(() => CreateTaskUseCase(locator()));
+  locator.registerLazySingleton(() => CreateTaskUseCase(locator(), locator()));
   locator.registerLazySingleton(() => DeleteTaskUseCase(locator()));
   locator.registerLazySingleton(() => GetTaskStreamUseCase(locator()));
   locator.registerLazySingleton(() => UpdateTaskAssigneeUidUseCase(locator()));
@@ -68,4 +75,7 @@ void setUpLocator(FirebaseFirestore firebaseFirestore) {
   locator.registerLazySingleton<TaskDataSource>(() => TaskDataSourceImpl(
       taskCollectionReference:
           FirestoreReferencesImpl(firebaseFirestore).taskCollectionRef));
+
+  locator.registerLazySingleton<AuthDataSource>(
+      () => AuthDataSourceImpl(firebaseAuth));
 }

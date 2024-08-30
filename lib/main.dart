@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,14 +22,15 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  setUpLocator(FirebaseFirestore.instance);
+  setUpLocator(FirebaseFirestore.instance, FirebaseAuth.instance);
 
   runApp(
     MultiBlocProvider(
       providers: [
         BlocProvider<ConnectivityBloc>(create: (_) => ConnectivityBloc()),
-        BlocProvider<UserSettingsBloc>(create: (_) => UserSettingsBloc()),
-        BlocProvider<AuthBloc>(create: (_) => AuthBloc()),
+        BlocProvider<UserSettingsBloc>(
+            create: (_) => locator<UserSettingsBloc>()),
+        BlocProvider<AuthBloc>(create: (_) => locator<AuthBloc>()),
         BlocProvider<BoardBloc>(create: (_) => locator<BoardBloc>()),
         BlocProvider<TaskBloc>(create: (_) => locator<TaskBloc>()),
       ],

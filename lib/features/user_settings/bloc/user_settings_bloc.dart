@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:vida_a_dois/core/i18n/l10n.dart';
 import 'package:vida_a_dois/core/util/logger/logger.dart';
-import 'package:vida_a_dois/features/auth/data/auth_data.dart';
 import 'package:vida_a_dois/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:vida_a_dois/features/user_settings/data/user_data.dart';
 import 'package:vida_a_dois/features/user_settings/domain/entities/user_settings.dart';
@@ -14,9 +14,11 @@ part 'user_settings_event.dart';
 part 'user_settings_state.dart';
 
 class UserSettingsBloc extends Bloc<UserSettingsEvent, UserSettingsState> {
+  final FirebaseAuth firebaseAuth;
   late StreamSubscription subscription;
   UserSettings? currentUserSettings;
-  UserSettingsBloc() : super(UserSettingsLoading()) {
+
+  UserSettingsBloc(this.firebaseAuth) : super(UserSettingsLoading()) {
     on<UserSettingsEvent>(_logEvents);
     on<LoadUserSettings>(_onLoadUserSettings);
     on<ChangeLocale>(_onChangeLocaleEvent);
@@ -129,7 +131,7 @@ class UserSettingsBloc extends Bloc<UserSettingsEvent, UserSettingsState> {
   }
 
   _onCreateUserSettings(_, __) async {
-    final user = AuthData.currentUser!;
+    final user = firebaseAuth.currentUser!;
     final userName = user.displayName ?? user.email!.split('@')[0];
 
     logger.trace('$AuthBloc: current user: $user');

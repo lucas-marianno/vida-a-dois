@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:vida_a_dois/core/constants/form_type.dart';
 import 'package:vida_a_dois/core/i18n/l10n.dart';
 import 'package:vida_a_dois/core/util/dialogs/info_dialog.dart';
 import 'package:vida_a_dois/core/widgets/form/modal_form.dart';
-import 'package:vida_a_dois/features/kanban/presentation/bloc/task/task_bloc.dart';
+
 import 'package:vida_a_dois/features/kanban/domain/constants/enum/task_importance.dart';
-import 'package:vida_a_dois/features/kanban/presentation/bloc/board/board_bloc.dart';
 import 'package:vida_a_dois/features/kanban/domain/entities/task_entity.dart';
+import 'package:vida_a_dois/features/kanban/presentation/bloc/task/task_bloc.dart';
+import 'package:vida_a_dois/features/kanban/presentation/bloc/board/board_bloc.dart';
 
 class TaskForm {
   final BuildContext context;
