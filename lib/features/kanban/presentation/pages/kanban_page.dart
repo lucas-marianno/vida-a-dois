@@ -104,6 +104,7 @@ class _KanbanPageState extends State<KanbanPage> {
               taskBloc.add(LoadTasks(boards));
 
               return ListView.builder(
+                key: const Key('kanbanPageScrollableWidget'),
                 controller: scrlCtrl,
                 scrollDirection: Axis.horizontal,
                 itemCount: boards.length + 2,
@@ -120,6 +121,7 @@ class _KanbanPageState extends State<KanbanPage> {
                       child: Padding(
                         padding: const EdgeInsets.only(left: 10, right: 20),
                         child: ElevatedButton(
+                          key: const Key('addBoardButton'),
                           onPressed: createBoard,
                           child: const Icon(Icons.add),
                         ),

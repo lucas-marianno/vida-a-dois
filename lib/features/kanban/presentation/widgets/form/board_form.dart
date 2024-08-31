@@ -147,6 +147,7 @@ class _EditBoardFormState extends State<EditBoardForm> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             ElevatedButton(
+              key: const Key('boardFormEditButton'),
               style: readOnly
                   ? ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).colorScheme.primary,
