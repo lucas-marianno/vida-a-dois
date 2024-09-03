@@ -9,6 +9,11 @@ abstract class FirestoreReferences {
     required this.firebaseAuth,
   });
 
+  final kanbanColPath = 'mockKanbanCollection2';
+  final boardsDocPath = 'boards';
+  final taskColPath = 'tasks';
+  final userSettingsColPath = 'userSettings';
+
   CollectionReference get kanbanCollectionRef;
   DocumentReference get boardsDocRef;
   CollectionReference get taskCollectionRef;
@@ -23,15 +28,17 @@ class FirestoreReferencesImpl extends FirestoreReferences {
 
   @override
   CollectionReference get kanbanCollectionRef =>
-      firestoreInstance.collection('mockKanbanCollection2');
+      firestoreInstance.collection(super.kanbanColPath);
 
   @override
-  DocumentReference get boardsDocRef => kanbanCollectionRef.doc('boards');
+  DocumentReference get boardsDocRef =>
+      kanbanCollectionRef.doc(super.boardsDocPath);
 
   @override
-  CollectionReference get taskCollectionRef => boardsDocRef.collection('tasks');
+  CollectionReference get taskCollectionRef =>
+      boardsDocRef.collection(super.taskColPath);
 
   @override
   CollectionReference get userSettingsCollectionRef =>
-      firestoreInstance.collection("userSettings");
+      firestoreInstance.collection(super.userSettingsColPath);
 }

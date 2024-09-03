@@ -8,7 +8,19 @@ abstract class TaskDataSource {
 
   Future<List<TaskModel>> getTaskList();
   Stream<List<TaskModel>> readTasks();
+
+  /// Cretes a new task in the data source.
+  ///
+  /// The field `id` is not taken into consideration, since it will be
+  /// creating a new entry with a new random generated id.
+  ///
+  /// If you want to set an specific `id`, use [updateTask] instead.
   Future<void> createTask(TaskModel task);
+
+  /// Updates a task in the data source.
+  ///
+  /// It will find a entry with the provided `id` and merge it's data.
+  /// If the entry doesn't exist, a new entry will be created.
   Future<void> updateTask(TaskModel task);
   Future<void> deleteTask(TaskModel task);
 }
