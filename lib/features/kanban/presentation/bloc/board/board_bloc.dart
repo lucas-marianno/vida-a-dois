@@ -36,7 +36,6 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     on<EditBoardEvent>(_onEditBoardEvent);
     on<DeleteBoardEvent>(_onDeleteBoardEvent);
     on<_BoardException>(_onHandleBoardException);
-    on<ReloadBoards>(_onReloadBoards);
 
     add(BoardInitialEvent());
   }
@@ -66,19 +65,6 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     } catch (e) {
       add(_BoardException(error: e));
     }
-  }
-
-  /// Similar to [BoardsListUpdate].
-  /// Except it will emit a [BoardLoadedState] even if there were no changes
-  /// to [_statusList].
-  ///
-  /// [ReloadBoards] emits a [BoardLoadedState]
-  /// with the last known `List<ColumnEntity>`.
-  ///
-  /// This event should only be called after an error has been properly
-  /// handled by [_BoardException] event.
-  _onReloadBoards(_, Emitter<BoardState> emit) {
-    emit(BoardLoadedState(_statusList));
   }
 
   _onBoardStreamDataUpdate(
@@ -139,12 +125,11 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
 
     if (error is StateError) {
       await createInitialBoard();
-      add(ReloadBoards());
-
       return;
     }
 
     emit(BoardErrorState(error.runtimeType.toString(), error: error));
+    emit(BoardLoadedState(_statusList));
   }
 
   @override

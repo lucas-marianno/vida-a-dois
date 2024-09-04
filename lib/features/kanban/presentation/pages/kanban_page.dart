@@ -53,7 +53,6 @@ class _KanbanPageState extends State<KanbanPage> {
           BlocListener<BoardBloc, BoardState>(
             listener: (context, state) async {
               if (state is BoardErrorState) {
-                boardBloc.add(ReloadBoards());
                 if (state.error is NameNotUniqueException) {
                   await InfoDialog.show(
                     context,

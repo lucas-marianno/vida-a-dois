@@ -34,7 +34,7 @@ final class RenameBoardEvent extends BoardEvent {
   const RenameBoardEvent(this.board, this.newBoardTitle);
 
   @override
-  List<Object> get props => [newBoardTitle];
+  List<Object> get props => [board, newBoardTitle];
 }
 
 final class EditBoardEvent extends BoardEvent {
@@ -66,5 +66,3 @@ final class _BoardException extends BoardEvent {
   @override
   List<Object> get props => [error];
 }
-
-final class ReloadBoards extends BoardEvent {}
