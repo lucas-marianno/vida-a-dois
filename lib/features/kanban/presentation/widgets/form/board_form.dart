@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vida_a_dois/core/constants/form_type.dart';
 import 'package:vida_a_dois/core/i18n/l10n.dart';
+import 'package:vida_a_dois/core/util/dialogs/info_dialog.dart';
 import 'package:vida_a_dois/core/widgets/form/modal_form.dart';
 import 'package:vida_a_dois/features/kanban/domain/entities/board_entity.dart';
 import 'package:vida_a_dois/features/kanban/presentation/bloc/board/board_bloc.dart';
@@ -50,8 +51,20 @@ class _EditBoardFormState extends State<EditBoardForm> {
     Navigator.pop(context, newBoard);
   }
 
-  void deleteBoardAndClose() {
+  void deleteBoardAndClose() async {
+    setState(() => formType = FormType.read);
+
     Navigator.pop(context);
+
+    final l10n = L10n.of(context);
+    final response = await InfoDialog.show(
+      context,
+      l10n.deleteBoardPromptDescription(widget.board.title),
+      title: '${l10n.delete} ${l10n.board.toLowerCase()}?',
+      showCancel: true,
+    );
+
+    if (response != true) return;
 
     boardBloc.add(DeleteBoardEvent(widget.board));
   }
