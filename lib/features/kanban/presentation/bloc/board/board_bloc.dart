@@ -28,7 +28,6 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     required this.updateBoardIndex,
     required this.deleteBoard,
   }) : super(BoardLoadingState()) {
-    on<BoardEvent>(_logEvents);
     on<BoardInitialEvent>(_onBoardInitialEvent);
     on<BoardsListUpdate>(_onBoardStreamDataUpdate);
     on<CreateBoardEvent>(_onCreateBoardEvent);
@@ -38,19 +37,6 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
     on<_BoardException>(_onHandleBoardException);
 
     add(BoardInitialEvent());
-  }
-  _logEvents(BoardEvent event, _) {
-    switch (event) {
-      case BoardInitialEvent():
-        logger.initializing(BoardBloc);
-        break;
-      case _BoardException():
-        if (event.error is StateError) break;
-        logger.warning('$BoardBloc $_BoardException', error: event.error);
-        break;
-      default:
-        logger.trace('$BoardBloc ${event.runtimeType} \n $event');
-    }
   }
 
   _onBoardInitialEvent(_, Emitter<BoardState> emit) {
@@ -130,6 +116,33 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
 
     emit(BoardErrorState(error.runtimeType.toString(), error: error));
     emit(BoardLoadedState(_statusList));
+  }
+
+  @override
+  void onEvent(BoardEvent event) {
+    switch (event) {
+      case BoardInitialEvent():
+        logger.initializing(BoardBloc);
+        break;
+      case _BoardException():
+        if (event.error is StateError) break;
+        logger.info('$BoardBloc $_BoardException', error: event.error);
+        break;
+      default:
+        logger.trace('$BoardBloc ${event.runtimeType} \n $event');
+    }
+
+    super.onEvent(event);
+  }
+
+  @override
+  void onChange(Change<BoardState> change) {
+    logger.trace(
+      '$BoardBloc ${change.nextState.runtimeType}\n'
+      '${change.nextState}',
+    );
+
+    super.onChange(change);
   }
 
   @override
