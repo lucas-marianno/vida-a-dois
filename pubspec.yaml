@@ -37,16 +37,12 @@ dev_dependencies:
   mocktail: ^1.0.4
   build_runner: ^2.4.12
   fake_cloud_firestore: ^3.0.2
+  test_cov_console: ^0.2.2
+  # run `flutter test --coverage`
+  # run `flutter pub run test_cov_console`
 
 flutter:
   generate: true
   uses-material-design: true
   assets:
     - assets/signin-assets/
-  #   - images/a_dot_ham.jpeg
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
