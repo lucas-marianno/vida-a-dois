@@ -129,7 +129,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   @override
   void onChange(Change<TaskState> change) {
-    logger.trace(
+    logger.debug(
       '$TaskBloc ${change.nextState.runtimeType}\n'
       '${change.nextState}',
     );

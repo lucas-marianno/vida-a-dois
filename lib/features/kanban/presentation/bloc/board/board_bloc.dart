@@ -137,7 +137,7 @@ class BoardBloc extends Bloc<BoardEvent, BoardState> {
 
   @override
   void onChange(Change<BoardState> change) {
-    logger.trace(
+    logger.debug(
       '$BoardBloc ${change.nextState.runtimeType}\n'
       '${change.nextState}',
     );

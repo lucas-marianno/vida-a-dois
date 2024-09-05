@@ -23,7 +23,7 @@ class Log {
   final bool verbose;
   late final Logger _logger;
 
-  Log({this.level = Level.all, this.verbose = false}) {
+  Log({this.level = Level.warning, this.verbose = false}) {
     _logger = Logger(
       filter: null,
       printer: !verbose ? _singleLine : null,

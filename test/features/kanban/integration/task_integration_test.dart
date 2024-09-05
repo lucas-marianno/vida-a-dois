@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:vida_a_dois/app/app.dart';
-import 'package:vida_a_dois/core/i18n/l10n.dart';
-import 'package:vida_a_dois/features/kanban/data/data_sources/task_data_source.dart';
-import 'package:vida_a_dois/features/kanban/data/models/task_model.dart';
-import 'package:vida_a_dois/features/kanban/domain/constants/enum/task_importance.dart';
 import 'package:vida_a_dois/injection_container.dart';
+
+import 'package:vida_a_dois/core/i18n/l10n.dart';
 import 'package:vida_a_dois/core/util/logger/logger.dart';
 
-import 'package:vida_a_dois/features/kanban/data/cloud_firestore/firestore_references.dart';
 import 'package:vida_a_dois/features/kanban/data/data_sources/board_data_source.dart';
+import 'package:vida_a_dois/features/kanban/data/data_sources/task_data_source.dart';
 import 'package:vida_a_dois/features/kanban/data/models/board_model.dart';
+import 'package:vida_a_dois/features/kanban/data/models/task_model.dart';
 import 'package:vida_a_dois/features/kanban/presentation/pages/kanban_page.dart';
 import 'package:vida_a_dois/features/kanban/presentation/widgets/kanban/kanban_board.dart';
 import 'package:vida_a_dois/features/kanban/presentation/widgets/kanban/kanban_tile.dart';
@@ -24,23 +23,26 @@ import '../../../helper/mock_blocs.dart';
 import '../../../helper/mock_generator.mocks.dart';
 
 Future<void> main() async {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  initLogger(Log(level: Level.warning));
+
   late final Widget app;
-
   final l10n = await L10n.from('en');
-
-  final mockUser = MockUser(
-    uid: 'uid123',
-    email: 'mockUser@mail.com',
-    displayName: 'mock user',
-  );
   final fakeFirestore = FakeFirebaseFirestore();
-  final fakeAuth = MockFirebaseAuth(signedIn: true, mockUser: mockUser);
-  final fakeConnectivity = MockConnectivity();
 
   setUpAll(() {
-    TestWidgetsFlutterBinding.ensureInitialized();
+    final fakeConnectivity = MockConnectivity();
+    final fakeAuth = MockFirebaseAuth(
+      signedIn: true,
+      mockUser: MockUser(
+        uid: 'uid123',
+        email: 'mockUser@mail.com',
+        displayName: 'mock user',
+      ),
+    );
+
     setUpLocator(fakeFirestore, fakeAuth, fakeConnectivity);
-    initLogger(Log(level: Level.all));
 
     mockito.when(fakeConnectivity.onConnectivityChanged).thenAnswer((_) {
       return Stream<List<ConnectivityResult>>.fromIterable([
@@ -69,272 +71,286 @@ Future<void> main() async {
       child: const VidaADoidApp(),
     );
   });
-  group('task', () {
-    group('task create and delete', skip: true, () {
-      late BoardDataSource boardDS;
-      setUpAll(() async {
-        await fakeFirestore.clearPersistence();
+  group('task create and delete', () {
+    late BoardDataSource boardDS;
+    setUpAll(() async {
+      await fakeFirestore.clearPersistence();
 
-        boardDS = BoardDataSourceImpl(
-          firestoreReferences: FirestoreReferencesImpl(
-            firestoreInstance: fakeFirestore,
-            firebaseAuth: fakeAuth,
-          ),
-        );
-      });
-
-      setUp(() async {
-        await boardDS.updateBoards(
-          [BoardModel(title: 'New Board', index: 0)],
-        );
-      });
-      testWidgets('should create new task', (tester) async {
-        // run app
-        await tester.pumpWidget(app);
-        await tester.pumpAndSettle();
-
-        // tap create task
-        final createTaskButton = find.text('New task');
-        await tester.runAsync(() async => await tester.tap(createTaskButton));
-        await tester.pumpAndSettle();
-
-        // should open new task form
-        final taskForm = find.byKey(const Key('taskForm'));
-        expect(taskForm, findsOneWidget);
-
-        // scroll down and find done button
-        final doneButton = find.byKey(const Key('doneButton'));
-        await tester.dragUntilVisible(
-          doneButton,
-          taskForm,
-          const Offset(0, -250),
-        );
-        await tester.pumpAndSettle();
-
-        // tap done button
-        await tester.runAsync(() async => await tester.tap(doneButton));
-        await tester.pumpAndSettle();
-
-        // should have created a new task
-        expect(find.byType(KanbanTile), findsOneWidget);
-      });
-
-      testWidgets('should show edit task form in read mode', (tester) async {
-        // run app
-        await tester.pumpWidget(app);
-        await tester.pumpAndSettle();
-
-        // should there be a kanban tile
-        final kanbanTile = find.byType(KanbanTile).first;
-        expect(kanbanTile, findsOneWidget);
-
-        // tap tile
-        await tester.runAsync(() async => await tester.tap(kanbanTile));
-        await tester.pumpAndSettle();
-
-        // should open edit task form in read mode
-        final taskForm = find.byKey(const Key('taskForm'));
-        expect(taskForm, findsOneWidget);
-        expect(find.text(l10n.readingATask), findsOneWidget);
-      });
-
-      testWidgets('should delete created task', (tester) async {
-        // run app
-        await tester.pumpWidget(app);
-        await tester.pumpAndSettle();
-
-        // should there be a kanban tile
-        final kanbanTile = find.byType(KanbanTile).first;
-        expect(kanbanTile, findsOneWidget);
-
-        // tap tile
-        await tester.runAsync(() async => await tester.tap(kanbanTile));
-        await tester.pumpAndSettle();
-
-        // scroll until edit/cancel button is visible
-        final editCancelButton = find.byKey(const Key('editCancelButton'));
-        final taskForm = find.byKey(const Key('taskForm'));
-        await tester.dragUntilVisible(
-          editCancelButton,
-          taskForm,
-          const Offset(0, -250),
-        );
-        await tester.pumpAndSettle();
-
-        // tap edit button
-        await tester.tap(editCancelButton);
-        await tester.pumpAndSettle();
-
-        // tap delete button
-        final deleteButton = find.byIcon(Icons.delete);
-        await tester.runAsync(() async => await tester.tap(deleteButton));
-        await tester.pumpAndSettle();
-
-        // tap 'ok' on confirmation button
-        final okButton = find.text('Ok');
-        await tester.runAsync(() async => await tester.tap(okButton));
-        await tester.pumpAndSettle();
-
-        // should have deleted tile
-        expect(find.byType(KanbanTile), findsNothing);
-      });
+      boardDS = locator<BoardDataSource>();
     });
-    group('task editing', () {
-      late BoardDataSource boardDS;
-      late TaskDataSource taskDS;
 
-      setUpAll(() async {
-        await fakeFirestore.clearPersistence();
+    setUp(() async {
+      await boardDS.updateBoards(
+        [BoardModel(title: 'New Board', index: 0)],
+      );
+    });
+    testWidgets('should create new task', (tester) async {
+      // run app
+      await tester.pumpWidget(app);
+      await tester.pumpAndSettle();
 
-        final fakeRef = FirestoreReferencesImpl(
-          firestoreInstance: fakeFirestore,
-          firebaseAuth: fakeAuth,
-        );
+      // tap create task
+      final createTaskButton = find.text('New task');
+      await tester.runAsync(() async => await tester.tap(createTaskButton));
+      await tester.pumpAndSettle();
 
-        boardDS = BoardDataSourceImpl(firestoreReferences: fakeRef);
-        taskDS = TaskDataSourceImpl(firestoreReferences: fakeRef);
-      });
-      testWidgets('should be empty', (tester) async {
-        await fakeFirestore.clearPersistence();
+      // should open new task form
+      final taskForm = find.byKey(const Key('taskForm'));
+      expect(taskForm, findsOneWidget);
 
-        await tester.pumpWidget(app);
-        await tester.pumpAndSettle();
+      // scroll down and find done button
+      final doneButton = find.byKey(const Key('doneButton'));
+      await tester.dragUntilVisible(
+        doneButton,
+        taskForm,
+        const Offset(0, -250),
+      );
+      await tester.pumpAndSettle();
 
-        final kanbanPage = find.byType(KanbanPage);
-        expect(kanbanPage, findsOneWidget);
+      // tap done button
+      await tester.runAsync(() async => await tester.tap(doneButton));
+      await tester.pumpAndSettle();
 
-        final kanbanBoard = find.byType(KanbanBoard);
-        expect(kanbanBoard, findsNothing);
+      // should have created a new task
+      expect(find.byType(KanbanTile), findsOneWidget);
+    });
 
-        final kanbanTile = find.byType(KanbanTile);
-        expect(kanbanTile, findsNothing);
-      });
-      testWidgets('should there be a kanban board', (tester) async {
-        await fakeFirestore.clearPersistence();
-        await boardDS.updateBoards([BoardModel(title: 'title', index: 0)]);
+    testWidgets('should show edit task form in read mode', (tester) async {
+      // run app
+      await tester.pumpWidget(app);
+      await tester.pumpAndSettle();
 
-        await tester.pumpWidget(app);
-        await tester.pumpAndSettle();
+      // should there be a kanban tile
+      final kanbanTile = find.byType(KanbanTile).first;
+      expect(kanbanTile, findsOneWidget);
 
-        final kanbanPage = find.byType(KanbanPage);
-        expect(kanbanPage, findsOneWidget);
+      // tap tile
+      await tester.runAsync(() async => await tester.tap(kanbanTile));
+      await tester.pumpAndSettle();
 
-        final kanbanBoard = find.byType(KanbanBoard);
-        expect(kanbanBoard, findsOneWidget);
+      // should open edit task form in read mode
+      final taskForm = find.byKey(const Key('taskForm'));
+      expect(taskForm, findsOneWidget);
+      expect(find.text(l10n.readingATask), findsOneWidget);
+    });
 
-        final kanbanTile = find.byType(KanbanTile);
-        expect(kanbanTile, findsNothing);
-      });
+    testWidgets('should delete created task', (tester) async {
+      // run app
+      await tester.pumpWidget(app);
+      await tester.pumpAndSettle();
 
-      testWidgets('should there be a kanban tile', (tester) async {
-        await fakeFirestore.clearPersistence();
-        logger.info(fakeFirestore.dump());
-        // await tester.pumpWidget(app);
-        // await tester.pumpAndSettle();
+      // should there be a kanban tile
+      final kanbanTile = find.byType(KanbanTile).first;
+      expect(kanbanTile, findsOneWidget);
 
-        await boardDS.updateBoards([BoardModel(title: 'to do', index: 0)]);
-        await taskDS.createTask(TaskModel(
-          id: 'id de cu é rola',
-          title: 'tasj title do caralho',
-          description: 'meu cu',
-          assingneeUID: 'tua mãe',
-          assingneeInitials: '4Q',
-          taskImportance: TaskImportance.normal,
-          status: "to do",
-          dueDate: DateTime.now(),
-          createdBy: 'minha rola',
-          createdDate: DateTime.now(),
-        ));
+      // tap tile
+      await tester.runAsync(() async => await tester.tap(kanbanTile));
+      await tester.pumpAndSettle();
 
-        // await tester.pumpAndSettle();
-        // run app
-        await tester.pumpWidget(app);
-        await tester.pumpAndSettle();
+      // scroll until edit/cancel button is visible
+      final editCancelButton = find.byKey(const Key('editCancelButton'));
+      final taskForm = find.byKey(const Key('taskForm'));
+      await tester.dragUntilVisible(
+        editCancelButton,
+        taskForm,
+        const Offset(0, -250),
+      );
+      await tester.pumpAndSettle();
 
-        // tap create task
-        final createTaskButton = find.text('New task');
-        await tester.runAsync(() async => await tester.tap(createTaskButton));
-        await tester.pumpAndSettle();
+      // tap edit button
+      await tester.tap(editCancelButton);
+      await tester.pumpAndSettle();
 
-        // should open new task form
-        final taskForm = find.byKey(const Key('taskForm'));
-        expect(taskForm, findsOneWidget);
+      // tap delete button
+      final deleteButton = find.byIcon(Icons.delete);
+      await tester.runAsync(() async => await tester.tap(deleteButton));
+      await tester.pumpAndSettle();
 
-        // scroll down and find done button
-        final doneButton = find.byKey(const Key('doneButton'));
-        await tester.dragUntilVisible(
-          doneButton,
-          taskForm,
-          const Offset(0, -250),
-        );
-        await tester.pumpAndSettle();
+      // tap 'ok' on confirmation button
+      final okButton = find.text('Ok');
+      await tester.runAsync(() async => await tester.tap(okButton));
+      await tester.pumpAndSettle();
 
-        // tap done button
-        await tester.runAsync(() async => await tester.tap(doneButton));
-        await tester.pumpAndSettle();
+      // should have deleted tile
+      expect(find.byType(KanbanTile), findsNothing);
+    });
+  });
+  group('task editing', () {
+    late BoardDataSource boardDS;
+    late TaskDataSource taskDS;
 
-        // should have created a new task
-        expect(find.byType(KanbanTile), findsOneWidget);
+    final mockBoard = BoardModel(title: 'to do', index: 0);
+    final mockTask = TaskModel(title: 'do this', status: "to do");
 
-        logger.warning(fakeFirestore.dump());
+    setUpAll(() async {
+      await fakeFirestore.clearPersistence();
 
-        final kanbanPage = find.byType(KanbanPage);
-        expect(kanbanPage, findsOneWidget);
+      boardDS = locator<BoardDataSource>();
+      taskDS = locator<TaskDataSource>();
+    });
 
-        final kanbanBoard = find.byType(KanbanBoard);
-        expect(kanbanBoard, findsOneWidget);
+    setUp(() async {
+      await fakeFirestore.clearPersistence();
 
-        final kanbanTile = find.byType(KanbanTile);
-        expect(kanbanTile, findsOneWidget);
-      });
+      await boardDS.updateBoards([mockBoard]);
+      await taskDS.createTask(mockTask);
+    });
 
-      testWidgets('should edit task title', skip: true, (tester) async {
-        // run app
-        await tester.pumpWidget(app);
-        await tester.pumpAndSettle();
+    testWidgets('ensure setUp() works correctly', (tester) async {
+      await tester.pumpWidget(app);
+      await tester.pumpAndSettle();
 
-        // tap tile
-        final kanbanTile = find.byType(KanbanTile).first;
-        await tester.runAsync(() async => await tester.tap(kanbanTile));
-        await tester.pumpAndSettle();
+      final kanbanPage = find.byType(KanbanPage);
+      expect(kanbanPage, findsOneWidget);
 
-        // open edit task form in read mode
-        final taskForm = find.byKey(const Key('taskForm'));
-        expect(taskForm, findsOneWidget);
-        expect(find.text(l10n.readingATask), findsOneWidget);
+      final kanbanBoard = find.byType(KanbanBoard);
+      expect(kanbanBoard, findsOneWidget);
 
-        // scroll until edit/cancel button is visible
-        final editCancelButton = find.byKey(const Key('editCancelButton'));
-        await tester.dragUntilVisible(
-          editCancelButton,
-          taskForm,
-          const Offset(0, -50),
-        );
-        await tester.pumpAndSettle();
+      final kanbanTile = find.byType(KanbanTile);
+      expect(kanbanTile, findsOneWidget);
+    });
 
-        // tap edit button
-        await tester.tap(editCancelButton);
-        await tester.pumpAndSettle();
+    testWidgets('should edit task title', (tester) async {
+      // run app
+      await tester.pumpWidget(app);
+      await tester.pumpAndSettle();
 
-        // should have entered edit mode
-        expect(find.text(l10n.editingATask), findsOneWidget);
+      // tap tile
+      final kanbanTile = find.byType(KanbanTile).first;
+      await tester.runAsync(() async => await tester.tap(kanbanTile));
+      await tester.pumpAndSettle();
 
-        // find task title
-        final taskTitle = find.byKey(Key('${l10n.task}FormField'));
-        // final taskTitle = find.byType(MyFormField);
+      // open edit task form in read mode
+      final taskForm = find.byKey(const Key('taskForm'));
+      expect(taskForm, findsOneWidget);
+      expect(find.text(l10n.readingATask), findsOneWidget);
 
-        logger.wtf(taskTitle);
-        expect(taskTitle, findsOneWidget);
+      // scroll until edit/cancel button is visible
+      final editCancelButton = find.byKey(const Key('editCancelButton'));
+      await tester.dragUntilVisible(
+        editCancelButton,
+        taskForm,
+        const Offset(0, -50),
+      );
+      await tester.pumpAndSettle();
 
-        // enter new task title
-        const newTaskTitle = 'new task title';
-        await tester.runAsync(() async => await tester.tap(taskTitle));
-        await tester.pumpAndSettle();
-        await tester.enterText(taskTitle, newTaskTitle);
+      // tap edit button
+      await tester.tap(editCancelButton);
+      await tester.pumpAndSettle();
 
-        // should have entered new title
-        expect(find.text(newTaskTitle), findsOneWidget);
-      });
+      // should have entered edit mode
+      expect(find.text(l10n.editingATask), findsOneWidget);
+
+      // find task title form field
+      final taskTitleFormField = find.byKey(Key('${l10n.task}FormField'));
+      await tester.dragUntilVisible(
+        taskTitleFormField,
+        taskForm,
+        const Offset(0, 50),
+      );
+      expect(taskTitleFormField, findsOneWidget);
+
+      // enter new task title
+      const newTaskTitle = 'new task title';
+      await tester.enterText(taskTitleFormField, newTaskTitle);
+      await tester.pumpAndSettle();
+
+      // should have entered new title
+      expect(find.text(newTaskTitle), findsOneWidget);
+
+      // find done button
+      final doneButton = find.byKey(const Key('doneButton'));
+      await tester.dragUntilVisible(
+        doneButton,
+        taskForm,
+        const Offset(0, -100),
+      );
+      expect(doneButton, findsOneWidget);
+
+      // tap done button
+      await tester.runAsync(() async => await tester.tap(doneButton));
+      await tester.pumpAndSettle(const Duration(milliseconds: 500));
+
+      // should be back in `KanbanPage` with an updated `Task`
+      expect(taskForm, findsNothing);
+      expect(kanbanTile, findsOneWidget);
+
+      final tileWidget = tester.widget<KanbanTile>(kanbanTile);
+      expect(tileWidget.task.title, newTaskTitle);
+    });
+    testWidgets('should edit task description', (tester) async {
+      // for some reason, this is the only way to not glitch everything when
+      // running test in dart vm with headless mode (aka vs code testing).
+      // why does it happen? no idea, it just works
+      tester.view.physicalSize = const Size(1080, 1920);
+
+      // run app
+      await tester.pumpWidget(app);
+      await tester.pumpAndSettle();
+
+      // tap tile
+      final kanbanTile = find.byType(KanbanTile).first;
+      await tester.runAsync(() async => await tester.tap(kanbanTile));
+      await tester.pumpAndSettle();
+
+      // open edit task form in read mode
+      final taskForm = find.byKey(const Key('taskForm'));
+      expect(taskForm, findsOneWidget);
+      expect(find.text(l10n.readingATask), findsOneWidget);
+
+      // scroll until edit/cancel button is visible
+      final editCancelButton = find.byKey(const Key('editCancelButton'));
+      await tester.dragUntilVisible(
+        editCancelButton,
+        taskForm,
+        const Offset(0, -50),
+      );
+      await tester.pumpAndSettle();
+
+      // tap edit button
+      await tester.tap(editCancelButton);
+      await tester.pumpAndSettle();
+
+      // should have entered edit mode
+      expect(find.text(l10n.editingATask), findsOneWidget);
+
+      // find task description form field
+      final taskDescriptionFormField =
+          find.byKey(Key('${l10n.taskDescription}FormField'));
+      await tester.dragUntilVisible(
+        taskDescriptionFormField,
+        taskForm,
+        const Offset(0, 50),
+      );
+      expect(taskDescriptionFormField, findsOneWidget);
+
+      // enter new task description
+      const newTaskDescription = 'new task long description with many words';
+      await tester.enterText(taskDescriptionFormField, newTaskDescription);
+      await tester.pumpAndSettle();
+
+      // should have entered new description
+      expect(find.text(newTaskDescription), findsOneWidget);
+
+      // find done button
+      final doneButton = find.byKey(const Key('doneButton'));
+      await tester.dragUntilVisible(
+        doneButton,
+        taskForm,
+        const Offset(0, -100),
+      );
+      expect(doneButton, findsOneWidget);
+
+      // tap done button
+      await tester.runAsync(() async => await tester.tap(doneButton));
+      await tester.pumpAndSettle(const Duration(milliseconds: 500));
+
+      // should be back in `KanbanPage` with an updated `Task`
+      expect(taskForm, findsNothing);
+      expect(kanbanTile, findsOneWidget);
+
+      final tileWidget = tester.widget<KanbanTile>(kanbanTile);
+      expect(tileWidget.task.description, newTaskDescription);
     });
   });
 }
