@@ -9,19 +9,14 @@ import 'package:vida_a_dois/features/kanban/data/data_sources/task_data_source.d
 import 'package:vida_a_dois/features/kanban/data/models/task_model.dart';
 
 void main() {
-  final fakeFirestore = FakeFirebaseFirestore();
-  late final FirestoreReferences firestoreRef;
-  late final TaskDataSource taskDS;
-
   initLogger(Log());
 
-  setUpAll(() {
-    firestoreRef = FirestoreReferencesImpl(
-      firestoreInstance: fakeFirestore,
-      firebaseAuth: MockFirebaseAuth(),
-    );
-    taskDS = TaskDataSourceImpl(firestoreReferences: firestoreRef);
-  });
+  final fakeFirestore = FakeFirebaseFirestore();
+  final firestoreRef = FirestoreReferencesImpl(
+    firestoreInstance: fakeFirestore,
+    firebaseAuth: MockFirebaseAuth(),
+  );
+  final taskDS = TaskDataSourceImpl(firestoreReferences: firestoreRef);
 
   group('testing put methods', () {
     late TaskModel task1;
@@ -142,6 +137,24 @@ void main() {
       await taskDS.deleteTask(task1);
 
       expect(_parseDump(fakeFirestore.dump(), firestoreRef)[id], isEmpty);
+    });
+  });
+
+  group('testing combined commands', () {
+    test('getting and creating tasks', () async {
+      await fakeFirestore.clearPersistence();
+
+      final response1 = await taskDS.getTaskList();
+      expect(response1, isEmpty);
+
+      final mockTask = TaskModel(title: 'title', status: 'to do');
+      await taskDS.createTask(mockTask);
+
+      final response2 = await taskDS.getTaskList();
+      expect(response2, isNotEmpty);
+      expect(response2.length, 1);
+      expect(response2.first.title, mockTask.title);
+      expect(response2.first.status, mockTask.status);
     });
   });
 }

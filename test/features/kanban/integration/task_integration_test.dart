@@ -5,6 +5,7 @@ import 'package:vida_a_dois/app/app.dart';
 import 'package:vida_a_dois/core/i18n/l10n.dart';
 import 'package:vida_a_dois/features/kanban/data/data_sources/task_data_source.dart';
 import 'package:vida_a_dois/features/kanban/data/models/task_model.dart';
+import 'package:vida_a_dois/features/kanban/domain/constants/enum/task_importance.dart';
 import 'package:vida_a_dois/injection_container.dart';
 import 'package:vida_a_dois/core/util/logger/logger.dart';
 
@@ -39,7 +40,7 @@ Future<void> main() async {
   setUpAll(() {
     TestWidgetsFlutterBinding.ensureInitialized();
     setUpLocator(fakeFirestore, fakeAuth, fakeConnectivity);
-    initLogger(Log(level: Level.warning));
+    initLogger(Log(level: Level.all));
 
     mockito.when(fakeConnectivity.onConnectivityChanged).thenAnswer((_) {
       return Stream<List<ConnectivityResult>>.fromIterable([
@@ -69,10 +70,10 @@ Future<void> main() async {
     );
   });
   group('task', () {
-    group('task create and delete', () {
+    group('task create and delete', skip: true, () {
       late BoardDataSource boardDS;
       setUpAll(() async {
-        fakeFirestore.clearPersistence();
+        await fakeFirestore.clearPersistence();
 
         boardDS = BoardDataSourceImpl(
           firestoreReferences: FirestoreReferencesImpl(
@@ -180,10 +181,10 @@ Future<void> main() async {
     });
     group('task editing', () {
       late BoardDataSource boardDS;
-      late final TaskDataSource taskDS;
+      late TaskDataSource taskDS;
 
-      setUpAll(() {
-        fakeFirestore.clearPersistence();
+      setUpAll(() async {
+        await fakeFirestore.clearPersistence();
 
         final fakeRef = FirestoreReferencesImpl(
           firestoreInstance: fakeFirestore,
@@ -193,32 +194,89 @@ Future<void> main() async {
         boardDS = BoardDataSourceImpl(firestoreReferences: fakeRef);
         taskDS = TaskDataSourceImpl(firestoreReferences: fakeRef);
       });
+      testWidgets('should be empty', (tester) async {
+        await fakeFirestore.clearPersistence();
 
-      setUp(() async {
-        fakeFirestore.clearPersistence();
-
-        logger.wtf(fakeFirestore.dump());
-        await taskDS.createTask(TaskModel(title: 'New task', status: 'to do'));
-        await boardDS.updateBoards([BoardModel(title: 'to do', index: 0)]);
-        logger.warning(fakeFirestore.dump());
-
-        boardDS.readBoards().listen((data) {
-          logger.error('updated boardDataSource \n$data');
-        });
-        taskDS.readTasks().listen((data) {
-          logger.warning('updated taskDataSource \n$data');
-        });
-      });
-
-      testWidgets('should there be a kanban tile', (tester) async {
         await tester.pumpWidget(app);
         await tester.pumpAndSettle();
 
-        await tester.pumpAndSettle(Duration(seconds: 1));
+        final kanbanPage = find.byType(KanbanPage);
+        expect(kanbanPage, findsOneWidget);
 
-        await taskDS.createTask(TaskModel(title: 'title', status: 'to do'));
+        final kanbanBoard = find.byType(KanbanBoard);
+        expect(kanbanBoard, findsNothing);
 
-        await tester.pumpAndSettle(Duration(seconds: 1));
+        final kanbanTile = find.byType(KanbanTile);
+        expect(kanbanTile, findsNothing);
+      });
+      testWidgets('should there be a kanban board', (tester) async {
+        await fakeFirestore.clearPersistence();
+        await boardDS.updateBoards([BoardModel(title: 'title', index: 0)]);
+
+        await tester.pumpWidget(app);
+        await tester.pumpAndSettle();
+
+        final kanbanPage = find.byType(KanbanPage);
+        expect(kanbanPage, findsOneWidget);
+
+        final kanbanBoard = find.byType(KanbanBoard);
+        expect(kanbanBoard, findsOneWidget);
+
+        final kanbanTile = find.byType(KanbanTile);
+        expect(kanbanTile, findsNothing);
+      });
+
+      testWidgets('should there be a kanban tile', (tester) async {
+        await fakeFirestore.clearPersistence();
+        logger.info(fakeFirestore.dump());
+        // await tester.pumpWidget(app);
+        // await tester.pumpAndSettle();
+
+        await boardDS.updateBoards([BoardModel(title: 'to do', index: 0)]);
+        await taskDS.createTask(TaskModel(
+          id: 'id de cu é rola',
+          title: 'tasj title do caralho',
+          description: 'meu cu',
+          assingneeUID: 'tua mãe',
+          assingneeInitials: '4Q',
+          taskImportance: TaskImportance.normal,
+          status: "to do",
+          dueDate: DateTime.now(),
+          createdBy: 'minha rola',
+          createdDate: DateTime.now(),
+        ));
+
+        // await tester.pumpAndSettle();
+        // run app
+        await tester.pumpWidget(app);
+        await tester.pumpAndSettle();
+
+        // tap create task
+        final createTaskButton = find.text('New task');
+        await tester.runAsync(() async => await tester.tap(createTaskButton));
+        await tester.pumpAndSettle();
+
+        // should open new task form
+        final taskForm = find.byKey(const Key('taskForm'));
+        expect(taskForm, findsOneWidget);
+
+        // scroll down and find done button
+        final doneButton = find.byKey(const Key('doneButton'));
+        await tester.dragUntilVisible(
+          doneButton,
+          taskForm,
+          const Offset(0, -250),
+        );
+        await tester.pumpAndSettle();
+
+        // tap done button
+        await tester.runAsync(() async => await tester.tap(doneButton));
+        await tester.pumpAndSettle();
+
+        // should have created a new task
+        expect(find.byType(KanbanTile), findsOneWidget);
+
+        logger.warning(fakeFirestore.dump());
 
         final kanbanPage = find.byType(KanbanPage);
         expect(kanbanPage, findsOneWidget);

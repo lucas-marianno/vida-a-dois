@@ -16,7 +16,7 @@ final class _TaskStreamUpdate extends TaskEvent {
   const _TaskStreamUpdate(this.updatedTasks, this.boardList);
 
   @override
-  List<Object> get props => [updatedTasks];
+  List<Object> get props => [updatedTasks, boardList];
 }
 
 final class _HandleTaskError extends TaskEvent {

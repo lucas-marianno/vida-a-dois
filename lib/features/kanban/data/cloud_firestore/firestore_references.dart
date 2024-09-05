@@ -9,7 +9,7 @@ abstract class FirestoreReferences {
     required this.firebaseAuth,
   });
 
-  final kanbanColPath = 'mockKanbanCollection2';
+  final kanbanColPath = 'mockKanbanCollection';
   final boardsDocPath = 'boards';
   final taskColPath = 'tasks';
   final userSettingsColPath = 'userSettings';

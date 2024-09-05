@@ -43,7 +43,6 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         _updateTaskUseCase = updateTask,
         _createTaskUseCase = createTask,
         super(TaskLoading()) {
-    on<TaskEvent>(_logEvents);
     on<_TaskInitial>(_onTaskInitialEvent);
     on<_TaskStreamUpdate>(_onTaskStreamDataUpdate);
     on<_HandleTaskError>(_onHandleTaskError);
@@ -59,19 +58,6 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     on<DeleteTask>(_onDeleteTaskEvent);
 
     add(_TaskInitial());
-  }
-
-  _logEvents(TaskEvent event, _) {
-    switch (event) {
-      case _TaskInitial():
-        logger.initializing(TaskBloc);
-        break;
-      case _HandleTaskError():
-        logger.error(event.error.runtimeType, error: event.error);
-        break;
-      default:
-        logger.trace('$TaskBloc ${event.runtimeType} \n $event');
-    }
   }
 
   _onTaskInitialEvent(_, Emitter<TaskState> emit) {
@@ -107,7 +93,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     await _deleteTaskUseCase(event.task);
   }
 
-  _onLoadTaskEvent(LoadTasks event, _) {
+  _onLoadTaskEvent(LoadTasks event, _) async {
     if (event.boardList == _boardList) return;
     _boardList = List.from(event.boardList);
 
@@ -139,6 +125,32 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   _onHandleTaskError(_HandleTaskError event, Emitter<TaskState> emit) {
     emit(TaskError(event.error));
+  }
+
+  @override
+  void onChange(Change<TaskState> change) {
+    logger.trace(
+      '$TaskBloc ${change.nextState.runtimeType}\n'
+      '${change.nextState}',
+    );
+    super.onChange(change);
+  }
+
+  @override
+  void onEvent(TaskEvent event) {
+    switch (event) {
+      case _TaskInitial():
+        logger.initializing(TaskBloc);
+        break;
+      case _HandleTaskError():
+        final error = event.error;
+        logger.error('$TaskBloc ${error.runtimeType}', error: error);
+        break;
+      default:
+        logger.trace('$TaskBloc ${event.runtimeType} \n $event');
+    }
+
+    super.onEvent(event);
   }
 
   @override

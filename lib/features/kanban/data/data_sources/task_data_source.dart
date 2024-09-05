@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:vida_a_dois/core/util/logger/logger.dart';
 import 'package:vida_a_dois/features/kanban/data/cloud_firestore/firestore_references.dart';
 import 'package:vida_a_dois/features/kanban/data/models/task_model.dart';
 
@@ -34,25 +35,33 @@ class TaskDataSourceImpl extends TaskDataSource {
   Future<List<TaskModel>> getTaskList() async {
     final tasks = await taskCollectionReference.get();
 
-    return tasks.docs.map((e) => TaskModel.fromJson(e)).toList();
+    final parsedResponse =
+        tasks.docs.map((e) => TaskModel.fromJson(e)).toList();
+
+    logger.trace('$TaskDataSourceImpl: $getTaskList\n$parsedResponse');
+    return parsedResponse;
   }
 
   @override
   Future<void> createTask(TaskModel task) async {
+    logger.trace('$TaskDataSourceImpl: $createTask\n$task');
     if (task.title.isEmpty) return;
 
     await taskCollectionReference.add(TaskModel.fromEntity(task).toJson);
   }
 
   @override
-  Stream<List<TaskModel>> readTasks() =>
-      taskCollectionReference.snapshots().map(_querySnapshotToModel);
+  Stream<List<TaskModel>> readTasks() {
+    logger.trace('$TaskDataSourceImpl: $readTasks');
+    return taskCollectionReference.snapshots().map(_querySnapshotToModel);
+  }
 
   List<TaskModel> _querySnapshotToModel(QuerySnapshot snapshot) =>
       snapshot.docs.map((doc) => TaskModel.fromJson(doc)).toList();
 
   @override
   Future<void> updateTask(TaskModel task) async {
+    logger.trace('$TaskDataSourceImpl: $updateTask\n$task');
     if (task.title.isEmpty) return;
 
     await taskCollectionReference.doc(task.id).set(
@@ -63,6 +72,7 @@ class TaskDataSourceImpl extends TaskDataSource {
 
   @override
   Future<void> deleteTask(TaskModel task) async {
+    logger.trace('$TaskDataSourceImpl: $deleteTask\n$task');
     assert(task.id != null);
     assert(task.id!.isNotEmpty);
 
