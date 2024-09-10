@@ -132,5 +132,8 @@
   "appTheme": "App theme",
   "light": "Light",
   "dark": "Dark",
-  "system": "System default"
+  "system": "System default",
+  "high": "High",
+  "normal": "Normal",
+  "low": "Low"
 }

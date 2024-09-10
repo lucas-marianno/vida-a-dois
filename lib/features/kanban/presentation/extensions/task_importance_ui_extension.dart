@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vida_a_dois/core/i18n/l10n.dart';
 import 'package:vida_a_dois/features/kanban/domain/constants/enum/task_importance.dart';
 
 extension TaskImportanceUI on TaskImportance {
@@ -22,5 +23,29 @@ extension TaskImportanceUI on TaskImportance {
       case TaskImportance.high:
         return Colors.red;
     }
+  }
+
+  String localizeName(BuildContext context) {
+    final l10n = L10n.of(context);
+    switch (this) {
+      case TaskImportance.low:
+        return l10n.low;
+      case TaskImportance.normal:
+        return l10n.normal;
+      case TaskImportance.high:
+        return l10n.high;
+    }
+  }
+
+  static TaskImportance fromLocalizedName(
+    String? taskImportance,
+    BuildContext context,
+  ) {
+    taskImportance = taskImportance?.toLowerCase();
+    final l10n = L10n.of(context);
+
+    if (taskImportance == l10n.low.toLowerCase()) return TaskImportance.low;
+    if (taskImportance == l10n.high.toLowerCase()) return TaskImportance.high;
+    return TaskImportance.normal;
   }
 }

@@ -82,5 +82,8 @@
     "appTheme": "Tema do aplicativo",
     "light": "Claro",
     "dark": "Escuro",
-    "system": "Padrão do sistema"
+    "system": "Padrão do sistema",
+    "high": "Alta",
+    "normal": "Normal",
+    "low": "Baixa"
 }

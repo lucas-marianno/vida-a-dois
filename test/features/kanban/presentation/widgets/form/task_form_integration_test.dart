@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:vida_a_dois/app/app.dart';
 import 'package:vida_a_dois/core/widgets/form/form_widgets/form_date_picker.dart';
+import 'package:vida_a_dois/features/kanban/domain/constants/enum/task_importance.dart';
 import 'package:vida_a_dois/injection_container.dart';
 
 import 'package:vida_a_dois/core/i18n/l10n.dart';
@@ -354,12 +355,6 @@ Future<void> main() async {
     });
 
     testWidgets('should edit task importance to "HIGH"', (tester) async {
-      /// TODO: implement `TaskImportance`
-      ///
-      /// 1. create l10n for various importance levels
-      /// 2. replace enum with proper importance
-      /// 3. implement this test
-
       // run app
       await tester.pumpWidget(app);
       await tester.pumpAndSettle();
@@ -403,7 +398,7 @@ Future<void> main() async {
       // select new importance
       await tester.tap(taskImportanceFormField);
       await tester.pumpAndSettle();
-      final highImportance = find.text('high'); // TODO: replace with l10n
+      final highImportance = find.text(l10n.high);
       expect(highImportance, findsOneWidget);
       await tester.tap(highImportance);
       await tester.pumpAndSettle();
@@ -427,7 +422,7 @@ Future<void> main() async {
 
       // `TaskTile` should have been updated
       final tileWidget = tester.widget<KanbanTile>(kanbanTile);
-      expect(tileWidget.task.taskImportance.name, 'high');
+      expect(tileWidget.task.taskImportance, TaskImportance.high);
 
       // `TaskTile` should show updated importance Icon
       final importanceIcon = find.descendant(
@@ -436,13 +431,8 @@ Future<void> main() async {
       );
       expect(importanceIcon, findsOneWidget);
     });
-    testWidgets('should edit task importance to "LOW"', (tester) async {
-      /// TODO: implement `TaskImportance`
-      ///
-      /// 1. create l10n for various importance levels
-      /// 2. replace enum with proper importance
-      /// 3. implement this test
 
+    testWidgets('should edit task importance to "LOW"', (tester) async {
       // run app
       await tester.pumpWidget(app);
       await tester.pumpAndSettle();
@@ -486,7 +476,7 @@ Future<void> main() async {
       // select new importance
       await tester.tap(taskImportanceFormField);
       await tester.pumpAndSettle();
-      final lowImportance = find.text('low'); // TODO: replace with l10n
+      final lowImportance = find.text(l10n.low);
       expect(lowImportance, findsOneWidget);
       await tester.tap(lowImportance);
       await tester.pumpAndSettle();
@@ -510,8 +500,7 @@ Future<void> main() async {
 
       // `TaskTile` should have been updated
       final tileWidget = tester.widget<KanbanTile>(kanbanTile);
-      expect(tileWidget.task.taskImportance.name,
-          'low'); // TODO: replace with l10n
+      expect(tileWidget.task.taskImportance, TaskImportance.low);
 
       // `TaskTile` should show updated importance Icon
       final importanceIcon = find.descendant(
@@ -520,6 +509,7 @@ Future<void> main() async {
       );
       expect(importanceIcon, findsOneWidget);
     });
+
     testWidgets('should change task status', (tester) async {
       fakeFirestore.clearPersistence();
 

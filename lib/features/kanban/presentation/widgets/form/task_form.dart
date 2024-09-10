@@ -10,6 +10,7 @@ import 'package:vida_a_dois/features/kanban/domain/constants/enum/task_importanc
 import 'package:vida_a_dois/features/kanban/domain/entities/task_entity.dart';
 import 'package:vida_a_dois/features/kanban/presentation/bloc/task/task_bloc.dart';
 import 'package:vida_a_dois/features/kanban/presentation/bloc/board/board_bloc.dart';
+import 'package:vida_a_dois/features/kanban/presentation/extensions/task_importance_ui_extension.dart';
 
 class TaskForm {
   final BuildContext context;
@@ -155,12 +156,14 @@ class _EditTaskFormState extends State<EditTaskForm> {
         FormDropDownMenuButton(
           label: l10n.taskImportance,
           enabled: !readOnly,
-          initialValue: newTask.taskImportance.name,
-          items: TaskImportance.values.map((e) => e.name).toList(),
-          onChanged: (newValue) {
-            newTask = newTask.copyWith(
-                taskImportance: TaskImportance.fromString(newValue));
-          },
+          initialValue: newTask.taskImportance.localizeName(context),
+          items: TaskImportance.values
+              .map((e) => e.localizeName(context))
+              .toList(),
+          onChanged: (newValue) => newTask = newTask.copyWith(
+            taskImportance:
+                TaskImportanceUI.fromLocalizedName(newValue, context),
+          ),
         ),
         Row(
           mainAxisSize: MainAxisSize.min,

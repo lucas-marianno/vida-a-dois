@@ -9,7 +9,7 @@ class TaskModel extends Task {
     super.description,
     super.assingneeUID,
     super.assingneeInitials,
-    super.taskImportance = TaskImportance.normal,
+    super.taskImportance,
     required super.status,
     super.dueDate,
     super.createdBy,
