@@ -8,7 +8,7 @@ import 'package:vida_a_dois/features/calendar/presentation/pages/calendar_page.d
 import 'package:vida_a_dois/features/enternainment/presentation/pages/entertainment_page.dart';
 import 'package:vida_a_dois/features/finance/presentation/pages/finance_page.dart';
 import 'package:vida_a_dois/features/kanban/presentation/pages/kanban_page.dart';
-import 'package:vida_a_dois/features/user_settings/bloc/user_settings_bloc.dart';
+import 'package:vida_a_dois/features/user_settings/presentation/bloc/user_settings_bloc.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

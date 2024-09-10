@@ -9,14 +9,14 @@ sealed class TaskEvent extends Equatable {
 
 final class _TaskInitial extends TaskEvent {}
 
-final class _TaskStreamDataUpdate extends TaskEvent {
+final class _TaskStreamUpdate extends TaskEvent {
   final List<Task> updatedTasks;
   final List<Board> boardList;
 
-  const _TaskStreamDataUpdate(this.updatedTasks, this.boardList);
+  const _TaskStreamUpdate(this.updatedTasks, this.boardList);
 
   @override
-  List<Object> get props => [updatedTasks];
+  List<Object> get props => [updatedTasks, boardList];
 }
 
 final class _HandleTaskError extends TaskEvent {
@@ -28,10 +28,10 @@ final class _HandleTaskError extends TaskEvent {
   List<Object> get props => [error];
 }
 
-final class LoadTasksEvent extends TaskEvent {
+final class LoadTasks extends TaskEvent {
   final List<Board> boardList;
 
-  const LoadTasksEvent(this.boardList);
+  const LoadTasks(this.boardList);
 
   @override
   List<Object> get props => [boardList];
@@ -39,24 +39,24 @@ final class LoadTasksEvent extends TaskEvent {
 
 final class ReloadTasks extends TaskEvent {}
 
-final class CreateTaskEvent extends TaskEvent {
-  final BuildContext context;
-  final String initialStatus;
+final class ReadTask extends TaskEvent {
+  final Task task;
+  final bool isNewTask;
 
-  const CreateTaskEvent(this.context, this.initialStatus);
+  const ReadTask(this.task, {this.isNewTask = false});
 
   @override
-  List<Object> get props => [context, initialStatus];
+  List<Object> get props => [task, isNewTask];
 }
 
-final class ReadTaskEvent extends TaskEvent {
-  final BuildContext context;
+final class UpdateTask extends TaskEvent {
   final Task task;
+  final bool isNewTask;
 
-  const ReadTaskEvent(this.context, this.task);
+  const UpdateTask(this.task, {this.isNewTask = false});
 
   @override
-  List<Object> get props => [context, task];
+  List<Object> get props => [task, isNewTask];
 }
 
 final class UpdateTaskAssigneeUID extends TaskEvent {
@@ -89,10 +89,10 @@ final class UpdateTaskStatus extends TaskEvent {
   List<Object> get props => [task, newStatus];
 }
 
-final class DeleteTaskEvent extends TaskEvent {
+final class DeleteTask extends TaskEvent {
   final Task task;
 
-  const DeleteTaskEvent(this.task);
+  const DeleteTask(this.task);
 
   @override
   List<Object> get props => [task];

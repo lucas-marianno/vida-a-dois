@@ -6,58 +6,44 @@ void main() {
   final dueDate = DateTime.parse('2024-08-15 09:59:55.288283');
   final createdDate = DateTime.parse('2023-09-16 10:01:16.906093');
 
-  final task1 = Task(
-    id: 'abcde123456',
-    title: 'do something',
-    description: 'how to to something',
-    assingneeUID: '987654321abc',
-    assingneeInitials: 'LM',
-    taskImportance: TaskImportance.normal,
-    status: 'todo',
-    dueDate: dueDate,
-    createdBy: '123456abc',
-    createdDate: createdDate,
-  );
-  final task1clone = Task(
-    id: 'abcde123456',
-    title: 'do something',
-    description: 'how to to something',
-    assingneeUID: '987654321abc',
-    assingneeInitials: 'LM',
-    taskImportance: TaskImportance.normal,
-    status: 'todo',
-    dueDate: dueDate,
-    createdBy: '123456abc',
-    createdDate: createdDate,
-  );
-
-  final task1nearclone = Task(
-    id: 'abcde1234567',
-    title: 'do something',
-    description: 'how to to something',
-    assingneeUID: '987654321abc',
-    assingneeInitials: 'LM',
-    taskImportance: TaskImportance.normal,
-    status: 'todo',
-    dueDate: dueDate,
-    createdBy: '123456abc',
-    createdDate: createdDate,
-  );
-
-  final task2 = Task(
-    id: 'abc',
-    title: 'do something else',
-    description: 'how to not to do something',
-    assingneeUID: '987654321abc',
-    assingneeInitials: 'JJ',
-    taskImportance: TaskImportance.normal,
-    status: 'done',
-    dueDate: DateTime.now(),
-    createdBy: '123456abc',
-    createdDate: DateTime.now(),
-  );
-
   group('equality operator', () {
+    final task1 = Task(
+      id: 'abcde123456',
+      title: 'do something',
+      description: 'how to to something',
+      assingneeUID: '987654321abc',
+      assingneeInitials: 'LM',
+      taskImportance: TaskImportance.normal,
+      status: 'todo',
+      dueDate: dueDate,
+      createdBy: '123456abc',
+      createdDate: createdDate,
+    );
+    final task1clone = Task(
+      id: 'abcde123456',
+      title: 'do something',
+      description: 'how to to something',
+      assingneeUID: '987654321abc',
+      assingneeInitials: 'LM',
+      taskImportance: TaskImportance.normal,
+      status: 'todo',
+      dueDate: dueDate,
+      createdBy: '123456abc',
+      createdDate: createdDate,
+    );
+    final task2 = Task(
+      id: 'abc',
+      title: 'do something else',
+      description: 'how to not to do something',
+      assingneeUID: '987654321abc',
+      assingneeInitials: 'JJ',
+      taskImportance: TaskImportance.normal,
+      status: 'done',
+      dueDate: DateTime.now(),
+      createdBy: '123456abc',
+      createdDate: DateTime.now(),
+    );
+
     test('should return [true] if tasks have the same content', () {
       // act
       final result = task1 == task1clone;
@@ -68,7 +54,7 @@ void main() {
 
     test('should return [false] if tasks have nearly identical content', () {
       // arrange
-      final nearClone = task1clone..title = task1clone.title += 'a';
+      final nearClone = task1clone.copyWith(title: '${task1.title}a');
       // act
       final result = task1 == nearClone;
 
@@ -121,6 +107,43 @@ void main() {
   });
 
   group('hashcode', () {
+    final task1 = Task(
+      id: 'abcde123456',
+      title: 'do something',
+      description: 'how to to something',
+      assingneeUID: '987654321abc',
+      assingneeInitials: 'LM',
+      taskImportance: TaskImportance.normal,
+      status: 'todo',
+      dueDate: dueDate,
+      createdBy: '123456abc',
+      createdDate: createdDate,
+    );
+    final task1clone = Task(
+      id: 'abcde123456',
+      title: 'do something',
+      description: 'how to to something',
+      assingneeUID: '987654321abc',
+      assingneeInitials: 'LM',
+      taskImportance: TaskImportance.normal,
+      status: 'todo',
+      dueDate: dueDate,
+      createdBy: '123456abc',
+      createdDate: createdDate,
+    );
+    final task1nearclone = Task(
+      id: 'abcde1234567',
+      title: 'do something',
+      description: 'how to to something',
+      assingneeUID: '987654321abc',
+      assingneeInitials: 'LM',
+      taskImportance: TaskImportance.normal,
+      status: 'todo',
+      dueDate: dueDate,
+      createdBy: '123456abc',
+      createdDate: createdDate,
+    );
+
     test('equal objects should have the same hashcode', () {
       final result = task1.hashCode == task1clone.hashCode;
       expect(result, true);

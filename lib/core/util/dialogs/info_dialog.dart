@@ -9,7 +9,7 @@ import 'package:vida_a_dois/core/i18n/l10n.dart';
 class InfoDialog extends StatelessWidget {
   final String? title;
   final String content;
-  final void Function() onAccept;
+  final void Function()? onAccept;
   final void Function()? onCancel;
 
   const InfoDialog(
@@ -32,10 +32,12 @@ class InfoDialog extends StatelessWidget {
                 onPressed: onCancel,
                 child: Text(L10n.of(context).cancel),
               ),
-        FilledButton(
-          onPressed: onAccept,
-          child: Text(L10n.of(context).ok),
-        )
+        onAccept == null
+            ? const SizedBox()
+            : FilledButton(
+                onPressed: onAccept,
+                child: Text(L10n.of(context).ok),
+              )
       ],
     );
   }
@@ -61,13 +63,17 @@ class InfoDialog extends StatelessWidget {
     String content, {
     String? title,
     bool showCancel = false,
+    bool barrierDismissible = true,
   }) async =>
       await showDialog(
         context: context,
+        barrierDismissible: barrierDismissible,
         builder: (context) => InfoDialog(
+          key: const Key('info_dialog'),
           content,
           title: title,
-          onAccept: () => Navigator.pop(context, true),
+          onAccept:
+              barrierDismissible ? () => Navigator.pop(context, true) : null,
           onCancel: showCancel ? () => Navigator.pop(context, false) : null,
         ),
       );

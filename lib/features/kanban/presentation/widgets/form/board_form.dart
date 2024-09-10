@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vida_a_dois/core/constants/form_type.dart';
 import 'package:vida_a_dois/core/i18n/l10n.dart';
+import 'package:vida_a_dois/core/util/dialogs/info_dialog.dart';
 import 'package:vida_a_dois/core/widgets/form/modal_form.dart';
 import 'package:vida_a_dois/features/kanban/domain/entities/board_entity.dart';
 import 'package:vida_a_dois/features/kanban/presentation/bloc/board/board_bloc.dart';
@@ -16,25 +17,26 @@ class BoardForm {
       isScrollControlled: true,
       context: context,
       builder: (context) {
-        return _EditBoardForm(
+        return EditBoardForm(
           board,
           formType: initAsReadOnly ? FormType.read : FormType.create,
+          key: const Key('boardForm'),
         );
       },
     );
   }
 }
 
-class _EditBoardForm extends StatefulWidget {
+class EditBoardForm extends StatefulWidget {
   final Board board;
   final FormType formType;
-  const _EditBoardForm(this.board, {required this.formType});
+  const EditBoardForm(this.board, {super.key, required this.formType});
 
   @override
-  State<_EditBoardForm> createState() => _EditBoardFormState();
+  State<EditBoardForm> createState() => _EditBoardFormState();
 }
 
-class _EditBoardFormState extends State<_EditBoardForm> {
+class _EditBoardFormState extends State<EditBoardForm> {
   late BoardBloc boardBloc;
   late Board newBoard;
   late bool readOnly;
@@ -49,8 +51,20 @@ class _EditBoardFormState extends State<_EditBoardForm> {
     Navigator.pop(context, newBoard);
   }
 
-  void deleteBoardAndClose() {
+  void deleteBoardAndClose() async {
+    setState(() => formType = FormType.read);
+
     Navigator.pop(context);
+
+    final l10n = L10n.of(context);
+    final response = await InfoDialog.show(
+      context,
+      l10n.deleteBoardPromptDescription(widget.board.title),
+      title: '${l10n.delete} ${l10n.board.toLowerCase()}?',
+      showCancel: true,
+    );
+
+    if (response != true) return;
 
     boardBloc.add(DeleteBoardEvent(widget.board));
   }
@@ -78,7 +92,7 @@ class _EditBoardFormState extends State<_EditBoardForm> {
     formType = widget.formType;
     boardBloc = context.read<BoardBloc>();
 
-    newBoard = Board.copyFrom(widget.board);
+    newBoard = widget.board.copyWith();
   }
 
   @override
@@ -108,7 +122,7 @@ class _EditBoardFormState extends State<_EditBoardForm> {
           enabled: !readOnly,
           initialValue: newBoard.title,
           onChanged: (newString) {
-            newBoard.title = newString!;
+            newBoard = newBoard.copyWith(title: newString);
           },
           mandatory: true,
         ),
@@ -120,7 +134,8 @@ class _EditBoardFormState extends State<_EditBoardForm> {
                       .toList() +
                   ['${state.boards.length} - ${l10n.addToEnd}'];
 
-              newBoard.index = newBoard.index.clamp(0, items.length - 1);
+              newBoard = newBoard.copyWith(
+                  index: newBoard.index.clamp(0, items.length - 1));
 
               return FormDropDownMenuButton(
                 enabled: !readOnly,
@@ -130,8 +145,10 @@ class _EditBoardFormState extends State<_EditBoardForm> {
                     : items[newBoard.index],
                 items: items,
                 onChanged: (e) {
-                  newBoard.index =
-                      int.tryParse(e?.substring(0, 1) ?? '') ?? newBoard.index;
+                  newBoard = newBoard.copyWith(
+                    index: int.tryParse(e?.substring(0, 1) ?? '') ??
+                        newBoard.index,
+                  );
                 },
               );
             }
@@ -143,6 +160,7 @@ class _EditBoardFormState extends State<_EditBoardForm> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             ElevatedButton(
+              key: const Key('boardFormEditButton'),
               style: readOnly
                   ? ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).colorScheme.primary,
@@ -154,6 +172,7 @@ class _EditBoardFormState extends State<_EditBoardForm> {
               child: Text(readOnly ? l10n.edit : l10n.cancel),
             ),
             FilledButton(
+              key: const Key('boardFormDoneButton'),
               onPressed: formType == FormType.read ? null : sendForm,
               child: Text(l10n.done),
             ),

@@ -33,6 +33,7 @@ class MyFormField extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 5),
         child: TextFormField(
+          key: Key('${label}FormField'),
           enabled: enabled,
           style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
           initialValue: mandatory ? initialValue ?? label : initialValue,

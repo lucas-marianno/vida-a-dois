@@ -1,25 +1,41 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
-import 'package:vida_a_dois/core/constants/firebase_constants.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:vida_a_dois/core/connectivity/bloc/connectivity_bloc.dart';
+import 'package:vida_a_dois/features/user_settings/data/user_settings_data_source.dart';
+import 'package:vida_a_dois/features/user_settings/presentation/bloc/user_settings_bloc.dart';
+
+import 'package:vida_a_dois/features/auth/data/auth_data.dart';
+import 'package:vida_a_dois/features/auth/presentation/bloc/auth_bloc.dart';
+
+import 'package:vida_a_dois/features/kanban/data/cloud_firestore/firestore_references.dart';
 import 'package:vida_a_dois/features/kanban/data/data_sources/board_data_source.dart';
 import 'package:vida_a_dois/features/kanban/data/data_sources/task_data_source.dart';
 import 'package:vida_a_dois/features/kanban/data/repositories/board_repository_impl.dart';
 import 'package:vida_a_dois/features/kanban/data/repositories/task_repository_impl.dart';
+
 import 'package:vida_a_dois/features/kanban/domain/repository/board_repository.dart';
 import 'package:vida_a_dois/features/kanban/domain/repository/task_repository.dart';
-import 'package:vida_a_dois/features/kanban/domain/usecases/board/create_board.dart';
-import 'package:vida_a_dois/features/kanban/domain/usecases/board/delete_board.dart';
-import 'package:vida_a_dois/features/kanban/domain/usecases/board/read_boards.dart';
-import 'package:vida_a_dois/features/kanban/domain/usecases/board/rename_board.dart';
-import 'package:vida_a_dois/features/kanban/domain/usecases/board/update_board_index.dart';
+import 'package:vida_a_dois/features/kanban/domain/usecases/board_usecases.dart';
+import 'package:vida_a_dois/features/kanban/domain/usecases/task_usecases.dart';
+
 import 'package:vida_a_dois/features/kanban/presentation/bloc/board/board_bloc.dart';
 import 'package:vida_a_dois/features/kanban/presentation/bloc/task/task_bloc.dart';
-import 'package:vida_a_dois/features/kanban/domain/usecases/task_usecases.dart';
 
 final locator = GetIt.instance;
 
-void setUpLocator() {
-  // bloc
+void setUpLocator(
+  FirebaseFirestore firebaseFirestore,
+  FirebaseAuth firebaseAuth,
+  Connectivity connectivity,
+) {
+  // blocs
+  locator.registerFactory(() => ConnectivityBloc(connectivity));
+  locator.registerFactory(() => AuthBloc(locator()));
+  locator.registerFactory(() => UserSettingsBloc(locator()));
   locator.registerFactory(() => BoardBloc(
+        createInitialBoard: locator(),
         renameBoard: locator(),
         createBoard: locator(),
         readBoards: locator(),
@@ -30,13 +46,13 @@ void setUpLocator() {
       getTaskStream: locator(),
       createTask: locator(),
       updateTask: locator(),
-      updateTaskAssigneeUid: locator(),
+      updateTaskAssigneeUID: locator(),
       updateTaskImportance: locator(),
       updateTaskStatus: locator(),
       deleteTask: locator()));
 
   // task use cases
-  locator.registerLazySingleton(() => CreateTaskUseCase(locator()));
+  locator.registerLazySingleton(() => CreateTaskUseCase(locator(), locator()));
   locator.registerLazySingleton(() => DeleteTaskUseCase(locator()));
   locator.registerLazySingleton(() => GetTaskStreamUseCase(locator()));
   locator.registerLazySingleton(() => UpdateTaskAssigneeUidUseCase(locator()));
@@ -45,6 +61,7 @@ void setUpLocator() {
   locator.registerLazySingleton(() => UpdateTaskUseCase(locator()));
 
   // board use cases
+  locator.registerLazySingleton(() => CreateInitialBoardUseCase(locator()));
   locator.registerLazySingleton(() => CreateBoardUseCase(locator()));
   locator.registerLazySingleton(
       () => DeleteBoardUseCase(boardRepo: locator(), taskRepo: locator()));
@@ -53,15 +70,24 @@ void setUpLocator() {
       () => RenameBoardUseCase(boardRepo: locator(), taskRepo: locator()));
   locator.registerLazySingleton(() => UpdateBoardIndexUseCase(locator()));
 
-  // repository
+  // repositories
   locator.registerLazySingleton<BoardRepository>(
       () => BoardRepositoryImpl(locator()));
   locator.registerLazySingleton<TaskRepository>(
       () => TaskRepositoryImpl(locator()));
 
-  // data source
-  locator.registerLazySingleton<BoardDataSource>(() => BoardDataSourceImpl(
-      boardsDocReference: FirebaseConstants.boardsDocReference));
-  locator.registerLazySingleton<TaskDataSource>(() => TaskDataSourceImpl(
-      taskCollectionReference: FirebaseConstants.taskCollectionReference));
+  // data sources
+  locator.registerLazySingleton<BoardDataSource>(
+      () => BoardDataSourceImpl(firestoreReferences: locator()));
+  locator.registerLazySingleton<TaskDataSource>(
+      () => TaskDataSourceImpl(firestoreReferences: locator()));
+  locator.registerLazySingleton<AuthDataSource>(
+      () => AuthDataSourceImpl(firebaseAuth));
+  locator.registerLazySingleton<UserSettingsDataSource>(
+      () => UserSettingsDataSourceImpl(firestoreReferences: locator()));
+
+  // firestore references
+  locator.registerLazySingleton<FirestoreReferences>(() =>
+      FirestoreReferencesImpl(
+          firestoreInstance: firebaseFirestore, firebaseAuth: firebaseAuth));
 }

@@ -9,6 +9,7 @@ class UpdateTaskAssigneeUidUseCase {
   Future<void> call(Task task, String newAssigneeUID) async {
     if (task.assingneeUID == newAssigneeUID) return;
 
-    await taskRepository.updateTask(task..assingneeUID = newAssigneeUID);
+    final updatedTask = task.copyWith(assingneeUID: newAssigneeUID);
+    await taskRepository.updateTask(updatedTask);
   }
 }

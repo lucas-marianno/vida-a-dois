@@ -9,6 +9,7 @@ class UpdateTaskStatusUseCase {
   Future<void> call(Task task, String newStatus) async {
     if (task.status == newStatus) return;
 
-    await taskRepository.updateTask(task..status = newStatus);
+    final updatedTask = task.copyWith(status: newStatus);
+    await taskRepository.updateTask(updatedTask);
   }
 }

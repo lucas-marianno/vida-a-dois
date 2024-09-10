@@ -65,7 +65,7 @@ class _TaskTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     void readTask() async {
-      context.read<TaskBloc>().add(ReadTaskEvent(context, task));
+      context.read<TaskBloc>().add(ReadTask(task));
     }
 
     return Container(
@@ -125,6 +125,7 @@ class _TaskTileAssignee extends StatelessWidget {
       children: [
         // Exibir a foto da pessoa que foi atribuida a tarefa
         PopupMenuButton(
+          key: const Key('taskAssigneePopupButton'),
           icon: UserInitials(task.assingneeInitials ?? ''),
           itemBuilder: (context) {
             // TODO: implement assignee selector
@@ -196,6 +197,7 @@ class _TaskTileImportance extends StatelessWidget {
       top: 6,
       right: 0,
       child: PopupMenuButton(
+        key: const Key('taskImportancePopupButton'),
         icon: Icon(
           task.taskImportance.icon,
           color: task.taskImportance.color,

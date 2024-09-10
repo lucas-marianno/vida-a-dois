@@ -21,7 +21,7 @@ class UpdateBoardIndexUseCase {
 
     currentBoards.removeAt(oldIndex);
 
-    board.index = newIndex;
+    board.copyWith(index: newIndex);
 
     currentBoards.insert(newIndex, board);
 

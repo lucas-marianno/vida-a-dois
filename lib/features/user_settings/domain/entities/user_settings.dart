@@ -42,4 +42,7 @@ class UserSettings {
   /// [equalsTo] makes a deep comparison between two [UserSettings] objects
   /// and returns `true` if all parameters match.
   bool equalsTo(UserSettings user) => '${user.toJson}' == '$toJson';
+
+  @override
+  String toString() => toJson.toString();
 }

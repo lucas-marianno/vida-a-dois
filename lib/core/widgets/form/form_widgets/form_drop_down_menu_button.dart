@@ -73,6 +73,7 @@ class _FormDropDownMenuButtonState extends State<FormDropDownMenuButton> {
       );
     }
     return DropdownButtonFormField<String>(
+      key: Key('${widget.label}DropdownField'),
       isExpanded: true,
       padding: const EdgeInsets.symmetric(vertical: 5),
       value: value,

@@ -23,7 +23,8 @@ class RenameBoardUseCase {
 
     final oldTitle = board.title;
 
-    currentBoards[board.index].title = newTitle;
+    currentBoards[board.index] =
+        currentBoards[board.index].copyWith(title: newTitle);
 
     Future.wait([
       _updateTasksStatusToNewStatus(oldTitle, newTitle),
@@ -44,7 +45,9 @@ class RenameBoardUseCase {
     final allTasks = await taskRepo.getTaskList();
     final updatedTasks = allTasks
         .map((task) {
-          return task.status == status ? (task..status = newStatus) : null;
+          return task.status == status
+              ? (task.copyWith(status: newStatus))
+              : null;
         })
         .nonNulls
         .toList();

@@ -9,7 +9,7 @@ import 'package:vida_a_dois/core/i18n/l10n.dart';
 import 'package:vida_a_dois/core/util/dialogs/error_dialog.dart';
 import 'package:vida_a_dois/core/util/dialogs/info_dialog.dart';
 import 'package:vida_a_dois/core/util/dialogs/loading_dialog.dart';
-import 'package:vida_a_dois/features/user_settings/bloc/user_settings_bloc.dart';
+import 'package:vida_a_dois/features/user_settings/presentation/bloc/user_settings_bloc.dart';
 import 'package:vida_a_dois/app/pages/home_page.dart';
 
 class Root extends StatelessWidget {
@@ -24,7 +24,6 @@ class Root extends StatelessWidget {
     final l10n = L10n.of(context);
     final auth = context.read<AuthBloc>();
     final userSettings = context.read<UserSettingsBloc>();
-    final connection = context.read<ConnectivityBloc>();
     return Material(
       child: MultiBlocListener(
         listeners: [
@@ -37,11 +36,9 @@ class Root extends StatelessWidget {
                   break;
                 case NoInternetConnection():
                   await InfoDialog.show(context, l10n.warningNoInternet);
-                  connection.add(CheckConnectivityEvent());
                   break;
-                case ConnectivityErrorState():
+                case ConnectivityError():
                   await ErrorDialog.show(context, state.error);
-                  connection.add(CheckConnectivityEvent());
                   break;
                 default:
                   popUntilRoot(context);
@@ -82,7 +79,16 @@ class Root extends StatelessWidget {
                 },
               );
             }
-            return const SizedBox();
+            return SafeArea(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const LinearProgressIndicator(),
+                  const SizedBox(height: 20),
+                  Text(l10n.checkingInternetConnection),
+                ],
+              ),
+            );
           },
         ),
       ),

@@ -113,14 +113,10 @@ class _AuthPageState extends State<AuthPage> {
         MediaQuery.of(context).size.width * (isShittyDevice ? 0.9 : 0.7);
     return SafeArea(
       child: Scaffold(
-        resizeToAvoidBottomInset: !isShittyDevice,
         body: Center(
-          child: SizedBox(
-            height: height,
-            width: width,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+          child: ConstrainedBox(
+            constraints: BoxConstraints.loose(Size(width, height)),
+            child: ListView(
               children: [
                 // app logo + slogan
                 const Center(child: AppTitle()),
@@ -138,6 +134,7 @@ class _AuthPageState extends State<AuthPage> {
                   ),
                   validator: emailValidator,
                 ),
+                const SizedBox(height: 10),
                 // password
                 TextFormField(
                     autofocus: false,

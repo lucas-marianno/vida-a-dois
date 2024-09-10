@@ -9,9 +9,10 @@ import 'package:vida_a_dois/features/kanban/domain/usecases/board_usecases.dart'
 part 'board_event.dart';
 part 'board_state.dart';
 
-final class BoardBloc extends Bloc<BoardEvent, BoardState> {
+class BoardBloc extends Bloc<BoardEvent, BoardState> {
   final RenameBoardUseCase renameBoard;
   final CreateBoardUseCase createBoard;
+  final CreateInitialBoardUseCase createInitialBoard;
   final ReadBoardsUseCase readBoards;
   final UpdateBoardIndexUseCase updateBoardIndex;
   final DeleteBoardUseCase deleteBoard;
@@ -20,6 +21,7 @@ final class BoardBloc extends Bloc<BoardEvent, BoardState> {
   late StreamSubscription _boardSubscription;
 
   BoardBloc({
+    required this.createInitialBoard,
     required this.createBoard,
     required this.readBoards,
     required this.renameBoard,
@@ -32,44 +34,23 @@ final class BoardBloc extends Bloc<BoardEvent, BoardState> {
     on<RenameBoardEvent>(_onRenameBoardEvent);
     on<EditBoardEvent>(_onEditBoardEvent);
     on<DeleteBoardEvent>(_onDeleteBoardEvent);
-    on<HandleBoardException>(_onHandleBoardException);
-    on<ReloadBoards>(_onReloadBoards);
+    on<_BoardException>(_onHandleBoardException);
 
-    Log.initializing(BoardBloc);
     add(BoardInitialEvent());
   }
 
-  _onBoardInitialEvent(
-    BoardInitialEvent event,
-    Emitter<BoardState> emit,
-  ) {
-    Log.trace('$BoardBloc $BoardInitialEvent \n $event');
+  _onBoardInitialEvent(_, Emitter<BoardState> emit) {
     emit(BoardLoadingState());
 
     try {
       _boardSubscription = readBoards().listen(
         (snapshot) => add(BoardsListUpdate(snapshot)),
-        onError: (e) => add(HandleBoardException(error: e)),
-        onDone: () => Log.debug('_boardSubscription is `done`!'),
-        cancelOnError: true,
+        onError: (e) => add(_BoardException(error: e)),
+        onDone: () => logger.debug('_boardSubscription is `done`!'),
       );
     } catch (e) {
-      add(HandleBoardException(error: e));
+      add(_BoardException(error: e));
     }
-  }
-
-  /// Similar to [BoardsListUpdate].
-  /// Except it will emit a [BoardLoadedState] even if there were no changes
-  /// to [_statusList].
-  ///
-  /// [ReloadBoards] emits a [BoardLoadedState]
-  /// with the last known `List<ColumnEntity>`.
-  ///
-  /// This event should only be called after an error has been properly
-  /// handled by [HandleBoardException] event.
-  _onReloadBoards(_, Emitter<BoardState> emit) {
-    Log.info("$BoardBloc $ReloadBoards");
-    emit(BoardLoadedState(_statusList));
   }
 
   _onBoardStreamDataUpdate(
@@ -78,32 +59,22 @@ final class BoardBloc extends Bloc<BoardEvent, BoardState> {
 
     _statusList = event.boardsList;
 
-    Log.trace('$BoardBloc $BoardsListUpdate\n$_statusList');
     emit(BoardLoadedState(_statusList));
   }
 
-  _onCreateBoardEvent(
-    CreateBoardEvent event,
-    Emitter<BoardState> emit,
-  ) async {
-    Log.trace('$BoardBloc $CreateBoardEvent \n $event');
+  _onCreateBoardEvent(CreateBoardEvent event, _) async {
     try {
       await createBoard(event.newBoard);
     } catch (e) {
-      add(HandleBoardException(error: e));
+      add(_BoardException(error: e));
     }
   }
 
-  _onRenameBoardEvent(
-    RenameBoardEvent event,
-    Emitter<BoardState> emit,
-  ) async {
-    Log.info('$BoardBloc $RenameBoardEvent \n $event');
-
+  _onRenameBoardEvent(RenameBoardEvent event, _) async {
     try {
       await renameBoard(event.board, event.newBoardTitle);
     } catch (e) {
-      add(HandleBoardException(error: e));
+      add(_BoardException(error: e));
     }
   }
 
@@ -112,41 +83,71 @@ final class BoardBloc extends Bloc<BoardEvent, BoardState> {
     Emitter<BoardState> emit,
   ) async {
     emit(BoardLoadingState());
-    Log.trace('$BoardBloc $EditBoardEvent \n $event');
     final oldB = event.oldBoard;
     final newB = event.newBoard;
     try {
       if (oldB.title != newB.title) renameBoard(oldB, newB.title);
       if (oldB.index != newB.index) updateBoardIndex(oldB, newB.index);
     } catch (e) {
-      add(HandleBoardException(error: e));
+      add(_BoardException(error: e));
     }
   }
 
-  _onDeleteBoardEvent(
-    DeleteBoardEvent event,
-    Emitter<BoardState> emit,
-  ) async {
-    Log.trace('$BoardBloc $DeleteBoardEvent \n $event');
+  _onDeleteBoardEvent(DeleteBoardEvent event, _) async {
     try {
       await deleteBoard(event.board);
     } catch (e) {
-      add(HandleBoardException(error: e));
+      add(_BoardException(error: e));
     }
   }
 
   _onHandleBoardException(
-    HandleBoardException event,
+    _BoardException event,
     Emitter<BoardState> emit,
   ) async {
+    emit(BoardLoadingState());
+
     final error = event.error;
-    Log.error(error.runtimeType, error: error);
+
+    if (error is StateError) {
+      await createInitialBoard();
+      return;
+    }
+
     emit(BoardErrorState(error.runtimeType.toString(), error: error));
+    emit(BoardLoadedState(_statusList));
+  }
+
+  @override
+  void onEvent(BoardEvent event) {
+    switch (event) {
+      case BoardInitialEvent():
+        logger.initializing(BoardBloc);
+        break;
+      case _BoardException():
+        if (event.error is StateError) break;
+        logger.info('$BoardBloc $_BoardException', error: event.error);
+        break;
+      default:
+        logger.trace('$BoardBloc ${event.runtimeType} \n $event');
+    }
+
+    super.onEvent(event);
+  }
+
+  @override
+  void onChange(Change<BoardState> change) {
+    logger.debug(
+      '$BoardBloc ${change.nextState.runtimeType}\n'
+      '${change.nextState}',
+    );
+
+    super.onChange(change);
   }
 
   @override
   Future<void> close() {
-    Log.trace('$BoardBloc close()');
+    logger.trace('$BoardBloc close()');
     _boardSubscription.cancel();
     return super.close();
   }

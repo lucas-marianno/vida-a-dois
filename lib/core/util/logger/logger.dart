@@ -1,4 +1,5 @@
 import 'package:logger/logger.dart';
+export 'package:logger/src/log_level.dart';
 
 /// Logger that logs everything...
 ///
@@ -10,59 +11,67 @@ import 'package:logger/logger.dart';
 /// e: "Error log",
 /// f: "What a fatal log",
 /// ```
+late final Log logger;
+
+void initLogger(Log log) {
+  logger = log;
+  logger.initializing('Logger');
+}
+
 class Log {
-  static const _verbose = false;
-  static final LogPrinter _default = PrettyPrinter();
-  static final LogPrinter _singleLine = PrettyPrinter(
+  final Level level;
+  final bool verbose;
+  late final Logger _logger;
+
+  Log({this.level = Level.warning, this.verbose = false}) {
+    _logger = Logger(
+      filter: null,
+      printer: !verbose ? _singleLine : null,
+      output: null,
+      level: level,
+    );
+  }
+
+  final LogPrinter _singleLine = PrettyPrinter(
     methodCount: 0,
     printEmojis: false,
     lineLength: 80,
   );
 
-  static final _logger = Logger(
-    filter: null,
-    printer: _verbose ? _default : _singleLine,
-    output: null,
-    level: Level.all,
-  );
-
   /// Info log => [what] initializing...
-  static void initializing(Object what) {
+  void initializing(Object what) {
     _logger.t('$what initializing...');
   }
 
   /// Trace log
-  static void trace(
+  void trace(
     dynamic message, {
     DateTime? time,
     Object? error,
     StackTrace? stackTrace,
-  }) {
-    _logger.t(message, time: time, error: error, stackTrace: stackTrace);
-  }
+  }) =>
+      _logger.t(message, time: time, error: error, stackTrace: stackTrace);
 
   /// Debug log
-  static void debug(
+  void debug(
     dynamic message, {
     DateTime? time,
     Object? error,
     StackTrace? stackTrace,
-  }) {
-    _logger.d(message, time: time, error: error, stackTrace: stackTrace);
-  }
+  }) =>
+      _logger.d(message, time: time, error: error, stackTrace: stackTrace);
 
   /// Info log
-  static void info(
+  void info(
     dynamic message, {
     DateTime? time,
     Object? error,
     StackTrace? stackTrace,
-  }) {
-    _logger.i(message, time: time, error: error, stackTrace: stackTrace);
-  }
+  }) =>
+      _logger.i(message, time: time, error: error, stackTrace: stackTrace);
 
   /// Warning log
-  static void warning(
+  void warning(
     dynamic message, {
     DateTime? time,
     Object? error,
@@ -71,7 +80,7 @@ class Log {
       _logger.w(message, time: time, error: error, stackTrace: stackTrace);
 
   /// Error log
-  static void error(
+  void error(
     dynamic message, {
     DateTime? time,
     Object? error,
@@ -80,7 +89,7 @@ class Log {
       _logger.e(message, time: time, error: error, stackTrace: stackTrace);
 
   /// Fatal log
-  static void wtf(
+  void wtf(
     dynamic message, {
     DateTime? time,
     Object? error,
