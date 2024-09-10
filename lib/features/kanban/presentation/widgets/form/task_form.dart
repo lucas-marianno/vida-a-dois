@@ -156,13 +156,12 @@ class _EditTaskFormState extends State<EditTaskForm> {
         FormDropDownMenuButton(
           label: l10n.taskImportance,
           enabled: !readOnly,
-          initialValue: newTask.taskImportance.localizeName(context),
+          initialValue: newTask.importance.localizeName(context),
           items: TaskImportance.values
               .map((e) => e.localizeName(context))
               .toList(),
           onChanged: (newValue) => newTask = newTask.copyWith(
-            taskImportance:
-                TaskImportanceUI.fromLocalizedName(newValue, context),
+            importance: TaskImportanceUI.fromLocalizedName(newValue, context),
           ),
         ),
         Row(
@@ -191,7 +190,7 @@ class _EditTaskFormState extends State<EditTaskForm> {
               label: l10n.taskDeadline,
               flex: 1,
               enabled: !readOnly,
-              initialDate: newTask.dueDate,
+              initialDate: newTask.deadline,
               onChanged: (newDate) {
                 newTask = newTask.copyWith(dueDate: newDate);
               },

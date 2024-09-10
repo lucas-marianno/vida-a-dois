@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+export 'package:flutter_gen/gen_l10n/localizations.dart';
+
 /// Provides easy access to generated `AppLocalizations`.
 ///
 /// `App Localizations` are generated from `.arb` files.

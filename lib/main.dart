@@ -17,6 +17,12 @@ import 'package:vida_a_dois/features/user_settings/presentation/bloc/user_settin
 import 'package:vida_a_dois/features/kanban/presentation/bloc/task/task_bloc.dart';
 import 'package:vida_a_dois/features/kanban/presentation/bloc/board/board_bloc.dart';
 
+// ignore_for_file: depend_on_referenced_packages
+import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+
+const kUseMocks = true;
+
 void main() async {
   initLogger(Log(level: Level.all));
   logger.initializing('main');
@@ -24,11 +30,26 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  setUpLocator(
-    FirebaseFirestore.instance,
-    FirebaseAuth.instance,
-    Connectivity(),
-  );
+  if (kUseMocks) {
+    final fakeFirestore = FakeFirebaseFirestore();
+    final realConnectivity = Connectivity();
+    final fakeAuth = MockFirebaseAuth(
+      signedIn: true,
+      mockUser: MockUser(
+        uid: 'uid123',
+        email: 'mockUser@mail.com',
+        displayName: 'mock user',
+      ),
+    );
+
+    setUpLocator(fakeFirestore, fakeAuth, realConnectivity);
+  } else {
+    setUpLocator(
+      FirebaseFirestore.instance,
+      FirebaseAuth.instance,
+      Connectivity(),
+    );
+  }
 
   runApp(
     MultiBlocProvider(

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vida_a_dois/core/i18n/l10n.dart';
 import 'package:vida_a_dois/core/widgets/user_initials.dart';
 import 'package:vida_a_dois/core/util/color_util.dart';
-import 'package:vida_a_dois/core/util/datetime_util.dart';
+import 'package:vida_a_dois/core/extentions/datetime_extension.dart';
 import 'package:vida_a_dois/features/kanban/domain/entities/task_entity.dart';
 import 'package:vida_a_dois/features/kanban/presentation/bloc/task/task_bloc.dart';
 import 'package:vida_a_dois/features/kanban/domain/constants/enum/task_importance.dart';
@@ -100,7 +101,7 @@ class _TaskTile extends StatelessWidget {
             ListTile(
               contentPadding: const EdgeInsets.only(left: 16),
               leading:
-                  task.dueDate == null ? null : _TaskTileDataStamp(task: task),
+                  task.deadline == null ? null : _TaskTileDataStamp(task: task),
               trailing: _TaskTileAssignee(task: task),
             )
           ],
@@ -173,9 +174,7 @@ class _TaskTileDataStamp extends StatelessWidget {
         ),
         const SizedBox(width: 10),
         Text(
-          DateTimeUtil.dateTimeToStringShort(
-            task.dueDate,
-          ).toUpperCase(),
+          task.deadline?.toAbreviatedDate(L10n.of(context)).toUpperCase() ?? '',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
       ],
@@ -199,10 +198,10 @@ class _TaskTileImportance extends StatelessWidget {
       child: PopupMenuButton(
         key: const Key('taskImportancePopupButton'),
         icon: Icon(
-          task.taskImportance.icon,
-          color: task.taskImportance.color,
+          task.importance.icon,
+          color: task.importance.color,
         ),
-        tooltip: task.taskImportance.name,
+        tooltip: task.importance.name,
         itemBuilder: (context) {
           return [
             for (TaskImportance importance in TaskImportance.values)

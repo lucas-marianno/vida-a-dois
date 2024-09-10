@@ -85,5 +85,20 @@
     "system": "Padrão do sistema",
     "high": "Alta",
     "normal": "Normal",
-    "low": "Baixa"
+    "low": "Baixa",
+    "dateShort": "{dd}/{mm}/{yyyy}",
+    "dateAbbreviated": "{dd} {mmm} {yyyy}",
+    "dateLong": "{dd} de {mmmm}, {yyyy}",
+    "january": "janeiro",
+    "february": "fevereiro",
+    "march": "março",
+    "april": "abril",
+    "may": "maio",
+    "june": "junho",
+    "july": "julho",
+    "august": "agosto",
+    "september": "setembro",
+    "october": "outubro",
+    "november": "novembro",
+    "december": "dezembro"
 }

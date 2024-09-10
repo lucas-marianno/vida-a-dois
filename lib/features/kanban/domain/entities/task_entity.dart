@@ -6,9 +6,9 @@ class Task {
   final String? description;
   final String? assingneeUID;
   final String? assingneeInitials;
-  final TaskImportance taskImportance;
+  final TaskImportance importance;
   final String status;
-  final DateTime? dueDate;
+  final DateTime? deadline;
   final String? createdBy;
   final DateTime? createdDate;
 
@@ -18,9 +18,9 @@ class Task {
     this.description,
     this.assingneeUID,
     this.assingneeInitials,
-    this.taskImportance = TaskImportance.normal,
+    this.importance = TaskImportance.normal,
     required this.status,
-    this.dueDate,
+    this.deadline,
     this.createdBy,
     this.createdDate,
   });
@@ -31,7 +31,7 @@ class Task {
     String? description,
     String? assingneeUID,
     String? assingneeInitials,
-    TaskImportance? taskImportance,
+    TaskImportance? importance,
     String? status,
     DateTime? dueDate,
     String? createdBy,
@@ -43,9 +43,9 @@ class Task {
       description: description ?? this.description,
       assingneeUID: assingneeUID ?? this.assingneeUID,
       assingneeInitials: assingneeInitials ?? this.assingneeInitials,
-      taskImportance: taskImportance ?? this.taskImportance,
+      importance: importance ?? this.importance,
       status: status ?? this.status,
-      dueDate: dueDate ?? this.dueDate,
+      deadline: dueDate ?? this.deadline,
       createdBy: createdBy ?? this.createdBy,
       createdDate: createdDate ?? this.createdDate,
     );
@@ -57,9 +57,9 @@ class Task {
         'description': description,
         'assingneeUID': assingneeUID,
         'assingneeInitials': assingneeInitials,
-        'taskImportance': taskImportance,
+        'importance': importance,
         'status': status,
-        'dueDate': dueDate,
+        'dueDate': deadline,
         'createdBy': createdBy,
         'createdDate': createdDate,
       };

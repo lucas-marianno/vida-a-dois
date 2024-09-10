@@ -41,9 +41,9 @@ void main() {
       expect(taskEntry[id]['description'], task1.description);
       expect(taskEntry[id]['assigneeUID'], task1.assingneeUID);
       expect(taskEntry[id]['assingneeInitials'], task1.assingneeInitials);
-      expect(taskEntry[id]['taskImportance'], task1.taskImportance.name);
+      expect(taskEntry[id]['importance'], task1.importance.name);
       expect(taskEntry[id]['status'], task1.status);
-      expect(taskEntry[id]['dueDate'], task1.dueDate);
+      expect(taskEntry[id]['dueDate'], task1.deadline);
       expect(taskEntry[id]['createdBy'], task1.createdBy);
       expect(taskEntry[id]['createdDate'], task1.createdDate);
     });
@@ -65,9 +65,9 @@ void main() {
       expect(taskEntry[id]['description'], task1b.description);
       expect(taskEntry[id]['assigneeUID'], task1b.assingneeUID);
       expect(taskEntry[id]['assingneeInitials'], task1b.assingneeInitials);
-      expect(taskEntry[id]['taskImportance'], task1b.taskImportance.name);
+      expect(taskEntry[id]['importance'], task1b.importance.name);
       expect(taskEntry[id]['status'], task1b.status);
-      expect(taskEntry[id]['dueDate'], task1b.dueDate);
+      expect(taskEntry[id]['dueDate'], task1b.deadline);
       expect(taskEntry[id]['createdBy'], task1b.createdBy);
       expect(taskEntry[id]['createdDate'], task1b.createdDate);
     });

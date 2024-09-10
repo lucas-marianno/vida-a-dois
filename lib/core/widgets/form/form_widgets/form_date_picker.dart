@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:vida_a_dois/core/util/datetime_util.dart';
+import 'package:vida_a_dois/core/extentions/datetime_extension.dart';
+import 'package:vida_a_dois/core/i18n/l10n.dart';
 
 class FormDatePicker extends StatefulWidget {
   final String label;
@@ -21,38 +22,37 @@ class FormDatePicker extends StatefulWidget {
 }
 
 class _FormDatePickerState extends State<FormDatePicker> {
-  late DateTime? dueDate;
+  late DateTime? deadLine;
   TextEditingController controller = TextEditingController();
 
   Future<void> pickDate() async {
     final DateTime? response = await showDatePicker(
       context: context,
-      initialDate: dueDate,
+      initialDate: deadLine,
       firstDate: DateTime(1900),
       lastDate: DateTime(2100),
     );
 
-    if (response != null) updateDueDate(response);
+    if (response != null) updateDeadline(response);
   }
 
-  void updateDueDate(DateTime? newDate, {bool initialCall = false}) {
-    dueDate = newDate;
-    widget.onChanged(dueDate);
-    controller.text = DateTimeUtil.dateTimeToStringBrazilDateOnly(dueDate);
+  void updateDeadline(DateTime newDate) async {
+    deadLine = newDate;
+    widget.onChanged(deadLine);
 
-    if (!initialCall) setState(() {});
+    setState(() {});
   }
 
   @override
   void initState() {
-    widget.onChanged(widget.initialDate);
-
-    updateDueDate(widget.initialDate, initialCall: true);
     super.initState();
+    deadLine = widget.initialDate;
+    widget.onChanged(widget.initialDate);
   }
 
   @override
   Widget build(BuildContext context) {
+    controller.text = deadLine?.toShortDate(L10n.of(context)) ?? '';
     return Expanded(
       flex: widget.flex,
       child: TextFormField(

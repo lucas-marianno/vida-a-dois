@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:vida_a_dois/app/app.dart';
+import 'package:vida_a_dois/core/extentions/datetime_extension.dart';
 import 'package:vida_a_dois/core/widgets/form/form_widgets/form_date_picker.dart';
 import 'package:vida_a_dois/features/kanban/domain/constants/enum/task_importance.dart';
 import 'package:vida_a_dois/injection_container.dart';
@@ -422,7 +423,7 @@ Future<void> main() async {
 
       // `TaskTile` should have been updated
       final tileWidget = tester.widget<KanbanTile>(kanbanTile);
-      expect(tileWidget.task.taskImportance, TaskImportance.high);
+      expect(tileWidget.task.importance, TaskImportance.high);
 
       // `TaskTile` should show updated importance Icon
       final importanceIcon = find.descendant(
@@ -500,7 +501,7 @@ Future<void> main() async {
 
       // `TaskTile` should have been updated
       final tileWidget = tester.widget<KanbanTile>(kanbanTile);
-      expect(tileWidget.task.taskImportance, TaskImportance.low);
+      expect(tileWidget.task.importance, TaskImportance.low);
 
       // `TaskTile` should show updated importance Icon
       final importanceIcon = find.descendant(
@@ -616,9 +617,66 @@ Future<void> main() async {
       );
     });
 
-    testWidgets('should change `Deadline`', (tester) async {
-      /// TODO: create l10n for date time
+    testWidgets('should show task.deadline as initial value in deadlinefield',
+        (tester) async {
+      // arrange
+      final taskDeadline = DateTime(2024, 9, 16);
+      await fakeFirestore.clearPersistence();
+      await boardDS.updateBoards([BoardModel(title: 'to do', index: 0)]);
+      await taskDS.createTask(
+        TaskModel(title: 'task', status: 'to do', deadline: taskDeadline),
+      );
 
+      // run app
+      await tester.pumpWidget(app);
+      await tester.pumpAndSettle();
+
+      // tap tile
+      final kanbanTile = find.byType(KanbanTile).first;
+      await tester.runAsync(() async => await tester.tap(kanbanTile));
+      await tester.pumpAndSettle();
+
+      // open edit task form in read mode
+      final taskForm = find.byKey(const Key('taskForm'));
+      expect(taskForm, findsOneWidget);
+      expect(find.text(l10n.readingATask), findsOneWidget);
+
+      // scroll until edit/cancel button is visible
+      final editCancelButton = find.byKey(const Key('editCancelButton'));
+      await tester.dragUntilVisible(
+        editCancelButton,
+        taskForm,
+        const Offset(0, -50),
+      );
+      await tester.pumpAndSettle();
+
+      // tap edit button
+      await tester.tap(editCancelButton);
+      await tester.pumpAndSettle();
+
+      // should have entered edit mode
+      expect(find.text(l10n.editingATask), findsOneWidget);
+
+      // find task deadline
+      final taskDeadlineField = find.byType(FormDatePicker);
+      await tester.dragUntilVisible(
+        taskDeadlineField,
+        taskForm,
+        const Offset(0, 50),
+      );
+      await tester.pumpAndSettle();
+      expect(taskDeadlineField, findsOneWidget);
+
+      // initial date should be localized and displayed
+      final taskDeadlineInitialValue = find.descendant(
+        of: taskDeadlineField,
+        matching: find.text(taskDeadline.toShortDate(l10n)),
+      );
+
+      expect(taskDeadlineInitialValue, findsOneWidget);
+    });
+
+    testWidgets('should change `Deadline`', (tester) async {
       // run app
       await tester.pumpWidget(app);
       await tester.pumpAndSettle();
@@ -662,7 +720,6 @@ Future<void> main() async {
       // open date picker
       await tester.tap(taskDeadline);
       await tester.pumpAndSettle();
-
       // enter input mode
       final inputMode = find.byIcon(Icons.edit_outlined);
       expect(inputMode, findsOneWidget);
@@ -671,8 +728,12 @@ Future<void> main() async {
 
       // enter new date
       final dateField = find.byType(InputDatePickerFormField);
+      final deadline = DateTime(1994, 9, 16);
       expect(dateField, findsOneWidget);
-      await tester.enterText(dateField, '09/16/1994'); // TODO: replace l10n
+      await tester.enterText(
+        dateField,
+        l10n.dateShort(deadline.day, deadline.month, deadline.year),
+      );
 
       await tester.tap(find.widgetWithText(TextButton, 'OK'));
       await tester.pumpAndSettle();
@@ -696,7 +757,7 @@ Future<void> main() async {
 
       // `TaskTile` should have been updated
       final tileWidget = tester.widget<KanbanTile>(kanbanTile);
-      expect(tileWidget.task.dueDate, DateTime(1994, 9, 16));
+      expect(tileWidget.task.deadline, DateTime(1994, 9, 16));
 
       // `TaskTile` should show updated deadline
       final deadLineIcon = find.descendant(
@@ -706,7 +767,7 @@ Future<void> main() async {
       expect(deadLineIcon, findsOneWidget);
       final deadLineText = find.descendant(
         of: find.byType(KanbanTile),
-        matching: find.text('16 SET 1994'), // TODO: replace l10n
+        matching: find.text(deadline.toAbreviatedDate(l10n).toUpperCase()),
       );
       expect(deadLineText, findsOneWidget);
     });

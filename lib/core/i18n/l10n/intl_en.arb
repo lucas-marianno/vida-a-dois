@@ -135,5 +135,62 @@
   "system": "System default",
   "high": "High",
   "normal": "Normal",
-  "low": "Low"
+  "low": "Low",
+  "dateShort": "{mm}/{dd}/{yyyy}",
+  "@dateShort": {
+    "description": "Short localized date: `en` = mm/dd/yyyy | `pt` = dd/mm/yyyy",
+    "placeholders": {
+      "dd": {
+        "type": "int"
+      },
+      "mm": {
+        "type": "int"
+      },
+      "yyyy": {
+        "type": "int"
+      }
+    }
+  },
+  "dateAbbreviated": "{mmm} {dd} {yyyy}",
+  "@dateAbbreviated": {
+    "description": "Short localized date: `en` = mmm dd yyyy | `pt` = dd mmm yyyy",
+    "placeholders": {
+      "dd": {
+        "type": "int"
+      },
+      "mmm": {
+        "type": "String"
+      },
+      "yyyy": {
+        "type": "int"
+      }
+    }
+  },
+  "dateLong": "{mmmm} {dd}, {yyyy}",
+  "@dateLong": {
+    "description": "Short localized date: `en` = mmmm dd, yyyy | `pt` = dd 'de' mmmm, yyyy",
+    "placeholders": {
+      "dd": {
+        "type": "int"
+      },
+      "mmmm": {
+        "type": "String"
+      },
+      "yyyy": {
+        "type": "int"
+      }
+    }
+  },
+  "january": "January",
+  "february": "February",
+  "march": "March",
+  "april": "April",
+  "may": "May",
+  "june": "June",
+  "july": "July",
+  "august": "August",
+  "september": "September",
+  "october": "October",
+  "november": "November",
+  "december": "December"
 }
