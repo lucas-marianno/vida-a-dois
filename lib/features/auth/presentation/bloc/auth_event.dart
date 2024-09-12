@@ -4,7 +4,7 @@ sealed class AuthEvent extends Equatable {
   const AuthEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 final class AuthStarted extends AuthEvent {}
@@ -33,11 +33,11 @@ final class SignInWithGoogle extends AuthEvent {}
 
 final class SignOut extends AuthEvent {}
 
-// final class _AuthException extends AuthEvent {
-//   final dynamic error;
+final class _GotAuthResponse extends AuthEvent {
+  final User? data;
 
-//   const _AuthException(this.error);
+  const _GotAuthResponse(this.data);
 
-//   @override
-//   List<Object> get props => [error];
-// }
+  @override
+  List<Object?> get props => [data];
+}

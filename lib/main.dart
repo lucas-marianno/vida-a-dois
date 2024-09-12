@@ -21,7 +21,7 @@ import 'package:vida_a_dois/features/kanban/presentation/bloc/board/board_bloc.d
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 
-const kUseMocks = true;
+const kUseMocks = false;
 
 void main() async {
   initLogger(Log(level: Level.all));

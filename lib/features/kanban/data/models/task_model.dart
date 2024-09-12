@@ -84,7 +84,7 @@ class TaskModel extends Task {
     String? assingneeInitials,
     TaskImportance? importance,
     String? status,
-    DateTime? dueDate,
+    DateTime? deadline,
     String? createdBy,
     DateTime? createdDate,
   }) {
@@ -96,7 +96,7 @@ class TaskModel extends Task {
       assingneeInitials: assingneeInitials ?? this.assingneeInitials,
       importance: importance ?? this.importance,
       status: status ?? this.status,
-      deadline: dueDate ?? deadline,
+      deadline: deadline ?? this.deadline,
       createdBy: createdBy ?? this.createdBy,
       createdDate: createdDate ?? this.createdDate,
     );

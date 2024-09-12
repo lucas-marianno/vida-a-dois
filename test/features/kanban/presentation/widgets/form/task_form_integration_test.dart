@@ -633,9 +633,14 @@ Future<void> main() async {
 
       // tap tile
       final kanbanTile = find.byType(KanbanTile).first;
+      final dataStamp = find.descendant(
+        of: kanbanTile,
+        matching: find.text(taskDeadline.toAbreviatedDate(l10n).toUpperCase()),
+      );
+      expect(dataStamp, findsOneWidget);
+
       await tester.runAsync(() async => await tester.tap(kanbanTile));
       await tester.pumpAndSettle();
-
       // open edit task form in read mode
       final taskForm = find.byKey(const Key('taskForm'));
       expect(taskForm, findsOneWidget);

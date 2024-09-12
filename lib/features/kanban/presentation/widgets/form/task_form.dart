@@ -192,7 +192,7 @@ class _EditTaskFormState extends State<EditTaskForm> {
               enabled: !readOnly,
               initialDate: newTask.deadline,
               onChanged: (newDate) {
-                newTask = newTask.copyWith(dueDate: newDate);
+                newTask = newTask.copyWith(deadline: newDate);
               },
             ),
           ],

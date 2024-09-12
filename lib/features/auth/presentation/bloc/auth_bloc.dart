@@ -20,6 +20,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<SignInWithEmailAndPassword>(_onSignInWithEmailAndPassword);
     on<SignInWithGoogle>(_onSignInWithGoogle);
     on<SignOut>(_onSignOut);
+    on<_GotAuthResponse>(_onGotAuthResponse);
 
     logger.initializing(AuthBloc);
     add(AuthStarted());
@@ -31,18 +32,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final currentUser = authDataSource.authInstance.currentUser;
     if (currentUser != null) emit(AuthAuthenticated(currentUser));
 
-    try {
-      authServiceListener = authDataSource.stream.listen(
-        (data) {
-          if (data is User) emit(AuthAuthenticated(data));
-          if (data == null) emit(AuthUnauthenticated());
-        },
-        cancelOnError: false,
-        onError: (e) => emit(AuthError(e)),
-      );
-    } catch (e) {
-      emit(AuthError(e));
-    }
+    authServiceListener = authDataSource.stream.listen(
+      (data) => add(_GotAuthResponse(data)),
+      cancelOnError: false,
+      onError: (e) => emit(AuthError(e)),
+    );
+  }
+
+  _onGotAuthResponse(_GotAuthResponse event, Emitter<AuthState> emit) {
+    if (event.data is User) emit(AuthAuthenticated(event.data!));
+    if (event.data == null) emit(AuthUnauthenticated());
   }
 
   _onCreateUserWithEmailAndPassword(
