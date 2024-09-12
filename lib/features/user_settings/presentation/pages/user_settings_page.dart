@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vida_a_dois/core/extentions/icon_extension.dart';
-import 'package:vida_a_dois/core/extentions/theme_mode_extension.dart';
+import 'package:vida_a_dois/core/extensions/icon_extension.dart';
+import 'package:vida_a_dois/core/extensions/theme_mode_extension.dart';
 import 'package:vida_a_dois/core/i18n/l10n.dart';
 import 'package:vida_a_dois/core/util/dialogs/info_dialog.dart';
 import 'package:vida_a_dois/core/widgets/divider_with_label.dart';

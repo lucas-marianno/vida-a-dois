@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:vida_a_dois/app/app.dart';
+import 'package:vida_a_dois/core/i18n/l10n.dart';
 import 'package:vida_a_dois/features/user_settings/domain/entities/user_settings.dart';
 
 import '../../helper/mock_blocs.dart';
@@ -20,6 +21,8 @@ void main() async {
 
     testWidgets('should launch the app in portuguese', (tester) async {
       // arrange
+      final l10n = await L10n.from('pt');
+
       final userSettingsPT = UserSettings(
         uid: 'uid',
         userName: 'userName',
@@ -32,13 +35,15 @@ void main() async {
 
       // act
       await tester.pumpWidget(myApp);
-      final portugueseTitle = find.text('Vida a dois');
+      final portugueseTitle = find.text(l10n.appTitle);
 
       // assert
       expect(portugueseTitle, findsOneWidget);
     });
     testWidgets('should launch the app in english', (tester) async {
       // arrange
+      final l10n = await L10n.from('en');
+
       final userSettingsEN = UserSettings(
         uid: 'uid',
         userName: 'userName',
@@ -51,7 +56,7 @@ void main() async {
 
       // act
       await tester.pumpWidget(myApp);
-      final portugueseTitle = find.text("A Couple's Life");
+      final portugueseTitle = find.text(l10n.appTitle);
 
       // assert
       expect(portugueseTitle, findsOneWidget);

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vida_a_dois/core/extentions/datetime_extension.dart';
+import 'package:vida_a_dois/core/extensions/datetime_extension.dart';
 import 'package:vida_a_dois/core/i18n/l10n.dart';
 
 class FormDatePicker extends StatefulWidget {

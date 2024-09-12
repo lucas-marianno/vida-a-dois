@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:vida_a_dois/app/app.dart';
-import 'package:vida_a_dois/core/extentions/datetime_extension.dart';
+import 'package:vida_a_dois/core/extensions/datetime_extension.dart';
 import 'package:vida_a_dois/core/widgets/form/form_widgets/form_date_picker.dart';
 import 'package:vida_a_dois/features/kanban/domain/constants/enum/task_importance.dart';
 import 'package:vida_a_dois/injection_container.dart';

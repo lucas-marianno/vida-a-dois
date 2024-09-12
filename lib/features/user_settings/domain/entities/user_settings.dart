@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vida_a_dois/core/extentions/string_extension.dart';
+import 'package:vida_a_dois/core/extensions/string_extension.dart';
 
 class UserSettings {
   String? uid;

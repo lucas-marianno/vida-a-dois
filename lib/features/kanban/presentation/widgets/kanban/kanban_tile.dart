@@ -3,12 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vida_a_dois/core/i18n/l10n.dart';
 import 'package:vida_a_dois/core/widgets/user_initials.dart';
 import 'package:vida_a_dois/core/util/color_util.dart';
-import 'package:vida_a_dois/core/extentions/datetime_extension.dart';
+import 'package:vida_a_dois/core/extensions/datetime_extension.dart';
 import 'package:vida_a_dois/features/kanban/domain/entities/task_entity.dart';
 import 'package:vida_a_dois/features/kanban/presentation/bloc/task/task_bloc.dart';
 import 'package:vida_a_dois/features/kanban/domain/constants/enum/task_importance.dart';
 import 'package:vida_a_dois/features/kanban/presentation/extensions/task_importance_ui_extension.dart';
-import 'package:vida_a_dois/features/kanban/util/draggable_scroll_controller.dart';
+import 'package:vida_a_dois/features/kanban/presentation/util/draggable_scroll_controller.dart';
 
 class KanbanTile extends StatelessWidget {
   final Task task;
