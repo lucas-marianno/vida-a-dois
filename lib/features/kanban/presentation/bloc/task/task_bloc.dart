@@ -8,7 +8,6 @@ import 'package:vida_a_dois/features/kanban/domain/constants/enum/task_importanc
 import 'package:vida_a_dois/features/kanban/domain/entities/board_entity.dart';
 import 'package:vida_a_dois/features/kanban/domain/entities/task_entity.dart';
 import 'package:vida_a_dois/features/kanban/domain/usecases/task_usecases.dart';
-import 'package:vida_a_dois/features/kanban/util/parse_tasklist_into_taskmap.dart';
 
 part 'task_event.dart';
 part 'task_state.dart';
@@ -20,7 +19,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   final UpdateTaskImportanceUseCase _updateTaskImportanceUseCase;
   final UpdateTaskStatusUseCase _updateTaskStatusUseCase;
   final DeleteTaskUseCase _deleteTaskUseCase;
-  final GetTaskStreamUseCase _getTaskStreamUseCase;
+  final GetTasksUseCase _getTaskStreamUseCase;
 
   StreamSubscription? _streamSubscription;
   Map<String, List<Task>> _lastEmittetMappedTaskList = {};
@@ -28,7 +27,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   List<Board> _boardList = [];
 
   TaskBloc({
-    required GetTaskStreamUseCase getTaskStream,
+    required GetTasksUseCase getTaskStream,
     required CreateTaskUseCase createTask,
     required UpdateTaskUseCase updateTask,
     required UpdateTaskAssigneeUidUseCase updateTaskAssigneeUID,
@@ -99,7 +98,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
     try {
       _streamSubscription = _getTaskStreamUseCase().listen(
-        (data) => add(_TaskStreamUpdate(data, _boardList)),
+        (data) => add(_TaskStreamUpdate(data)),
         onError: (e) => _HandleTaskError(e),
         onDone: () => logger.debug('$TaskBloc streamSubscription is Done!'),
         cancelOnError: true,
@@ -115,12 +114,10 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   _onTaskStreamDataUpdate(
       _TaskStreamUpdate event, Emitter<TaskState> emit) async {
-    final organized = mergeIntoMap(event.updatedTasks, event.boardList);
+    if ('${event.updatedTasks}' == '$_lastEmittetMappedTaskList') return;
 
-    if (organized.toString() == _lastEmittetMappedTaskList.toString()) return;
-
-    _lastEmittetMappedTaskList = Map.from(organized);
-    emit(TasksLoaded(organized));
+    _lastEmittetMappedTaskList = Map.from(event.updatedTasks);
+    emit(TasksLoaded(_lastEmittetMappedTaskList));
   }
 
   _onHandleTaskError(_HandleTaskError event, Emitter<TaskState> emit) {

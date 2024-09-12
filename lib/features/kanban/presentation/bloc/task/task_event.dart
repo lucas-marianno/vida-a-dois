@@ -10,13 +10,12 @@ sealed class TaskEvent extends Equatable {
 final class _TaskInitial extends TaskEvent {}
 
 final class _TaskStreamUpdate extends TaskEvent {
-  final List<Task> updatedTasks;
-  final List<Board> boardList;
+  final Map<String, List<Task>> updatedTasks;
 
-  const _TaskStreamUpdate(this.updatedTasks, this.boardList);
+  const _TaskStreamUpdate(this.updatedTasks);
 
   @override
-  List<Object> get props => [updatedTasks, boardList];
+  List<Object> get props => [updatedTasks];
 }
 
 final class _HandleTaskError extends TaskEvent {

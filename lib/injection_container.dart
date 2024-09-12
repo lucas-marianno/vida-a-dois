@@ -54,7 +54,7 @@ void setUpLocator(
   // task use cases
   locator.registerLazySingleton(() => CreateTaskUseCase(locator(), locator()));
   locator.registerLazySingleton(() => DeleteTaskUseCase(locator()));
-  locator.registerLazySingleton(() => GetTaskStreamUseCase(locator()));
+  locator.registerLazySingleton(() => GetTasksUseCase(locator(), locator()));
   locator.registerLazySingleton(() => UpdateTaskAssigneeUidUseCase(locator()));
   locator.registerLazySingleton(() => UpdateTaskImportanceUseCase(locator()));
   locator.registerLazySingleton(() => UpdateTaskStatusUseCase(locator()));
