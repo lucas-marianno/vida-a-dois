@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:vida_a_dois/features/kanban/data/cloud_firestore/firestore_references.dart';
-import 'package:vida_a_dois/features/kanban/data/data_sources/board_data_source.dart';
-import 'package:vida_a_dois/features/kanban/data/models/board_model.dart';
+import 'package:kanban/src/data/cloud_firestore/firestore_references.dart';
+import 'package:kanban/src/data/data_sources/board_data_source.dart';
+import 'package:kanban/src/data/models/board_model.dart';
 
 void main() async {
   // should get a proper list of board model from DB

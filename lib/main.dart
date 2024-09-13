@@ -9,13 +9,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:vida_a_dois/app/app.dart';
 import 'package:vida_a_dois/injection_container.dart';
-import 'package:vida_a_dois/core/util/logger/logger.dart';
+import 'package:vida_a_dois/core/util/logger.dart';
 import 'package:vida_a_dois/core/connectivity/bloc/connectivity_bloc.dart';
 
 import 'package:vida_a_dois/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:vida_a_dois/features/user_settings/presentation/bloc/user_settings_bloc.dart';
-import 'package:vida_a_dois/features/kanban/presentation/bloc/task/task_bloc.dart';
-import 'package:vida_a_dois/features/kanban/presentation/bloc/board/board_bloc.dart';
+import 'package:kanban/src/presentation/bloc/task/task_bloc.dart';
+import 'package:kanban/src/presentation/bloc/board/board_bloc.dart';
 
 // ignore_for_file: depend_on_referenced_packages
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';

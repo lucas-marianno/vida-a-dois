@@ -5,7 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:vida_a_dois/features/auth/data/auth_data.dart';
-import 'package:vida_a_dois/core/util/logger/logger.dart';
+import 'package:vida_a_dois/core/util/logger.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';

@@ -6,7 +6,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
 import 'package:vida_a_dois/core/i18n/l10n.dart';
-import 'package:vida_a_dois/core/util/logger/logger.dart';
+import 'package:vida_a_dois/core/util/logger.dart';
 
 import 'package:vida_a_dois/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:vida_a_dois/features/user_settings/data/user_settings_data_source.dart';

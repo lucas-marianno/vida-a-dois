@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart' as mockito;
 
-import 'package:vida_a_dois/core/util/logger/logger.dart';
+import 'package:vida_a_dois/core/util/logger.dart';
 
-import 'package:vida_a_dois/features/kanban/domain/entities/board_entity.dart';
-import 'package:vida_a_dois/features/kanban/domain/entities/task_entity.dart';
-import 'package:vida_a_dois/features/kanban/domain/usecases/task/get_task_stream.dart';
+import 'package:kanban/src/domain/entities/board_entity.dart';
+import 'package:kanban/src/domain/entities/task_entity.dart';
+import 'package:kanban/src/domain/usecases/task/get_task_stream.dart';
 
 import '../../../../../helper/mock_generator.mocks.dart';
 

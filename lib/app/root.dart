@@ -6,9 +6,9 @@ import 'package:vida_a_dois/features/auth/presentation/pages/auth_page.dart';
 import 'package:vida_a_dois/core/connectivity/bloc/connectivity_bloc.dart';
 import 'package:vida_a_dois/core/constants/routes.dart';
 import 'package:vida_a_dois/core/i18n/l10n.dart';
-import 'package:vida_a_dois/core/util/dialogs/error_dialog.dart';
-import 'package:vida_a_dois/core/util/dialogs/info_dialog.dart';
-import 'package:vida_a_dois/core/util/dialogs/loading_dialog.dart';
+import 'package:vida_a_dois/core/widgets/dialogs/error_dialog.dart';
+import 'package:vida_a_dois/core/widgets/dialogs/info_dialog.dart';
+import 'package:vida_a_dois/core/widgets/dialogs/loading_dialog.dart';
 import 'package:vida_a_dois/features/user_settings/presentation/bloc/user_settings_bloc.dart';
 import 'package:vida_a_dois/app/pages/home_page.dart';
 

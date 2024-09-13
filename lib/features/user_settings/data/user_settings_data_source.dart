@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:vida_a_dois/features/kanban/data/cloud_firestore/firestore_references.dart';
+import 'package:kanban/src/data/cloud_firestore/firestore_references.dart';
 import 'package:vida_a_dois/features/user_settings/domain/entities/user_settings.dart';
 
 abstract class UserSettingsDataSource {

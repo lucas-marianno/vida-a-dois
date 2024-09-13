@@ -1,0 +1,196 @@
+{
+  "@@locale": "en",
+  "currentLanguage": "English",
+  "@currentLanguage": {
+    "description": "The current Language"
+  },
+  "currentLaguageFlag": "🇺🇸",
+  "appTitle": "A Couple's Life",
+  "@appTitle": {
+    "description": "Title for the Home Page"
+  },
+  "youCannotDoThat": "You cannot do that!",
+  "warning": "Warning!",
+  "warningNoInternet": "There is no internet connection!\n\nAt the moment, Vida A Dois requires an internet connection to work. \n\n Please check if your device has an internet connection, or if this app has internet access authorized in the device settings.\n\nPlease try again later.",
+  "@warningNoInternet": {
+    "description": "Warning! No Internet Connection."
+  },
+  "error": "Error:\n{error}\n\n",
+  "@error": {
+    "description": "Unexpected error.",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "authError": "Email or password is incorrect",
+  "unexpectedInternetError": "Something bad happened!\n\nAn unexpected error happened while trying to connect to the internet:\n\n{error}\n",
+  "@unexpectedInternetError": {
+    "description": "Unexpected internet connection error.",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "somethingBadHappened": "Something bad happened!",
+  "unexpectedError": "An unexpected error happened:\n\n{error}\n\n",
+  "@unexpectedError": {
+    "description": "Unexpected error.",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "boardUniqueNameException": "Board names must be unique!",
+  "@boardUniqueNameException": {
+    "description": "Exception when boards don't have unique names"
+  },
+  "noBoardsYet": "You haven't created any boards yet!",
+  "createYourFirstBoard": "Create your first board:",
+  "newBoard": "New board",
+  "creatingABoard": "Creating a new board",
+  "editingABoard": "Editing a board",
+  "readingABoard": "Reading a board",
+  "newTask": "New task",
+  "creatingATask": "Creating a new task",
+  "editingATask": "Editing a task",
+  "readingATask": "Reading a task",
+  "mandatoryFields": "* mandatory fields!",
+  "isMandatory": "is mandatory!",
+  "boardName": "Board name",
+  "before": "Before",
+  "after": "After",
+  "addToEnd": "Add to end",
+  "position": "Position",
+  "index": "Index",
+  "edit": "Edit",
+  "cancel": "Cancel",
+  "done": "Done",
+  "ok": "Ok",
+  "confirm": "Confirm",
+  "tryAgain": "Try again",
+  "delete": "Delete",
+  "board": "Board",
+  "task": "Task",
+  "options": "Options",
+  "rename": "Rename",
+  "taskImportance": "Task importance",
+  "taskDescription": "Task description",
+  "taskAssignee": "Task assignee",
+  "taskStatus": "Task status",
+  "taskDeadline": "Task deadline",
+  "noTasksHere": "There are no tasks here!",
+  "deleteBoardPromptDescription": "Are you sure you want to delete the board '{boardTitle}'?\n\nAll tasks marked with status '{boardTitle}' will also be deleted.\n\nWarning! This action is irreversible. After deletion, you will not be able to recover the board or the tasks!",
+  "@deleteBoardPromptDescription": {
+    "description": "A prompt that warns the user that deletion is irreversible and asks for confirmation.",
+    "placeholders": {
+      "boardTitle": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteTaskPromptDescription": "Are you sure you want to delete the task '{taskTitle}'?\n\nWarning! This action is irreversible. After deletion, you will not be able to recover the task!",
+  "@deleteTaskPromptDescription": {
+    "description": "A prompt that warns the user that deletion is irreversible and asks for confirmation.",
+    "placeholders": {
+      "taskTitle": {
+        "type": "String"
+      }
+    }
+  },
+  "appSlogan": "motivational sentence|don't worry about whatever|love each other|leave the boring stuff for us|life is beautiful|tasks are boring|yada yada yada|some inspiring sentence|help me pay my rent|please buy my app|",
+  "authenticating": "Authenticating user",
+  "checkingInternetConnection": "Checking internet connection",
+  "invalidEmailAddress": "Invalid email address",
+  "email": "E-mail",
+  "password": "Password",
+  "passwordCannotBeBlank": "Password cannot be blank",
+  "confirmPassword": "Confirm password",
+  "forgotPassword": "Forgot password?",
+  "passwordsDontMatch": "Passwords don't match",
+  "createAccount": "Create account",
+  "signIn": "Sign in",
+  "or": "or",
+  "signUpWithGoogle": "Sign up with Google",
+  "signInWithGoogle": "Sign in with Google",
+  "alreadyHaveAnAccount": "Already have an account?",
+  "notAMember": "Not a member?",
+  "signInNow": "Sign in now",
+  "signUpNow": "Sign up now",
+  "signOut": "Sign out",
+  "leaveTheApp": "Leave the app?",
+  "areYouSureYouWantToLeave": "Are you sure you want to leave the app?",
+  "settings": "Settings",
+  "username": "Username",
+  "userInitials": "User initials",
+  "userSettings": "User settings",
+  "appSettings": "App settings",
+  "appLanguage": "App language",
+  "appTheme": "App theme",
+  "light": "Light",
+  "dark": "Dark",
+  "system": "System default",
+  "high": "High",
+  "normal": "Normal",
+  "low": "Low",
+  "dateShort": "{mm}/{dd}/{yyyy}",
+  "@dateShort": {
+    "description": "Short localized date: `en` = mm/dd/yyyy | `pt` = dd/mm/yyyy",
+    "placeholders": {
+      "dd": {
+        "type": "int"
+      },
+      "mm": {
+        "type": "int"
+      },
+      "yyyy": {
+        "type": "int"
+      }
+    }
+  },
+  "dateAbbreviated": "{mmm} {dd} {yyyy}",
+  "@dateAbbreviated": {
+    "description": "Short localized date: `en` = mmm dd yyyy | `pt` = dd mmm yyyy",
+    "placeholders": {
+      "dd": {
+        "type": "int"
+      },
+      "mmm": {
+        "type": "String"
+      },
+      "yyyy": {
+        "type": "int"
+      }
+    }
+  },
+  "dateLong": "{mmmm} {dd}, {yyyy}",
+  "@dateLong": {
+    "description": "Short localized date: `en` = mmmm dd, yyyy | `pt` = dd 'de' mmmm, yyyy",
+    "placeholders": {
+      "dd": {
+        "type": "int"
+      },
+      "mmmm": {
+        "type": "String"
+      },
+      "yyyy": {
+        "type": "int"
+      }
+    }
+  },
+  "january": "January",
+  "february": "February",
+  "march": "March",
+  "april": "April",
+  "may": "May",
+  "june": "June",
+  "july": "July",
+  "august": "August",
+  "september": "September",
+  "october": "October",
+  "november": "November",
+  "december": "December"
+}

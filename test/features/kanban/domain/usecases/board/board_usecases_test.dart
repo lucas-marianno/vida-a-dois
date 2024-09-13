@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:vida_a_dois/features/kanban/domain/entities/board_entity.dart';
-import 'package:vida_a_dois/features/kanban/domain/exceptions/kanban_exception.dart';
-import 'package:vida_a_dois/features/kanban/domain/usecases/board_usecases.dart';
+import 'package:kanban/src/domain/entities/board_entity.dart';
+import 'package:kanban/src/domain/exceptions/kanban_exception.dart';
+import 'package:kanban/src/domain/usecases/board_usecases.dart';
 
 import '../../../../../helper/mock_generator.mocks.dart';
 

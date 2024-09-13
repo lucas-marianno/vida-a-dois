@@ -9,19 +9,19 @@ import 'package:vida_a_dois/features/user_settings/presentation/bloc/user_settin
 import 'package:vida_a_dois/features/auth/data/auth_data.dart';
 import 'package:vida_a_dois/features/auth/presentation/bloc/auth_bloc.dart';
 
-import 'package:vida_a_dois/features/kanban/data/cloud_firestore/firestore_references.dart';
-import 'package:vida_a_dois/features/kanban/data/data_sources/board_data_source.dart';
-import 'package:vida_a_dois/features/kanban/data/data_sources/task_data_source.dart';
-import 'package:vida_a_dois/features/kanban/data/repositories/board_repository_impl.dart';
-import 'package:vida_a_dois/features/kanban/data/repositories/task_repository_impl.dart';
+import 'package:kanban/src/data/cloud_firestore/firestore_references.dart';
+import 'package:kanban/src/data/data_sources/board_data_source.dart';
+import 'package:kanban/src/data/data_sources/task_data_source.dart';
+import 'package:kanban/src/data/repositories/board_repository_impl.dart';
+import 'package:kanban/src/data/repositories/task_repository_impl.dart';
 
-import 'package:vida_a_dois/features/kanban/domain/repository/board_repository.dart';
-import 'package:vida_a_dois/features/kanban/domain/repository/task_repository.dart';
-import 'package:vida_a_dois/features/kanban/domain/usecases/board_usecases.dart';
-import 'package:vida_a_dois/features/kanban/domain/usecases/task_usecases.dart';
+import 'package:kanban/src/domain/repository/board_repository.dart';
+import 'package:kanban/src/domain/repository/task_repository.dart';
+import 'package:kanban/src/domain/usecases/board_usecases.dart';
+import 'package:kanban/src/domain/usecases/task_usecases.dart';
 
-import 'package:vida_a_dois/features/kanban/presentation/bloc/board/board_bloc.dart';
-import 'package:vida_a_dois/features/kanban/presentation/bloc/task/task_bloc.dart';
+import 'package:kanban/src/presentation/bloc/board/board_bloc.dart';
+import 'package:kanban/src/presentation/bloc/task/task_bloc.dart';
 
 final locator = GetIt.instance;
 
@@ -52,7 +52,8 @@ void setUpLocator(
       deleteTask: locator()));
 
   // task use cases
-  locator.registerLazySingleton(() => CreateTaskUseCase(locator(), locator()));
+  locator.registerLazySingleton(
+      () => CreateTaskUseCase(locator(), firebaseAuth.currentUser!.uid));
   locator.registerLazySingleton(() => DeleteTaskUseCase(locator()));
   locator.registerLazySingleton(() => GetTasksUseCase(locator(), locator()));
   locator.registerLazySingleton(() => UpdateTaskAssigneeUidUseCase(locator()));

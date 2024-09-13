@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:vida_a_dois/core/util/logger/logger.dart';
-import 'package:vida_a_dois/features/kanban/data/cloud_firestore/firestore_references.dart';
-import 'package:vida_a_dois/features/kanban/data/data_sources/task_data_source.dart';
-import 'package:vida_a_dois/features/kanban/data/models/task_model.dart';
+import 'package:vida_a_dois/core/util/logger.dart';
+import 'package:kanban/src/data/cloud_firestore/firestore_references.dart';
+import 'package:kanban/src/data/data_sources/task_data_source.dart';
+import 'package:kanban/src/data/models/task_model.dart';
 
 void main() {
   initLogger(Log());

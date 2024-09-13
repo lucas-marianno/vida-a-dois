@@ -3,14 +3,14 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:vida_a_dois/app/app.dart';
 import 'package:vida_a_dois/core/i18n/l10n.dart';
-import 'package:vida_a_dois/features/kanban/data/data_sources/board_data_source.dart';
-import 'package:vida_a_dois/features/kanban/data/models/board_model.dart';
-import 'package:vida_a_dois/features/kanban/presentation/pages/kanban_page.dart';
+import 'package:kanban/src/data/data_sources/board_data_source.dart';
+import 'package:kanban/src/data/models/board_model.dart';
+import 'package:kanban/src/presentation/pages/kanban_page.dart';
 import 'package:vida_a_dois/injection_container.dart';
-import 'package:vida_a_dois/core/util/logger/logger.dart';
+import 'package:vida_a_dois/core/util/logger.dart';
 
-import 'package:vida_a_dois/features/kanban/presentation/widgets/kanban/kanban_board.dart';
-import 'package:vida_a_dois/features/kanban/presentation/widgets/kanban/kanban_tile.dart';
+import 'package:kanban/src/presentation/widgets/kanban/kanban_board.dart';
+import 'package:kanban/src/presentation/widgets/kanban/kanban_tile.dart';
 
 import 'package:mockito/mockito.dart' as mockito;
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';

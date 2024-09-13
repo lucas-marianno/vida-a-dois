@@ -9,14 +9,10 @@ import 'package:connectivity_plus/connectivity_plus.dart' as _i7;
 import 'package:connectivity_plus_platform_interface/connectivity_plus_platform_interface.dart'
     as _i8;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:vida_a_dois/features/kanban/domain/entities/board_entity.dart'
-    as _i6;
-import 'package:vida_a_dois/features/kanban/domain/entities/task_entity.dart'
-    as _i4;
-import 'package:vida_a_dois/features/kanban/domain/repository/board_repository.dart'
-    as _i5;
-import 'package:vida_a_dois/features/kanban/domain/repository/task_repository.dart'
-    as _i2;
+import 'package:kanban/src/domain/entities/board_entity.dart' as _i6;
+import 'package:kanban/src/domain/entities/task_entity.dart' as _i4;
+import 'package:kanban/src/domain/repository/board_repository.dart' as _i5;
+import 'package:kanban/src/domain/repository/task_repository.dart' as _i2;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values

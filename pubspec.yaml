@@ -26,12 +26,17 @@ dependencies:
   google_nav_bar: ^5.0.6
   google_fonts: ^6.2.1
   get_it: ^7.7.0
+  kanban:
+  #   git:
+  #     url: https://github.com/lucas-marianno/flutter_kanban_package
+  #     ref: main 
+    path: kanban/
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
-  bloc_test: ^9.1.7
+  bloc_test: ^9.1.7 
   firebase_auth_mocks: ^0.14.0
   mockito: ^5.4.4
   mocktail: ^1.0.4
