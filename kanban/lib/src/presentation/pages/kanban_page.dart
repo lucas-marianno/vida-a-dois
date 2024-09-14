@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/core/i18n/l10n.dart';
+import 'package:kanban/core/logger/logger.dart';
 import 'package:kanban/src/domain/entities/board_entity.dart';
 import 'package:kanban/src/domain/exceptions/kanban_exception.dart';
 import 'package:kanban/src/presentation/bloc/board/board_bloc.dart';
@@ -42,6 +43,8 @@ class _KanbanPageState extends State<KanbanPage> {
 
     boardBloc = context.read<BoardBloc>();
     taskBloc = context.read<TaskBloc>();
+
+    logger.wtf('kanban init');
   }
 
   @override
@@ -85,6 +88,8 @@ class _KanbanPageState extends State<KanbanPage> {
         ],
         child: BlocBuilder<BoardBloc, BoardState>(
           builder: (context, state) {
+            logger.wtf(state);
+
             if (state is BoardLoadingState) {
               return const LinearProgressIndicator();
             } else if (state is BoardLoadedState) {

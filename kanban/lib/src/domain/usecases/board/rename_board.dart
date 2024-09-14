@@ -6,10 +6,9 @@ import 'package:kanban/src/domain/repository/task_repository.dart';
 
 class RenameBoardUseCase {
   final BoardRepository boardRepo;
-
   final TaskRepository taskRepo;
 
-  RenameBoardUseCase({required this.boardRepo, required this.taskRepo});
+  RenameBoardUseCase(this.boardRepo, this.taskRepo);
 
   late List<Board> currentBoards;
 

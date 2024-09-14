@@ -1,5 +1,6 @@
 import 'package:logger/logger.dart';
-export 'package:logger/src/log_level.dart';
+
+export 'package:logger/src/log_level.dart' show Level;
 
 /// Logger that logs everything...
 ///

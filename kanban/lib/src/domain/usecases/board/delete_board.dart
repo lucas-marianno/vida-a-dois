@@ -6,7 +6,7 @@ import 'package:kanban/src/domain/repository/task_repository.dart';
 class DeleteBoardUseCase {
   final BoardRepository boardRepo;
   final TaskRepository taskRepo;
-  DeleteBoardUseCase({required this.boardRepo, required this.taskRepo});
+  DeleteBoardUseCase(this.boardRepo, this.taskRepo);
 
   Future<void> call(Board board) async {
     final currentBoards = await boardRepo.getBoards();

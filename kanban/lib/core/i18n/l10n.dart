@@ -16,7 +16,7 @@ export 'package:flutter_gen/gen_l10n/localizations.dart';
 /// 3. hot-restart the flutter application.
 ///
 class L10n {
-  static const all = [
+  static const supportedLocales = [
     Locale('en'),
     Locale('pt'),
   ];
@@ -36,14 +36,14 @@ class L10n {
     return Locale(locale.languageCode);
   }
 
-  /// [laguageCode] must be contained in [all]
+  /// [laguageCode] must be contained in [supportedLocales]
   ///
   /// [from] should preferably be used only for debug or testing.
   ///
   /// For UI usage, prefer the method [of] since it will provide current device
   /// locale sensitive `AppLocalizations`
   static Future<AppLocalizations> from(String laguageCode) async {
-    assert(all.map((l) => l.languageCode).contains(laguageCode));
+    assert(supportedLocales.map((l) => l.languageCode).contains(laguageCode));
     return await AppLocalizations.delegate.load(Locale(laguageCode));
   }
 }
