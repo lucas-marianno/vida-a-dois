@@ -1,15 +1,19 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kanban/core/logger/logger.dart';
 import 'package:kanban/src/domain/entities/board_entity.dart';
+import 'package:kanban/src/domain/repository/board_repository.dart';
+import 'package:kanban/src/injection_container.dart';
 
 import '../../../../helper/fake_board_repository.dart';
+import '../../../../helper/fake_task_repository.dart';
 
 void main() async {
   initLogger(Log(level: Level.all));
 
-  group('testing `FakeBoardRepository`', () {
-    final boardRepo = FakeBoardRepository();
+  setUpLocator(FakeBoardRepository(), FakeTaskRepository());
+  final boardRepo = locator<BoardRepository>() as FakeBoardRepository;
 
+  group('testing `FakeBoardRepository`', () {
     setUp(() => boardRepo.clearPersistence());
 
     test('should get an empty `List<Board>` ', () async {
@@ -33,7 +37,7 @@ void main() async {
       expect(response.toString() == boardList.toString(), true);
     });
 
-    test('should get a valid `Stream<Board>` in order', () async {
+    test('should get a valid `Stream<List<Board>>` in order', () async {
       // arrange
       const board1 = Board(title: '1', index: 0);
       const board2 = Board(title: '2', index: 1);
