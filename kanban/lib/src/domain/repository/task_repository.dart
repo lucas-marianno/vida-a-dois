@@ -5,7 +5,7 @@ abstract class TaskRepository {
 
   Stream<List<Task>> readTasks();
 
-  Future<List<Task>> getTaskList();
+  Future<List<Task>> getTasks();
 
   Future<void> updateTask(Task task);
 

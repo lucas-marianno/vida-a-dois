@@ -52,7 +52,7 @@ class MockTaskRepository extends _i1.Mock implements _i2.TaskRepository {
       ) as _i3.Stream<List<_i4.Task>>);
 
   @override
-  _i3.Future<List<_i4.Task>> getTaskList() => (super.noSuchMethod(
+  _i3.Future<List<_i4.Task>> getTasks() => (super.noSuchMethod(
         Invocation.method(
           #getTaskList,
           [],

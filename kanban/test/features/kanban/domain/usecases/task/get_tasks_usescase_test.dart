@@ -38,7 +38,7 @@ void main() {
       () async {
     // Arrange
     mockito
-        .when(mockTaskRepository.getTaskList())
+        .when(mockTaskRepository.getTasks())
         .thenAnswer((_) async => mockTasks);
 
     mockito
@@ -74,7 +74,7 @@ void main() {
     ];
 
     mockito
-        .when(mockTaskRepository.getTaskList())
+        .when(mockTaskRepository.getTasks())
         .thenAnswer((_) async => mockTasks);
     mockito
         .when(mockBoardRepository.getBoards())
@@ -115,7 +115,7 @@ void main() {
     ];
 
     mockito
-        .when(mockTaskRepository.getTaskList())
+        .when(mockTaskRepository.getTasks())
         .thenAnswer((_) async => mockTasks);
     mockito
         .when(mockBoardRepository.getBoards())
@@ -151,7 +151,7 @@ void main() {
       () async {
     // Arrange
     mockito
-        .when(mockTaskRepository.getTaskList())
+        .when(mockTaskRepository.getTasks())
         .thenAnswer((_) async => mockTasks);
     mockito
         .when(mockBoardRepository.getBoards())

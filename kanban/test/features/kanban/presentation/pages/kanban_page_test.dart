@@ -36,7 +36,7 @@ void main() async {
 
     // task repo stub
     when(taskRepo.readTasks()).thenAnswer((_) => Stream.value([]));
-    when(taskRepo.getTaskList()).thenAnswer((_) async => []);
+    when(taskRepo.getTasks()).thenAnswer((_) async => []);
 
     boardBloc = locator<BoardBloc>();
     taskBloc = locator<TaskBloc>();

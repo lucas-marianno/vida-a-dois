@@ -41,7 +41,7 @@ class RenameBoardUseCase {
     String status,
     String newStatus,
   ) async {
-    final allTasks = await taskRepo.getTaskList();
+    final allTasks = await taskRepo.getTasks();
     final updatedTasks = allTasks
         .map((task) {
           return task.status == status

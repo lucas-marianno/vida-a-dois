@@ -19,7 +19,7 @@ class DeleteBoardUseCase {
   }
 
   Future<void> _deleteAllTasksWithStatus(String status) async {
-    final allTasks = await taskRepo.getTaskList();
+    final allTasks = await taskRepo.getTasks();
     final allTasksWithStatus = allTasks
         .map((task) => task.status == status ? task : null)
         .nonNulls

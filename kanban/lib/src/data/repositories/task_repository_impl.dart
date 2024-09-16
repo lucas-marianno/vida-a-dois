@@ -28,7 +28,7 @@ class TaskRepositoryImpl extends TaskRepository {
   }
 
   @override
-  Future<List<Task>> getTaskList() async {
+  Future<List<Task>> getTasks() async {
     return (await taskDataSource.getTaskList())
         .map((model) => model.toEntity())
         .toList();

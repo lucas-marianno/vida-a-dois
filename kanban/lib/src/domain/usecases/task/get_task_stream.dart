@@ -12,7 +12,7 @@ class GetTasksUseCase {
   GetTasksUseCase(this.taskRepository, this.boardRepository);
 
   Stream<Map<String, List<Task>>> call() async* {
-    List<Task> taskList = await taskRepository.getTaskList();
+    List<Task> taskList = await taskRepository.getTasks();
     List<Board> boardList = await boardRepository.getBoards();
 
     yield _organizeTasks(taskList, boardList);
