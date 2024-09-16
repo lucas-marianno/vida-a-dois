@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kanban/core/logger/logger.dart';
 import 'package:kanban/src/domain/entities/board_entity.dart';
@@ -18,7 +16,7 @@ void main() async {
       final response = await boardRepo.getBoards();
 
       expect(response, isA<List<Board>>());
-      expect(response.isEmpty, true);
+      expect(response, isEmpty);
     });
 
     test('should get a valid `List<Board>`', () async {
@@ -35,32 +33,6 @@ void main() async {
       expect(response.toString() == boardList.toString(), true);
     });
 
-    // test('should get a valid `Stream<Board>`', () async {
-    //   // arrange
-    //   const board1 = Board(title: '1', index: 0);
-    //   const board2 = Board(title: '2', index: 1);
-    //   final expectedStream = [
-    //     [],
-    //     [board1],
-    //     [board1, board2]
-    //   ];
-    //   late final StreamSubscription thisStream;
-
-    //   // assert
-    //   int i = 0;
-    //   onData(data) {
-    //     expect(data, expectedStream[i]);
-    //     i++;
-
-    //     if (i == expectedStream.length) thisStream.cancel();
-    //   }
-
-    //   thisStream = boardRepo.readBoards().listen(onData);
-
-    //   // act
-    //   await boardRepo.updateBoards([board1]);
-    //   await boardRepo.updateBoards([board1, board2]);
-    // });
     test('should get a valid `Stream<Board>` in order', () async {
       // arrange
       const board1 = Board(title: '1', index: 0);
@@ -70,15 +42,14 @@ void main() async {
         [board1],
         [board1, board2]
       ];
-      final stream = boardRepo.readBoards();
-
-      // act
-      await boardRepo.updateBoards([board1]);
-      await boardRepo.updateBoards([board1, board2]);
-      await boardRepo.dispose();
 
       // assert
-      expect(stream, emitsInOrder(expectedStream));
+      expect(boardRepo.readBoards(), emitsInOrder(expectedStream));
+
+      // act
+      boardRepo.updateBoards([board1]);
+      boardRepo.updateBoards([board1, board2]);
+      boardRepo.dispose();
     });
   });
 }

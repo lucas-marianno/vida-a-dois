@@ -17,6 +17,9 @@ class FakeBoardRepository extends BoardRepository {
   @override
   Stream<List<Board>> readBoards() {
     logger.trace('$FakeBoardRepository: readBoards \n $_boardList');
+
+    _controller.onListen = () => _controller.add(_boardList);
+
     return _controller.stream;
   }
 
@@ -35,9 +38,11 @@ class FakeBoardRepository extends BoardRepository {
         'current: $_boardList\n'
         'next: []');
     _boardList.clear();
+    _controller.add([]);
   }
 
   Future<void> dispose() async {
+    logger.trace('$FakeBoardRepository: closing');
     await _controller.close();
   }
 }
