@@ -8,6 +8,12 @@ class FakeBoardRepository extends BoardRepository {
   List<Board> _boardList = [];
   final _controller = StreamController<List<Board>>.broadcast();
 
+  FakeBoardRepository() {
+    _controller.stream.listen((data) {
+      logger.info('$FakeBoardRepository: emitted \n $data');
+    });
+  }
+
   @override
   Future<List<Board>> getBoards() async {
     logger.trace('$FakeBoardRepository: getBoards \n $_boardList');
@@ -18,19 +24,19 @@ class FakeBoardRepository extends BoardRepository {
   Stream<List<Board>> readBoards() {
     logger.trace('$FakeBoardRepository: readBoards \n $_boardList');
 
-    _controller.onListen = () => _controller.add(_boardList);
+    _controller.onListen = () => _controller.add([..._boardList]);
 
     return _controller.stream;
   }
 
   @override
-  Future<void> updateBoards(List<Board> boardsList) async {
+  Future<void> updateBoards(List<Board> boardList) async {
     logger.trace('$FakeBoardRepository: updateBoards \n'
         'current: $_boardList\n'
-        'next: $boardsList');
+        'next: $boardList');
 
-    _boardList = [...boardsList];
-    _controller.add(_boardList);
+    _boardList = [...boardList];
+    _controller.add([..._boardList]);
   }
 
   void clearPersistence() {

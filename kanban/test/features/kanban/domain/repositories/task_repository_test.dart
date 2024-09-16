@@ -13,7 +13,7 @@ void main() {
   setUpLocator(FakeBoardRepository(), FakeTaskRepository());
   final taskRepo = locator<TaskRepository>() as FakeTaskRepository;
 
-  setUp(() async => await taskRepo.clearPersistence());
+  setUp(() => taskRepo.clearPersistence());
 
   test('should get an empty list', () async {
     final response = await taskRepo.getTasks();
@@ -47,7 +47,7 @@ void main() {
     late Task task1;
 
     setUp(() async {
-      await taskRepo.clearPersistence();
+      taskRepo.clearPersistence();
 
       task1 = const Task(title: 'task1', status: 'to do');
 

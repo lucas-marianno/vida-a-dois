@@ -3,34 +3,43 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:kanban/core/i18n/l10n.dart';
 import 'package:kanban/core/logger/logger.dart';
-import 'package:kanban/src/data/data_sources/board_data_source.dart';
-import 'package:kanban/src/data/models/board_model.dart';
-import 'package:kanban/src/presentation/pages/kanban_page.dart';
-import 'package:vida_a_dois/injection_container.dart';
-import 'package:vida_a_dois/core/util/logger.dart';
 
+import 'package:kanban/src/injection_container.dart';
+import 'package:kanban/src/domain/entities/board_entity.dart';
+import 'package:kanban/src/domain/repository/board_repository.dart';
+
+import 'package:kanban/src/presentation/pages/kanban_page.dart';
+import 'package:kanban/src/presentation/bloc/board/board_bloc.dart';
+import 'package:kanban/src/presentation/bloc/task/task_bloc.dart';
 import 'package:kanban/src/presentation/widgets/kanban/kanban_board.dart';
 import 'package:kanban/src/presentation/widgets/kanban/kanban_tile.dart';
 
-import 'package:mockito/mockito.dart' as mockito;
-import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
-import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
-
+import '../../../../helper/fake_board_repository.dart';
+import '../../../../helper/fake_task_repository.dart';
 import '../../../../helper/testable_app.dart';
 
 Future<void> main() async {
+  initLogger(Log(level: Level.all));
+
+  setUpLocator(FakeBoardRepository(), FakeTaskRepository());
+
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   late final Widget app;
 
   final l10n = await L10n.from('en');
-  late final BoardDataSource boardDS;
+
+  final boardRepo = locator<BoardRepository>() as FakeBoardRepository;
 
   setUpAll(() {
-    app = TestableApp(KanbanPage());
-
-    boardDS = locator<BoardDataSource>();
+    app = TestableApp(
+      const KanbanPage(),
+      boardBloc: locator<BoardBloc>(),
+      taskBloc: locator<TaskBloc>(),
+    );
   });
 
-  setUp(() async => await fakeFirestore.clearPersistence());
+  setUp(() async => boardRepo.clearPersistence());
 
   testWidgets('should find an empty kanban board', (tester) async {
     await tester.pumpWidget(app);
@@ -61,10 +70,9 @@ Future<void> main() async {
 
   testWidgets('should show a `BoardForm` when `add board` is tapped',
       (tester) async {
-    //arrange
-    await boardDS.updateBoards([BoardModel(title: 'title', index: 0)]);
+    await locator<BoardRepository>()
+        .updateBoards([const Board(title: 'title', index: 0)]);
 
-    //run app
     await tester.pumpWidget(app);
     await tester.pumpAndSettle();
 
@@ -80,7 +88,7 @@ Future<void> main() async {
       'should show `NameNotUniqueException` '
       'when creating kanban board with repeated name', (tester) async {
     //arrange
-    await boardDS.updateBoards([BoardModel(title: 'title', index: 0)]);
+    await boardRepo.updateBoards([const Board(title: 'title', index: 0)]);
 
     //run app
     await tester.pumpWidget(app);

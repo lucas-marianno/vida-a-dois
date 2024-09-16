@@ -1,26 +1,21 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart' as mockito;
 
-import 'package:vida_a_dois/core/util/logger.dart';
+import 'package:kanban/core/logger/logger.dart';
 
 import 'package:kanban/src/domain/entities/board_entity.dart';
 import 'package:kanban/src/domain/entities/task_entity.dart';
 import 'package:kanban/src/domain/usecases/task/get_task_stream.dart';
 
+import 'package:mockito/mockito.dart' as mockito;
 import '../../../../../helper/mock_generator.mocks.dart';
 
 void main() {
   initLogger(Log());
 
-  late MockTaskRepository mockTaskRepository;
-  late MockBoardRepository mockBoardRepository;
-  late GetTasksUseCase getTasksUseCase;
-
-  setUp(() {
-    mockTaskRepository = MockTaskRepository();
-    mockBoardRepository = MockBoardRepository();
-    getTasksUseCase = GetTasksUseCase(mockTaskRepository, mockBoardRepository);
-  });
+  final mockTaskRepository = MockTaskRepository();
+  final mockBoardRepository = MockBoardRepository();
+  final getTasksUseCase =
+      GetTasksUseCase(mockTaskRepository, mockBoardRepository);
 
   final List<Task> mockTasks = [
     const Task(id: '1', title: 'Task 1', status: 'To Do'),

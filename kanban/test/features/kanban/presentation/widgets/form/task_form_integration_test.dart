@@ -1,92 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:vida_a_dois/app/app.dart';
-import 'package:vida_a_dois/core/extensions/datetime_extension.dart';
-import 'package:kanban/src/presentation/widgets/form/widgets/form_date_picker.dart';
+import 'package:kanban/core/i18n/l10n.dart';
+import 'package:kanban/core/logger/logger.dart';
+import 'package:kanban/core/extensions/datetime_extension.dart';
+
+import 'package:kanban/src/injection_container.dart';
+
+import 'package:kanban/src/domain/entities/board_entity.dart';
+import 'package:kanban/src/domain/entities/task_entity.dart';
+import 'package:kanban/src/domain/repository/board_repository.dart';
+import 'package:kanban/src/domain/repository/task_repository.dart';
+
 import 'package:kanban/src/domain/constants/enum/task_importance.dart';
-import 'package:vida_a_dois/injection_container.dart';
 
-import 'package:vida_a_dois/core/i18n/l10n.dart';
-import 'package:vida_a_dois/core/util/logger.dart';
-
-import 'package:kanban/src/data/data_sources/board_data_source.dart';
-import 'package:kanban/src/data/data_sources/task_data_source.dart';
-import 'package:kanban/src/data/models/board_model.dart';
-import 'package:kanban/src/data/models/task_model.dart';
 import 'package:kanban/src/presentation/pages/kanban_page.dart';
 import 'package:kanban/src/presentation/widgets/kanban/kanban_board.dart';
 import 'package:kanban/src/presentation/widgets/kanban/kanban_tile.dart';
+import 'package:kanban/src/presentation/widgets/form/widgets/form_date_picker.dart';
 
-import 'package:mockito/mockito.dart' as mockito;
-import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
-import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
-
+import '../../../../../helper/fake_board_repository.dart';
+import '../../../../../helper/fake_task_repository.dart';
 import '../../../../../helper/testable_app.dart';
-import '../../../../../helper/mock_generator.mocks.dart';
 
 Future<void> main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
-
   initLogger(Log(level: Level.warning));
+
+  setUpLocator(FakeBoardRepository(), FakeTaskRepository());
+  final boardRepo = locator<BoardRepository>() as FakeBoardRepository;
+  final taskRepo = locator<TaskRepository>() as FakeTaskRepository;
 
   late final Widget app;
   final l10n = await L10n.from('en');
-  final fakeFirestore = FakeFirebaseFirestore();
 
   setUpAll(() {
-    final fakeConnectivity = MockConnectivity();
-    final fakeAuth = MockFirebaseAuth(
-      signedIn: true,
-      mockUser: MockUser(
-        uid: 'uid123',
-        email: 'mockUser@mail.com',
-        displayName: 'mock user',
-      ),
-    );
-
-    setUpLocator(fakeFirestore, fakeAuth, fakeConnectivity);
-
-    mockito.when(fakeConnectivity.onConnectivityChanged).thenAnswer((_) {
-      return Stream<List<ConnectivityResult>>.fromIterable([
-        [ConnectivityResult.wifi]
-      ]);
-    });
-
-    app = MultiBlocProvider(
-      providers: [
-        BlocProvider<ConnectivityBloc>(
-          create: (_) => locator<ConnectivityBloc>(),
-        ),
-        BlocProvider<UserSettingsBloc>(
-          create: (_) => locator<UserSettingsBloc>(),
-        ),
-        BlocProvider<AuthBloc>(
-          create: (_) => locator<AuthBloc>(),
-        ),
-        BlocProvider<BoardBloc>(
-          create: (_) => locator<BoardBloc>(),
-        ),
-        BlocProvider<TaskBloc>(
-          create: (_) => locator<TaskBloc>(),
-        ),
-      ],
-      child: const VidaADoidApp(),
+    app = TestableApp(
+      const KanbanPage(),
+      languageCode: 'en',
+      boardBloc: locator(),
+      taskBloc: locator(),
     );
   });
-  group('task create and delete from `TaskForm`', () {
-    late BoardDataSource boardDS;
-    setUpAll(() async {
-      await fakeFirestore.clearPersistence();
 
-      boardDS = locator<BoardDataSource>();
+  group('task create and delete from `TaskForm`', () {
+    setUpAll(() async {
+      boardRepo.clearPersistence();
+      taskRepo.clearPersistence();
     });
 
     setUp(() async {
-      await boardDS.updateBoards(
-        [BoardModel(title: 'New Board', index: 0)],
+      boardRepo.clearPersistence();
+      await boardRepo.updateBoards(
+        [const Board(title: 'New Board', index: 0)],
       );
     });
+
     testWidgets('should create new task', (tester) async {
       // run app
       await tester.pumpWidget(app);
@@ -179,24 +148,15 @@ Future<void> main() async {
     });
   });
   group('task editing from `TaskForm`', () {
-    late BoardDataSource boardDS;
-    late TaskDataSource taskDS;
-
-    final mockBoard = BoardModel(title: 'to do', index: 0);
-    final mockTask = TaskModel(title: 'do this', status: "to do");
-
-    setUpAll(() async {
-      await fakeFirestore.clearPersistence();
-
-      boardDS = locator<BoardDataSource>();
-      taskDS = locator<TaskDataSource>();
-    });
+    final mockBoard = const Board(title: 'to do', index: 0);
+    final mockTask = const Task(title: 'do this', status: "to do");
 
     setUp(() async {
-      await fakeFirestore.clearPersistence();
+      boardRepo.clearPersistence();
+      taskRepo.clearPersistence();
 
-      await boardDS.updateBoards([mockBoard]);
-      await taskDS.createTask(mockTask);
+      await boardRepo.updateBoards([mockBoard]);
+      await taskRepo.createTask(mockTask);
     });
 
     testWidgets('ensure setUp() works correctly', (tester) async {
@@ -512,14 +472,15 @@ Future<void> main() async {
     });
 
     testWidgets('should change task status', (tester) async {
-      fakeFirestore.clearPersistence();
+      boardRepo.clearPersistence();
+      taskRepo.clearPersistence();
 
       // arrange
-      final board1 = BoardModel(title: 'to do', index: 0);
-      final board2 = BoardModel(title: 'in progress', index: 1);
-      final mockTask = TaskModel(title: 'mock title', status: board1.title);
-      await boardDS.updateBoards([board1, board2]);
-      await taskDS.createTask(mockTask);
+      final board1 = const Board(title: 'to do', index: 0);
+      final board2 = const Board(title: 'in progress', index: 1);
+      final mockTask = Task(title: 'mock title', status: board1.title);
+      await boardRepo.updateBoards([board1, board2]);
+      await taskRepo.createTask(mockTask);
 
       // run app
       await tester.pumpWidget(app);
@@ -621,10 +582,12 @@ Future<void> main() async {
         (tester) async {
       // arrange
       final taskDeadline = DateTime(2024, 9, 16);
-      await fakeFirestore.clearPersistence();
-      await boardDS.updateBoards([BoardModel(title: 'to do', index: 0)]);
-      await taskDS.createTask(
-        TaskModel(title: 'task', status: 'to do', deadline: taskDeadline),
+      boardRepo.clearPersistence();
+      taskRepo.clearPersistence();
+
+      await boardRepo.updateBoards([const Board(title: 'to do', index: 0)]);
+      await taskRepo.createTask(
+        Task(title: 'task', status: 'to do', deadline: taskDeadline),
       );
 
       // run app

@@ -1,79 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:vida_a_dois/app/app.dart';
-import 'package:vida_a_dois/core/i18n/l10n.dart';
-import 'package:kanban/src/data/data_sources/board_data_source.dart';
-import 'package:kanban/src/data/models/board_model.dart';
+import 'package:kanban/core/i18n/l10n.dart';
+import 'package:kanban/core/logger/logger.dart';
+
+import 'package:kanban/src/injection_container.dart';
+
+import 'package:kanban/src/domain/entities/board_entity.dart';
+import 'package:kanban/src/domain/repository/board_repository.dart';
+import 'package:kanban/src/domain/repository/task_repository.dart';
+
 import 'package:kanban/src/presentation/pages/kanban_page.dart';
-import 'package:vida_a_dois/injection_container.dart';
-import 'package:vida_a_dois/core/util/logger.dart';
-
-import 'package:kanban/src/presentation/widgets/form/widgets/form_drop_down_menu_button.dart';
-
 import 'package:kanban/src/presentation/widgets/kanban/kanban_board.dart';
 import 'package:kanban/src/presentation/widgets/kanban/kanban_tile.dart';
+import 'package:kanban/src/presentation/widgets/form/widgets/form_drop_down_menu_button.dart';
 
-import 'package:mockito/mockito.dart' as mockito;
-import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
-import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
-
+import '../../../../../helper/fake_board_repository.dart';
+import '../../../../../helper/fake_task_repository.dart';
 import '../../../../../helper/testable_app.dart';
-import '../../../../../helper/mock_generator.mocks.dart';
 
 Future<void> main() async {
+  initLogger(Log(level: Level.warning));
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUpLocator(FakeBoardRepository(), FakeTaskRepository());
+  final boardRepo = locator<BoardRepository>() as FakeBoardRepository;
+  final taskRepo = locator<TaskRepository>() as FakeTaskRepository;
+
   late final Widget app;
-
   final l10n = await L10n.from('en');
-  final mockUser = MockUser(
-    uid: 'uid123',
-    email: 'mockUser@mail.com',
-    displayName: 'mock user',
-  );
-  final fakeFirestore = FakeFirebaseFirestore();
-  final fakeAuth = MockFirebaseAuth(signedIn: true, mockUser: mockUser);
-  final fakeConnectivity = MockConnectivity();
-
-  late final BoardDataSource boardDS;
 
   setUpAll(() {
-    fakeFirestore.clearPersistence();
+    boardRepo.clearPersistence();
+    taskRepo.clearPersistence();
 
-    TestWidgetsFlutterBinding.ensureInitialized();
-    setUpLocator(fakeFirestore, fakeAuth, fakeConnectivity);
-    initLogger(Log(level: Level.warning));
-
-    mockito.when(fakeConnectivity.onConnectivityChanged).thenAnswer((_) {
-      return Stream<List<ConnectivityResult>>.fromIterable([
-        [ConnectivityResult.wifi]
-      ]);
-    });
-
-    app = MultiBlocProvider(
-      providers: [
-        BlocProvider<ConnectivityBloc>(
-          create: (_) => locator<ConnectivityBloc>(),
-        ),
-        BlocProvider<UserSettingsBloc>(
-          create: (_) => locator<UserSettingsBloc>(),
-        ),
-        BlocProvider<AuthBloc>(
-          create: (_) => locator<AuthBloc>(),
-        ),
-        BlocProvider<BoardBloc>(
-          create: (_) => locator<BoardBloc>(),
-        ),
-        BlocProvider<TaskBloc>(
-          create: (_) => locator<TaskBloc>(),
-        ),
-      ],
-      child: const VidaADoidApp(),
+    app = TestableApp(
+      const KanbanPage(),
+      languageCode: 'en',
+      boardBloc: locator(),
+      taskBloc: locator(),
     );
-
-    boardDS = locator<BoardDataSource>();
   });
 
-  setUp(() async => fakeFirestore.clearPersistence());
+  setUp(() {
+    boardRepo.clearPersistence();
+    taskRepo.clearPersistence();
+  });
 
   testWidgets('should find an empty kanban page', (tester) async {
     await tester.pumpWidget(app);
@@ -121,7 +93,7 @@ Future<void> main() async {
 
   testWidgets('should rename board', (tester) async {
     // arrange
-    await boardDS.updateBoards([BoardModel(title: 'title', index: 0)]);
+    await boardRepo.updateBoards([const Board(title: 'title', index: 0)]);
 
     // run app
     await tester.pumpWidget(app);
@@ -197,7 +169,7 @@ Future<void> main() async {
 
   testWidgets('should create second kanban board', (tester) async {
     // arrange
-    await boardDS.updateBoards([BoardModel(title: 'title', index: 0)]);
+    await boardRepo.updateBoards([const Board(title: 'title', index: 0)]);
 
     // run app
     await tester.pumpWidget(app);
@@ -247,9 +219,9 @@ Future<void> main() async {
   });
   testWidgets('should reorder boards', (tester) async {
     // arrange
-    final board1 = BoardModel(title: 'first board', index: 0);
-    final board2 = BoardModel(title: 'second board', index: 1);
-    await boardDS.updateBoards([board1, board2]);
+    const board1 = Board(title: 'first board', index: 0);
+    const board2 = Board(title: 'second board', index: 1);
+    await boardRepo.updateBoards([board1, board2]);
 
     // run app
     await tester.pumpWidget(app);
@@ -338,9 +310,9 @@ Future<void> main() async {
 
   testWidgets('should delete a board', (tester) async {
     // arrange
-    final board1 = BoardModel(title: 'first board', index: 0);
-    final board2 = BoardModel(title: 'second board', index: 1);
-    await boardDS.updateBoards([board1, board2]);
+    const board1 = Board(title: 'first board', index: 0);
+    const board2 = Board(title: 'second board', index: 1);
+    await boardRepo.updateBoards([board1, board2]);
 
     // run app
     await tester.pumpWidget(app);

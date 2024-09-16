@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:kanban/core/logger/logger.dart';
-import 'package:kanban/src/domain/entities/board_entity.dart';
-import 'package:kanban/src/domain/entities/task_entity.dart';
 
 import 'package:kanban/src/injection_container.dart';
 import 'package:kanban/src/presentation/bloc/board/board_bloc.dart';
