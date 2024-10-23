@@ -45,8 +45,13 @@ Create and manage several lists, such as movies or TV shows to watch, games to p
 
 Contributions are welcome! Please fork the repository and create a pull request with your changes.
 
-## Project Architecture
+## Project Overview
 
+### Technologies used
+
+- Flutter, Firebase Firestore + Auth, i18n + l10n, TDD, Clean-Architecture, BLoC, BLoC + Unit + Widget + Integration testing, test coverage, logger.
+
+### Architecture
 ![Clean Architecture drawio](https://github.com/user-attachments/assets/5ed658c9-79a0-4e86-b803-74de8789db46)
 
 ## License
